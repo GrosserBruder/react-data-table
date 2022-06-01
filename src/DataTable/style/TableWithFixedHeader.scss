@@ -1,0 +1,47 @@
+.table-with-fixed-header {
+  height: 100%;
+  overflow: auto;
+  background-color: white;
+
+  &--fixed-top-title {
+    .table-with-fixed-header {
+      .head {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: white;
+      }
+    }
+  }
+
+  &--fixed-left-column {
+    .table-with-fixed-header {
+      .body .row,
+      .head .row {
+        &:nth-child(n) {
+          .cell:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            background-color: white;
+          }
+        }
+      }
+
+      &.table--striped {
+        .body .row {
+          &:nth-child(odd) {
+            .cell:first-child {
+              background-color: #e8eaf6;
+            }
+          }
+          &:nth-child(even) {
+            .cell:first-child {
+              background-color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+}

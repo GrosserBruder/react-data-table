@@ -3,6 +3,12 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "dist/*"
+      ]
+    }
   }
 }
