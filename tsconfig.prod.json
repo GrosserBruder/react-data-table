@@ -4,11 +4,11 @@
     "noEmit": false,
     "outDir": "dist",
     "declaration": true,
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "dist/*"
-      ]
-    }
+    // "baseUrl": ".",
+    // "paths": {
+    //   "*": [
+    //     "dist/*"
+    //   ]
+    // }
   }
 }
