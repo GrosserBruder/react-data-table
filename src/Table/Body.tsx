@@ -1,5 +1,6 @@
 import { ReactNode, HTMLAttributes, forwardRef, ForwardedRef } from "react";
 import classnames from 'classnames';
+import "./Body.scss";
 
 export type BodyProps = HTMLAttributes<HTMLElement> & {
   children: ReactNode[] | ReactNode,
