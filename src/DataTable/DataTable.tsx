@@ -3,6 +3,7 @@ import { Body, BodyProps, Cell, CellProps, Head, HeadCell, HeadProps, Row, RowPr
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
 import { useDataTable } from './DataTableProvider/useDataTable';
 import TableWithFixedHeader from '../TableWithFixedHeader/TableWithFixedHeader';
+import './DataTable.scss';
 
 export type LineCell = {
   id: string | number,

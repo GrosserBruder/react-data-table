@@ -1,6 +1,7 @@
 import { ReactElement, forwardRef, ForwardedRef, HTMLProps } from 'react';
 import { BodyProps, HeadProps } from "./"
 import classnames from 'classnames';
+import './style/Table.scss'
 
 export type TableProps = {
   children: ReactElement<BodyProps | HeadProps>[] | ReactElement<BodyProps | HeadProps>

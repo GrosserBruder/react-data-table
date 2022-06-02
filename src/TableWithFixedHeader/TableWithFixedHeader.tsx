@@ -1,6 +1,7 @@
 import { ReactElement, memo } from 'react';
 import { BodyProps, HeadProps, Table, TableProps } from "../"
 import classnames from 'classnames';
+import './TableWithFixedHeader.scss';
 
 export type TableWithFixedHeaderProps = TableProps & {
   children: ReactElement<BodyProps | HeadProps>[] | ReactElement<BodyProps | HeadProps>

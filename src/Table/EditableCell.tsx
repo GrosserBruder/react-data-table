@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 import classnames from 'classnames';
 import Cell, { CellProps } from "./Cell";
+import './style/EditableCell.scss'
 
 export type EditableCellProps = CellProps & {
   className?: string

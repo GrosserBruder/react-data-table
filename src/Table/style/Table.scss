@@ -1,5 +1,4 @@
 $border: 1px solid black;
-@use "../../../../Feature/styles/colors.scss" as colors;
 
 .table {
   width: 100%;
@@ -17,7 +16,7 @@ $border: 1px solid black;
   & .body .row {
     &:hover {
       .cell {
-        background-color: colors.$color-hover !important;
+        background-color: #c5cae9 !important;
       }
     }
   }
@@ -29,7 +28,7 @@ $border: 1px solid black;
 
   &--striped {
     .body .row:nth-child(odd) {
-      background-color: colors.$color-striped;
+      background-color: #e8eaf6;
     }
   }
 

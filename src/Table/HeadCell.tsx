@@ -5,6 +5,7 @@ import { IconButton, Popover } from "@mui/material";
 // import SearchField from "../SearchField/SearchField";
 import FilterAltOutlined from "@mui/icons-material/FilterAltOutlined";
 import FilterAlt from "@mui/icons-material/FilterAlt";
+import './style/HeadCell.scss'
 
 export type HeadCellProps = ThHTMLAttributes<HTMLElement>
   & {
