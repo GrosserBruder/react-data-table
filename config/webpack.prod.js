@@ -1,17 +1,15 @@
 const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
 const typeScriptRegex = /\.(ts|tsx)$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   // watch: true,
   // entry: path.resolve(__dirname, 'dist'),
-  externals: {
-    "react": "react",
-    "react-dom": "react-dom",
-  },
+  externals: [nodeExternals()],
   entry: {
     main: './src/index.ts'
   },
@@ -51,5 +49,8 @@ module.exports = {
         ]
       },
     ],
+  },
+  optimization: {
+    minimize: true,
   }
 }
