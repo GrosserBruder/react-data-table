@@ -21,7 +21,8 @@
   "license": "MIT",
   "scripts": {
     "prepublish": "build",
-    "build": "webpack --config ./config/webpack.prod.js "
+    "build": "webpack --config ./config/webpack.prod.js",
+    "pub": "npm run build && npm publish"
   },
   "main": "dist/main.js",
   "types": "dist/index.d.ts",
