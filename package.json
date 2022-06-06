@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build:prod": "webpack --config ./config/webpack.prod.js --stats-modules-space 999",
-    "build:tsc": "tsc --build --watch tsconfig.prod.json"
+    "prepublish": "npm run build",
+    "build": "webpack --config ./config/webpack.prod.js "
   },
   "main": "dist/main.js",
   "types": "dist/index.d.ts",
