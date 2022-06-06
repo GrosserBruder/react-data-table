@@ -1,9 +1,26 @@
 {
-  "name": "react-data-table",
+  "name": "@grossb/react-data-table",
   "version": "0.0.3",
-  "private": true,
+  "description": "React data table component",
+  "keywords": [
+    "react",
+    "data table",
+    "react data table",
+    "table",
+    "grosser bruder data table",
+    "grosser bruder"
+  ],
+  "homepage": "https://github.com/GrosserBruder/react-data-table",
+  "bugs": {
+    "url": "https://github.com/GrosserBruder/react-data-table/issues"
+  },
+  "author": {
+    "name": "Ivan Leshchinsky",
+    "email": "falenangellll@yandex.ru"
+  },
+  "license": "MIT",
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublish": "build",
     "build": "webpack --config ./config/webpack.prod.js "
   },
   "main": "dist/main.js",
