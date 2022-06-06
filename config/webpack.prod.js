@@ -4,7 +4,6 @@ const nodeExternals = require('webpack-node-externals');
 
 const typeScriptRegex = /\.(ts|tsx)$/;
 const sassRegex = /\.(scss|sass)$/;
-const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 const entries = glob.sync('./src/**/*.ts*').reduce((acc, path) => {
   const entry = path.replace(/\/*\.tsx?/, '').replace(/\.\/src\//, '')
@@ -16,12 +15,6 @@ module.exports = {
   mode: 'production',
   externals: [nodeExternals()],
   entry: entries,
-  resolve: {
-    alias: {
-      "react": "@hot-loader/react",
-      "react-dom": "@hot-loader/react-dom",
-    },
-  },
   output: {
     path: path.resolve(__dirname, '../dist'),
   },
