@@ -20,7 +20,6 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublish": "build",
     "build": "webpack --config ./config/webpack.prod.js",
     "pub": "npm run build && npm publish"
   },
