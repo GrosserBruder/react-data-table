@@ -1,5 +1,5 @@
 import { createContext, useState, ReactNode, useEffect } from 'react';
-import { BodyLineCell, TableRowProps } from '../DataTable';
+import { BodyLineCell, TableRowProps } from '..';
 
 export interface TableContextType {
   resultBodyLines: Array<TableRowProps<BodyLineCell>>
