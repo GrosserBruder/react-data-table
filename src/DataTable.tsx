@@ -3,7 +3,7 @@ import { Body, BodyProps, Cell, CellProps, Head, HeadCell, HeadProps, Row, RowPr
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
 import { useDataTable } from './DataTableProvider/useDataTable';
 import TableWithFixedHeader from '@grossb/react-table/dist/TableWithFixedHeader';
-import './DataTable.scss';
+import './style/DataTable.scss';
 
 export type LineCell = {
   id: string | number,
