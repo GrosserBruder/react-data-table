@@ -1,8 +1,8 @@
 import { ReactNode, useState, FC, useEffect } from 'react';
-import { Body, BodyProps, Cell, CellProps, Head, HeadCell, HeadProps, Row, RowProps, TableProps, HeadCellProps } from "../"
+import { Body, BodyProps, Cell, CellProps, Head, HeadCell, HeadProps, Row, RowProps, TableProps, HeadCellProps } from "@grossb/react-table"
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
 import { useDataTable } from './DataTableProvider/useDataTable';
-import TableWithFixedHeader from '../TableWithFixedHeader/TableWithFixedHeader';
+import TableWithFixedHeader from '@grossb/react-table/dist/TableWithFixedHeader';
 import './DataTable.scss';
 
 export type LineCell = {

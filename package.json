@@ -20,7 +20,9 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config ./config/webpack.prod.js",
+    "clean": "rimraf dist",
+    "copy:styles": "cpx src/style/** dist/style",
+    "build": "npm run clean && tsc -p tsconfig.prod.json && npm run copy:styles",
     "pub": "npm run build && npm publish"
   },
   "main": "dist/index.js",
@@ -31,10 +33,11 @@
   "peerDependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@grossb/react-table": "^0.0.3",
     "@mui/icons-material": "^5.8.2",
+    "classnames": "^2.3.1",
     "react": ">=18.1.0",
     "react-dom": ">=18.1.0",
-    "classnames": "^2.3.1",
     "typescript": "^4.7.2"
   },
   "devDependencies": {
