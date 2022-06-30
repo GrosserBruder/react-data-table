@@ -33,12 +33,11 @@ export type DataTableProps = {
   bodyProps?: BodyProps
   headLines: Array<TableRowProps<HeadLineCell>>,
   bodyLines: Array<TableRowProps<BodyLineCell>>,
-  sortable?: boolean,
-  searchable?: boolean,
+  filtration?: boolean,
 }
 
 function DataTable(props: DataTableProps) {
-  const { headLines, sortable, searchable } = props;
+  const { headLines, filtration } = props;
   const dataTableHook = useDataTable();
 
   const headRows = headLines.map((row) => {
@@ -49,8 +48,7 @@ function DataTable(props: DataTableProps) {
         key={cell.id}
         onSearch={(value: any) => dataTableHook.onSearch(cell.id, value)}
         initialSearchValue={dataTableHook.getSearchValueByColumnId(cell.id)}
-        sortable={sortable}
-        searchable={searchable}
+        filtration={filtration}
         {...cell.config}
       >
         {cell.renderValue}

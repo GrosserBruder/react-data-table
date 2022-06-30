@@ -1,12 +1,11 @@
-import { ReactNode, ThHTMLAttributes, useRef, useState } from "react";
+import { ReactNode, ThHTMLAttributes, useRef, useState, useCallback } from "react";
 import classnames from 'classnames';
 import Cell from "@grossb/react-table/dist/Cell";
 import { IconButton, Popover } from "@mui/material";
 import SearchField from "../SearchField/SearchField";
 import FilterAltOutlined from "@mui/icons-material/FilterAltOutlined";
 import FilterAlt from "@mui/icons-material/FilterAlt";
-import ArrowDownward from "@mui/icons-material/ArrowDownward"
-import ArrowUpward from "@mui/icons-material/ArrowUpward"
+import MoreVert from "@mui/icons-material/MoreVert"
 
 import { SORT_VALUES } from '../../const'
 import MenuItem from '@mui/material/MenuItem';
@@ -18,45 +17,43 @@ import '../styles/HeadCell.scss';
 export type HeadCellProps = ThHTMLAttributes<HTMLElement>
   & {
     children?: ReactNode,
-    searchable?: boolean,
-    sortable?: boolean,
+    filtration?: boolean,
     onSearch?: (value: string) => void,
+    onSort?: (value: string) => void,
     initialSearchValue?: string,
     initialSort?: string,
     width?: number
   };
 
 export function HeadCell(props: HeadCellProps) {
-  const { children, searchable, onSearch, initialSearchValue, initialSort, sortable, ...rest } = props;
-  const cellRef = useRef<HTMLTableCellElement | null>(null);
+  const { children, filtration, onSearch, onSort, initialSearchValue, initialSort, ...rest } = props;
   const className = classnames('head-cell', props.className)
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const toggleSearch = (event: any) => {
+  const toggleFilters = useCallback((event: any) => {
     setAnchorEl(event.currentTarget);
-  }
+  }, [setAnchorEl])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, [setAnchorEl])
 
-  const onSearchHandler = (value: any) => {
-    if (!cellRef.current) return;
+  const onSearchHandler = useCallback((value: any) => {
     onSearch?.(value);
-  }
+  }, [onSearch])
 
-  return <Cell ref={cellRef} component="th" {...rest} className={className}>
+  const onSortHandler = useCallback((value: any) => {
+    console.log()
+    onSort?.(value);
+  }, [onSearch])
+
+  return <Cell component="th" {...rest} className={className}>
     <div className="head-cell__content">
       <div className="head-cell__children">{children}</div>
       <div className="head-cell__filters">
-        {searchable && (
-          <IconButton onClick={toggleSearch}>
-            {initialSearchValue ? <FilterAlt /> : <FilterAltOutlined />}
-          </IconButton>
-        )}
-        {sortable && (
-          <IconButton onClick={toggleSearch}>
-            {initialSort === SORT_VALUES.DESC ? <ArrowDownward /> : <ArrowUpward />}
+        {filtration && (
+          <IconButton onClick={toggleFilters}>
+            <MoreVert />
           </IconButton>
         )}
       </div>
@@ -67,7 +64,7 @@ export function HeadCell(props: HeadCellProps) {
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'left',
+          horizontal: 'right',
         }}
       >
         <SearchField
@@ -83,12 +80,12 @@ export function HeadCell(props: HeadCellProps) {
             id="demo-simple-select"
             // value={age}
             label="Age"
-            // onChange={handleChange}
+            onChange={onSortHandler}
             size="small"
           >
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
+            <MenuItem value={undefined}>Не выбрано</MenuItem>
+            <MenuItem value={SORT_VALUES.ASC}>По возрастанию</MenuItem>
+            <MenuItem value={SORT_VALUES.DESC}>По убыванию</MenuItem>
           </Select>
         </FormControl>
       </Popover>
