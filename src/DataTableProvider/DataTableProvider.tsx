@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useState, ReactNode, useEffect, useRef, useCallback } from 'react';
 import { BodyLineCell, TableRowProps } from '..';
 
 export interface TableContextType {
@@ -7,8 +7,13 @@ export interface TableContextType {
   getSearchValueByColumnId: (columnId: string | number) => any
 }
 
+type Filter = {
+  [key: string]: any
+}
+
 type InitialValues = {
   bodyLines: Array<TableRowProps<BodyLineCell>>
+  filters?: Filter
 }
 
 export type TableProviderProps = {
@@ -19,43 +24,35 @@ export type TableProviderProps = {
 export const DataTableContext = createContext<TableContextType>(undefined!);
 
 export function DataTableProvider(props: TableProviderProps) {
-  const { children } = props
-  const [initialValues, setInitialValues] = useState<InitialValues | undefined>(props.initialValues);
+  const { children, initialValues } = props
   const [resultBodyLines, setResultBodyLines] = useState(initialValues?.bodyLines ?? [])
-  const [filters, setFilters] = useState(new Map())
+  const filters = useRef(new Map(Object.entries(initialValues?.filters ?? {})))
 
-  useEffect(() => {
-    setInitialValues(props.initialValues)
-  }, [props.initialValues?.bodyLines])
-
-  useEffect(() => {
-    filterBodyLines()
-  }, [initialValues?.bodyLines])
-
-  const filterBodyLines = async () => {
+  const filterBodyLines = useCallback(async () => {
     const filteredBodyLines = (initialValues?.bodyLines ?? []).filter((line) => {
       return line.cells
-        .filter((cell) => filters.has(cell.id))
+        .filter((cell) => filters.current.has(cell.id.toString()))
         .every((cell) => {
-          return (cell.value as string || '').toLowerCase().includes(filters.get(cell.id))
+          return (cell.value as string || '').toLowerCase().includes(filters.current.get(cell.id.toString()))
         })
     })
-    setResultBodyLines(filteredBodyLines);
-  }
 
-  const onSearch = async (columnId: string | number, value: string) => {
+    setResultBodyLines(filteredBodyLines);
+  }, [initialValues?.bodyLines, filters.current])
+
+  const onSearch = useCallback(async (columnId: string | number, value: string) => {
     if (value === '') {
-      filters.delete(columnId)
+      filters.current.delete(columnId.toString())
     } else {
-      filters.set(columnId, value.toLowerCase())
+      filters.current.set(columnId.toString(), value.toLowerCase())
     }
 
     filterBodyLines()
-  }
+  }, [filters.current])
 
-  const getSearchValueByColumnId = (columnId: string | number) => {
-    return filters.get(columnId)
-  }
+  const getSearchValueByColumnId = useCallback((columnId: string | number) => {
+    return filters.current.get(columnId.toString())
+  }, [filters.current])
 
   const value = {
     resultBodyLines,

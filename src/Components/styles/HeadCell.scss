@@ -1,0 +1,23 @@
+.head-cell {
+  & .MuiPopover-paper {
+    padding: 5px;
+
+    & > *:not(:last-child) {
+      margin-bottom: 5px;
+    }
+  }
+
+  &__content {
+    display: flex;
+    align-items: baseline;
+  }
+  &__children {
+    flex: 1 1 0;
+    padding-left: 5px;
+  }
+  &__filters {
+  }
+  .cell__wrapper {
+    padding: unset;
+  }
+}

@@ -1,9 +1,9 @@
 import { ReactNode, useState, FC, useEffect } from 'react';
-import { Body, BodyProps, Cell, CellProps, Head, HeadCell, HeadProps, Row, RowProps, TableProps, HeadCellProps } from "@grossb/react-table"
+import { Table, Body, BodyProps, Cell, CellProps, Head, HeadProps, Row, RowProps, TableProps } from "@grossb/react-table"
+import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
 import { useDataTable } from './DataTableProvider/useDataTable';
-import TableWithFixedHeader from '@grossb/react-table/dist/TableWithFixedHeader';
-import './style/DataTable.scss';
+import './styles/DataTable.scss';
 
 export type LineCell = {
   id: string | number,
@@ -33,22 +33,12 @@ export type DataTableProps = {
   bodyProps?: BodyProps
   headLines: Array<TableRowProps<HeadLineCell>>,
   bodyLines: Array<TableRowProps<BodyLineCell>>,
-}
-
-function DataTableWrapper(props: DataTableProps) {
-  const [initialValues, setInitialValues] = useState(props);
-
-  useEffect(() => {
-    setInitialValues(props)
-  }, [props])
-
-  return <DataTableProvider initialValues={initialValues}>
-    <DataTable {...props} />
-  </DataTableProvider>
+  sortable?: boolean,
+  searchable?: boolean,
 }
 
 function DataTable(props: DataTableProps) {
-  const { headLines } = props;
+  const { headLines, sortable, searchable } = props;
   const dataTableHook = useDataTable();
 
   const headRows = headLines.map((row) => {
@@ -59,6 +49,8 @@ function DataTable(props: DataTableProps) {
         key={cell.id}
         onSearch={(value: any) => dataTableHook.onSearch(cell.id, value)}
         initialSearchValue={dataTableHook.getSearchValueByColumnId(cell.id)}
+        sortable={sortable}
+        searchable={searchable}
         {...cell.config}
       >
         {cell.renderValue}
@@ -99,14 +91,21 @@ function DataTable(props: DataTableProps) {
 
   const bodyRows = getRowsOrEmptyRow();
 
-  return <TableWithFixedHeader fixedTopTitle className="data-table">
-    <Head>
-      {headRows}
-    </Head>
-    <Body>
-      {bodyRows}
-    </Body>
-  </TableWithFixedHeader>
+
+  return <DataTableProvider initialValues={props}>
+    <Table fixedTopTitle className="data-table">
+      <Head>
+        {headRows}
+      </Head>
+      <Body>
+        {bodyRows}
+      </Body>
+    </Table>
+  </DataTableProvider>
 }
 
-export default DataTableWrapper
+export default (props: DataTableProps) => {
+  return <DataTableProvider initialValues={props}>
+    <DataTable {...props} />
+  </DataTableProvider>
+}
