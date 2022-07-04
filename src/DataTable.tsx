@@ -1,14 +1,16 @@
-import { ReactNode, useState, FC, useEffect } from 'react';
-import { Body, BodyProps, Cell, CellProps, Head, HeadCell, HeadProps, Row, RowProps, TableProps, HeadCellProps } from "@grossb/react-table"
+import { FC, useCallback, useEffect, useState } from 'react';
+import { Table, Body, BodyProps, Cell, CellProps, Head, HeadProps, Row, RowProps, TableProps } from "@grossb/react-table"
+import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
 import { useDataTable } from './DataTableProvider/useDataTable';
-import TableWithFixedHeader from '@grossb/react-table/dist/TableWithFixedHeader';
-import './style/DataTable.scss';
+import './styles/DataTable.scss';
+import { SORT_VALUES } from './const';
+import Checkbox from './Components/Checkbox/Checkbox';
 
 export type LineCell = {
   id: string | number,
   value?: any,
-  renderValue?: ReactNode,
+  renderComponent?: FC<RowProps>,
   cellComponent?: FC<any>,
 }
 
@@ -28,66 +30,146 @@ export type TableRowProps<CellType> = {
 }
 
 export type DataTableProps = {
+  onRowClick?: (row: TableRowProps<BodyLineCell>) => void,
+  onSelected?: (rows: Array<TableRowProps<BodyLineCell>>) => void,
+  onSortChange?: (headLineCell: HeadLineCell, sortValue: SORT_VALUES) => void,
+  onSearchChange?: (headLineCell: HeadLineCell, value: string) => void,
   tableProps?: TableProps,
   headProps?: HeadProps
   bodyProps?: BodyProps
   headLines: Array<TableRowProps<HeadLineCell>>,
   bodyLines: Array<TableRowProps<BodyLineCell>>,
-}
-
-function DataTableWrapper(props: DataTableProps) {
-  const [initialValues, setInitialValues] = useState(props);
-
-  useEffect(() => {
-    setInitialValues(props)
-  }, [props])
-
-  return <DataTableProvider initialValues={initialValues}>
-    <DataTable {...props} />
-  </DataTableProvider>
+  filtration?: boolean,
+  selectable?: boolean,
 }
 
 function DataTable(props: DataTableProps) {
-  const { headLines } = props;
+  const { headLines, filtration, tableProps, selectable, onRowClick: onRowClickProps, onSelected, onSearchChange, onSortChange } = props;
   const dataTableHook = useDataTable();
+  const [selectedRows, setSelectedRows] = useState<Array<TableRowProps<BodyLineCell>>>([])
+
+  const addToSelectedRows = useCallback((row: TableRowProps<BodyLineCell>) => {
+    setSelectedRows([...selectedRows, row])
+  }, [selectedRows])
+
+  const removeFromSelectedRows = useCallback((row: TableRowProps<BodyLineCell>) => {
+    setSelectedRows(selectedRows.filter((x) => x.id !== row.id))
+  }, [selectedRows])
+
+  useEffect(() => {
+    onSelected?.(selectedRows)
+  }, [selectedRows])
+
+  const isRowSelected = useCallback((row: TableRowProps<BodyLineCell>) => {
+    return selectedRows.findIndex((x) => x.id === row.id) !== -1
+  }, [selectedRows])
+
+  const onBodyCheckboxClick = useCallback((row: TableRowProps<BodyLineCell>) => {
+    const isSelected = isRowSelected(row);
+    if (isSelected) {
+      removeFromSelectedRows(row)
+    } else {
+      addToSelectedRows(row)
+    }
+  }, [isRowSelected, removeFromSelectedRows, addToSelectedRows, selectedRows])
+
+  const onHeadCheckboxClick = useCallback(() => {
+    if (selectedRows.length !== 0) {
+      setSelectedRows([])
+    } else {
+      setSelectedRows(dataTableHook.resultBodyLines)
+    }
+  }, [selectedRows, dataTableHook.resultBodyLines])
+
+  const onSortHandler = (headLineCell: HeadLineCell, value: SORT_VALUES) => {
+    onSortChange?.(headLineCell, value)
+    dataTableHook.onSort(headLineCell.id, value)
+  }
+
+  const onSearchHandler = (headLineCell: HeadLineCell, value: string) => {
+    onSearchChange?.(headLineCell, value)
+    dataTableHook.onSearch(headLineCell.id, value)
+  }
+
+  const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
+    const CellComponent = bodyLineCell.renderComponent || Cell
+
+    return <CellComponent
+      key={bodyLineCell.id}
+      {...bodyLineCell.config}
+    >
+      {bodyLineCell.value}
+    </CellComponent>
+  }, [])
+
+  const getHeadCell = useCallback((headLineCell: HeadLineCell) => {
+    const CellComponent = headLineCell.renderComponent || HeadCell
+
+    return <CellComponent
+      key={headLineCell.id}
+      onSearch={(value: any) => onSearchHandler(headLineCell, value)}
+      onSort={(sortValue: SORT_VALUES) => onSortHandler(headLineCell, sortValue)}
+      initialSearchValue={dataTableHook.getSearchValueByColumnId(headLineCell.id)}
+      initialSortValues={dataTableHook.getSortingValueByColumnId(headLineCell.id)}
+      filtration={filtration}
+      {...headLineCell.config}
+    >
+      {headLineCell.value}
+    </CellComponent>
+  }, [])
 
   const headRows = headLines.map((row) => {
     const RowComponent = row.render || Row
 
     return <RowComponent key={row.id} {...row.config}>
-      {row.cells.map((cell) => <HeadCell
-        key={cell.id}
-        onSearch={(value: any) => dataTableHook.onSearch(cell.id, value)}
-        initialSearchValue={dataTableHook.getSearchValueByColumnId(cell.id)}
-        {...cell.config}
-      >
-        {cell.renderValue}
-      </HeadCell>
+      {selectable && (
+        <Cell className="cell__select-all" rowSpan={headLines.length} width={50}>
+          <Checkbox
+            checked={selectedRows.length === dataTableHook.resultBodyLines.length}
+            indeterminate={selectedRows.length > 0 && selectedRows.length < dataTableHook.resultBodyLines.length}
+            onClick={onHeadCheckboxClick}
+          />
+        </Cell>
       )}
+      {row.cells.map(getHeadCell)}
     </RowComponent>
   })
 
-  const getRows = () => {
+  const getRows = useCallback(() => {
     return dataTableHook.resultBodyLines.map((row) => {
       const RowComponent = row.render || Row
 
-      return <RowComponent key={row.id} {...row.config}>
-        {row.cells.map((cell) => {
-          const Component = cell.cellComponent || Cell;
-          return <Component key={cell.id} {...cell.config}>
-            {cell.renderValue}
-          </Component>
-        })}
+      const onRowClick = (event: any) => {
+        onRowClickProps?.(row)
+        selectable && onBodyCheckboxClick(row)
+      }
+
+      const onCheckboxClick = (event: any) => {
+        event.stopPropagation();
+        onBodyCheckboxClick(row)
+      }
+
+      return <RowComponent key={row.id} {...row.config} onClick={onRowClick}>
+        {selectable && <Cell className="cell__select">
+          <Checkbox
+            checked={isRowSelected(row)}
+            onClick={onCheckboxClick}
+          />
+        </Cell>}
+        {row.cells.map(getBodyCell)}
       </RowComponent >
     })
-  }
+  }, [dataTableHook.resultBodyLines, getBodyCell, selectedRows])
 
 
-  const getRowsOrEmptyRow = () => {
+  const getRowsOrEmptyRow = useCallback(() => {
     const isEmpty = dataTableHook.resultBodyLines.length === 0;
 
     if (isEmpty) {
-      const columnCount = headLines[0].cells.reduce((acc, value) => acc + (value.config?.colSpan || 1), 0)
+      let columnCount = headLines[0].cells.reduce((acc, value) => acc + (value.config?.colSpan || 1), 0)
+      if (selectable) {
+        columnCount = columnCount + 1
+      }
 
       return <Row>
         <Cell className="data-table__empty-row" colSpan={columnCount}>Список пуст</Cell>
@@ -95,18 +177,22 @@ function DataTable(props: DataTableProps) {
     }
 
     return getRows()
-  }
+  }, [dataTableHook.resultBodyLines, getBodyCell, selectedRows])
 
   const bodyRows = getRowsOrEmptyRow();
 
-  return <TableWithFixedHeader fixedTopTitle className="data-table">
+  return <Table fixedTopTitle className="data-table" {...tableProps}>
     <Head>
       {headRows}
     </Head>
     <Body>
       {bodyRows}
     </Body>
-  </TableWithFixedHeader>
+  </Table>
 }
 
-export default DataTableWrapper
+export default (props: DataTableProps) => {
+  return <DataTableProvider initialValues={props}>
+    <DataTable {...props} />
+  </DataTableProvider>
+}
