@@ -1,10 +1,11 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { Table, Body, BodyProps, Cell, CellProps, Head, HeadProps, Row, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
 import { useDataTable } from './DataTableProvider/useDataTable';
 import './styles/DataTable.scss';
 import { SORT_VALUES } from './const';
+import Checkbox from './Components/Checkbox/Checkbox';
 
 export type LineCell = {
   id: string | number,
@@ -35,11 +36,45 @@ export type DataTableProps = {
   headLines: Array<TableRowProps<HeadLineCell>>,
   bodyLines: Array<TableRowProps<BodyLineCell>>,
   filtration?: boolean,
+  selectable?: boolean,
 }
 
 function DataTable(props: DataTableProps) {
-  const { headLines, filtration, tableProps } = props;
+  const { headLines, filtration, tableProps, selectable } = props;
   const dataTableHook = useDataTable();
+  const [selectedRows, setSelectedRows] = useState<Array<TableRowProps<BodyLineCell>>>([])
+
+  const addToSelectedRows = useCallback((row: TableRowProps<BodyLineCell>) => {
+    setSelectedRows([...selectedRows, row])
+  }, [selectedRows])
+
+  const removeFromSelectedRows = useCallback((row: TableRowProps<BodyLineCell>) => {
+    setSelectedRows(selectedRows.filter((x) => x.id !== row.id))
+  }, [selectedRows])
+
+  useEffect(() => {
+  }, [selectedRows])
+
+  const isRowSelected = useCallback((row: TableRowProps<BodyLineCell>) => {
+    return selectedRows.findIndex((x) => x.id === row.id) !== -1
+  }, [selectedRows])
+
+  const onBodyCheckboxClick = useCallback((row: TableRowProps<BodyLineCell>) => {
+    const isSelected = isRowSelected(row);
+    if (isSelected) {
+      removeFromSelectedRows(row)
+    } else {
+      addToSelectedRows(row)
+    }
+  }, [isRowSelected, removeFromSelectedRows, addToSelectedRows, selectedRows])
+
+  const onHeadCheckboxClick = useCallback(() => {
+    if (selectedRows.length !== 0) {
+      setSelectedRows([])
+    } else {
+      setSelectedRows(dataTableHook.resultBodyLines)
+    }
+  }, [selectedRows, dataTableHook.resultBodyLines])
 
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
     const CellComponent = bodyLineCell.renderComponent || Cell
@@ -72,6 +107,15 @@ function DataTable(props: DataTableProps) {
     const RowComponent = row.render || Row
 
     return <RowComponent key={row.id} {...row.config}>
+      {selectable && (
+        <Cell className="cell__select-all" rowSpan={headLines.length} width={50}>
+          <Checkbox
+            checked={selectedRows.length === dataTableHook.resultBodyLines.length}
+            indeterminate={selectedRows.length > 0 && selectedRows.length < dataTableHook.resultBodyLines.length}
+            onClick={onHeadCheckboxClick}
+          />
+        </Cell>
+      )}
       {row.cells.map(getHeadCell)}
     </RowComponent>
   })
@@ -80,11 +124,26 @@ function DataTable(props: DataTableProps) {
     return dataTableHook.resultBodyLines.map((row) => {
       const RowComponent = row.render || Row
 
-      return <RowComponent key={row.id} {...row.config}>
+      const onRowClick = (event: any) => {
+        onBodyCheckboxClick(row)
+      }
+
+      const onCheckboxClick = (event: any) => {
+        event.stopPropagation();
+        onBodyCheckboxClick(row)
+      }
+
+      return <RowComponent key={row.id} {...row.config} onClick={onRowClick}>
+        {selectable && <Cell className="cell__select">
+          <Checkbox
+            checked={isRowSelected(row)}
+            onClick={onCheckboxClick}
+          />
+        </Cell>}
         {row.cells.map(getBodyCell)}
       </RowComponent >
     })
-  }, [dataTableHook.resultBodyLines, getBodyCell])
+  }, [dataTableHook.resultBodyLines, getBodyCell, selectedRows])
 
 
   const getRowsOrEmptyRow = useCallback(() => {
@@ -99,7 +158,7 @@ function DataTable(props: DataTableProps) {
     }
 
     return getRows()
-  }, [dataTableHook.resultBodyLines, getBodyCell])
+  }, [dataTableHook.resultBodyLines, getBodyCell, selectedRows])
 
   const bodyRows = getRowsOrEmptyRow();
 

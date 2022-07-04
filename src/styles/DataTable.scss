@@ -3,4 +3,20 @@
     height: 50px;
     text-align: center;
   }
+
+  .cell__select-all {
+    min-width: 50px;
+    width: 50px;
+  }
+
+  .cell__select-all .cell__wrapper,
+  .cell__select .cell__wrapper {
+    padding: 0;
+  }
+
+  .cell__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
