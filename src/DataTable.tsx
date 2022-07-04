@@ -95,7 +95,7 @@ function DataTable(props: DataTableProps) {
       onSearch={(value: any) => dataTableHook.onSearch(headLineCell.id, value)}
       onSort={(sortValue: SORT_VALUES) => dataTableHook.onSort(headLineCell.id, sortValue)}
       initialSearchValue={dataTableHook.getSearchValueByColumnId(headLineCell.id)}
-      selectedSortValues={dataTableHook.getSortingValueByColumnId(headLineCell.id)}
+      initialSortValues={dataTableHook.getSortingValueByColumnId(headLineCell.id)}
       filtration={filtration}
       {...headLineCell.config}
     >
@@ -150,7 +150,10 @@ function DataTable(props: DataTableProps) {
     const isEmpty = dataTableHook.resultBodyLines.length === 0;
 
     if (isEmpty) {
-      const columnCount = headLines[0].cells.reduce((acc, value) => acc + (value.config?.colSpan || 1), 0)
+      let columnCount = headLines[0].cells.reduce((acc, value) => acc + (value.config?.colSpan || 1), 0)
+      if (selectable) {
+        columnCount = columnCount + 1
+      }
 
       return <Row>
         <Cell className="data-table__empty-row" colSpan={columnCount}>Список пуст</Cell>

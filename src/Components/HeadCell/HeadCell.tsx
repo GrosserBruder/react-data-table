@@ -16,7 +16,7 @@ export type HeadCellProps = ThHTMLAttributes<HTMLElement>
     onSearch?: (value: string) => void,
     onSort?: (sortValue: SORT_VALUES) => void,
     initialSearchValue?: string,
-    selectedSortValues?: SORT_VALUES.NOT_SELECTED | SORT_VALUES.ASC | SORT_VALUES.DESC,
+    initialSortValues?: SORT_VALUES.NOT_SELECTED | SORT_VALUES.ASC | SORT_VALUES.DESC,
     width?: number
   };
 
@@ -27,10 +27,12 @@ const SORT_LIST_VALUES: Array<SelectListItem> = [
 ]
 
 export function HeadCell(props: HeadCellProps) {
-  const { children, filtration, onSearch, onSort, initialSearchValue, selectedSortValues = SORT_LIST_VALUES[0].id, ...rest } = props;
+  const { children, filtration, onSearch, onSort, initialSearchValue = '', initialSortValues = SORT_LIST_VALUES[0].id, ...rest } = props;
   const className = classnames('head-cell', props.className)
   const cellRef = useRef(null)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState(initialSearchValue);
+  const [selectedSortValues, setSelectedSortValues] = useState(SORT_LIST_VALUES.find((x) => x.id === initialSortValues) || SORT_LIST_VALUES[0]);
 
   const toggleFilters = useCallback((event: any) => {
     setIsPopoverOpen((x) => !x)
@@ -44,13 +46,15 @@ export function HeadCell(props: HeadCellProps) {
     onSearch?.(value);
   }, [onSearch])
 
-  const onSortHandler = useCallback((value: SelectListItem) => {
-    onSort?.(value.id as SORT_VALUES);
-  }, [onSearch])
+  const onAccepteButtonClick = useCallback(() => {
+    onSearch?.(searchValue);
+    onSort?.(selectedSortValues.id as SORT_VALUES);
+    handleClose();
+  }, [searchValue, selectedSortValues])
 
   const filtrationButtonClassName = classnames({
     "filtration-button--setted": Boolean(initialSearchValue
-      || (selectedSortValues !== undefined && selectedSortValues !== SORT_VALUES.NOT_SELECTED))
+      || (selectedSortValues !== undefined && selectedSortValues.id !== SORT_VALUES.NOT_SELECTED))
   })
 
   return <Cell ref={cellRef} component="th" {...rest} className={className}>
@@ -78,16 +82,18 @@ export function HeadCell(props: HeadCellProps) {
           autoFocus
           withoutButton
           onSearch={onSearchHandler}
+          onChange={(event) => setSearchValue(event.target.value)}
+          value={searchValue}
           initialValue={initialSearchValue}
         />
         <SelectList
           list={SORT_LIST_VALUES}
           label="Сортировать"
-          value={selectedSortValues}
+          value={selectedSortValues.id}
           defaultValue={SORT_LIST_VALUES[0]}
-          onChange={onSortHandler}
+          onChange={setSelectedSortValues}
         />
-        <Button onClick={handleClose}>Применить</Button>
+        <Button onClick={onAccepteButtonClick}>Применить</Button>
       </Popover>
     </div>
   </Cell >
