@@ -1,19 +1,21 @@
 import SearchOutlined from "@mui/icons-material/SearchOutlined";
 import { TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { HTMLAttributes, InputHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
 import Button from "../Button";
 import { TextFieldProps } from "../TextField/TextField";
+import '../styles/SearchField.scss';
 
 export type SearchFieldProps = TextFieldProps & {
   initialValue?: string
   label?: string
   onSearch?: (value: string) => void
   withoutButton?: boolean
+  inputProps?: InputHTMLAttributes<HTMLInputElement>
 }
 
 export default function SearchField(props: SearchFieldProps) {
-  const { label = "Поиск", onSearch, initialValue = '', withoutButton, ...restProps } = props;
+  const { label = "Поиск", onSearch, initialValue = '', withoutButton, inputProps, ...restProps } = props;
   const [searchValue, setSearchValue] = useState<string>(initialValue);
   const [callOnButtonClickAfterUpdate, setCallOnButtonClickAfterUpdate] = useState(false);
   const searchRef = useRef<HTMLDivElement | null>(null);
@@ -67,6 +69,10 @@ export default function SearchField(props: SearchFieldProps) {
             <SearchOutlined />
           </InputAdornment>
         ),
+      }}
+      inputProps={{
+        maxLength: 50,
+        ...inputProps
       }}
       onChange={onChange}
       onKeyDown={onKeyDown}

@@ -1,14 +1,15 @@
-import { ReactNode, useState, FC, useEffect } from 'react';
+import { FC, useCallback } from 'react';
 import { Table, Body, BodyProps, Cell, CellProps, Head, HeadProps, Row, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
 import { useDataTable } from './DataTableProvider/useDataTable';
 import './styles/DataTable.scss';
+import { SORT_VALUES } from './const';
 
 export type LineCell = {
   id: string | number,
   value?: any,
-  renderValue?: ReactNode,
+  renderComponent?: FC<RowProps>,
   cellComponent?: FC<any>,
 }
 
@@ -37,43 +38,56 @@ export type DataTableProps = {
 }
 
 function DataTable(props: DataTableProps) {
-  const { headLines, filtration } = props;
+  const { headLines, filtration, tableProps } = props;
   const dataTableHook = useDataTable();
+
+  const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
+    const CellComponent = bodyLineCell.renderComponent || Cell
+
+    return <CellComponent
+      key={bodyLineCell.id}
+      {...bodyLineCell.config}
+    >
+      {bodyLineCell.value}
+    </CellComponent>
+  }, [])
+
+  const getHeadCell = useCallback((headLineCell: HeadLineCell) => {
+    const CellComponent = headLineCell.renderComponent || HeadCell
+
+    return <CellComponent
+      key={headLineCell.id}
+      onSearch={(value: any) => dataTableHook.onSearch(headLineCell.id, value)}
+      onSort={(sortValue: SORT_VALUES) => dataTableHook.onSort(headLineCell.id, sortValue)}
+      initialSearchValue={dataTableHook.getSearchValueByColumnId(headLineCell.id)}
+      selectedSortValues={dataTableHook.getSortingValueByColumnId(headLineCell.id)}
+      filtration={filtration}
+      {...headLineCell.config}
+    >
+      {headLineCell.value}
+    </CellComponent>
+  }, [])
 
   const headRows = headLines.map((row) => {
     const RowComponent = row.render || Row
 
     return <RowComponent key={row.id} {...row.config}>
-      {row.cells.map((cell) => <HeadCell
-        key={cell.id}
-        onSearch={(value: any) => dataTableHook.onSearch(cell.id, value)}
-        initialSearchValue={dataTableHook.getSearchValueByColumnId(cell.id)}
-        filtration={filtration}
-        {...cell.config}
-      >
-        {cell.renderValue}
-      </HeadCell>
-      )}
+      {row.cells.map(getHeadCell)}
     </RowComponent>
   })
 
-  const getRows = () => {
+  const getRows = useCallback(() => {
     return dataTableHook.resultBodyLines.map((row) => {
       const RowComponent = row.render || Row
 
       return <RowComponent key={row.id} {...row.config}>
-        {row.cells.map((cell) => {
-          const Component = cell.cellComponent || Cell;
-          return <Component key={cell.id} {...cell.config}>
-            {cell.renderValue}
-          </Component>
-        })}
+        {row.cells.map(getBodyCell)}
       </RowComponent >
     })
-  }
+  }, [dataTableHook.resultBodyLines, getBodyCell])
 
 
-  const getRowsOrEmptyRow = () => {
+  const getRowsOrEmptyRow = useCallback(() => {
     const isEmpty = dataTableHook.resultBodyLines.length === 0;
 
     if (isEmpty) {
@@ -85,21 +99,18 @@ function DataTable(props: DataTableProps) {
     }
 
     return getRows()
-  }
+  }, [dataTableHook.resultBodyLines, getBodyCell])
 
   const bodyRows = getRowsOrEmptyRow();
 
-
-  return <DataTableProvider initialValues={props}>
-    <Table fixedTopTitle className="data-table">
-      <Head>
-        {headRows}
-      </Head>
-      <Body>
-        {bodyRows}
-      </Body>
-    </Table>
-  </DataTableProvider>
+  return <Table fixedTopTitle className="data-table" {...tableProps}>
+    <Head>
+      {headRows}
+    </Head>
+    <Body>
+      {bodyRows}
+    </Body>
+  </Table>
 }
 
 export default (props: DataTableProps) => {
