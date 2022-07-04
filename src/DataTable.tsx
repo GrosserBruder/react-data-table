@@ -30,6 +30,10 @@ export type TableRowProps<CellType> = {
 }
 
 export type DataTableProps = {
+  onRowClick?: (row: TableRowProps<BodyLineCell>) => void,
+  onSelected?: (rows: Array<TableRowProps<BodyLineCell>>) => void,
+  onSortChange?: (headLineCell: HeadLineCell, sortValue: SORT_VALUES) => void,
+  onSearchChange?: (headLineCell: HeadLineCell, value: string) => void,
   tableProps?: TableProps,
   headProps?: HeadProps
   bodyProps?: BodyProps
@@ -40,7 +44,7 @@ export type DataTableProps = {
 }
 
 function DataTable(props: DataTableProps) {
-  const { headLines, filtration, tableProps, selectable } = props;
+  const { headLines, filtration, tableProps, selectable, onRowClick: onRowClickProps, onSelected, onSearchChange, onSortChange } = props;
   const dataTableHook = useDataTable();
   const [selectedRows, setSelectedRows] = useState<Array<TableRowProps<BodyLineCell>>>([])
 
@@ -53,6 +57,7 @@ function DataTable(props: DataTableProps) {
   }, [selectedRows])
 
   useEffect(() => {
+    onSelected?.(selectedRows)
   }, [selectedRows])
 
   const isRowSelected = useCallback((row: TableRowProps<BodyLineCell>) => {
@@ -76,6 +81,16 @@ function DataTable(props: DataTableProps) {
     }
   }, [selectedRows, dataTableHook.resultBodyLines])
 
+  const onSortHandler = (headLineCell: HeadLineCell, value: SORT_VALUES) => {
+    onSortChange?.(headLineCell, value)
+    dataTableHook.onSort(headLineCell.id, value)
+  }
+
+  const onSearchHandler = (headLineCell: HeadLineCell, value: string) => {
+    onSearchChange?.(headLineCell, value)
+    dataTableHook.onSearch(headLineCell.id, value)
+  }
+
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
     const CellComponent = bodyLineCell.renderComponent || Cell
 
@@ -92,8 +107,8 @@ function DataTable(props: DataTableProps) {
 
     return <CellComponent
       key={headLineCell.id}
-      onSearch={(value: any) => dataTableHook.onSearch(headLineCell.id, value)}
-      onSort={(sortValue: SORT_VALUES) => dataTableHook.onSort(headLineCell.id, sortValue)}
+      onSearch={(value: any) => onSearchHandler(headLineCell, value)}
+      onSort={(sortValue: SORT_VALUES) => onSortHandler(headLineCell, sortValue)}
       initialSearchValue={dataTableHook.getSearchValueByColumnId(headLineCell.id)}
       initialSortValues={dataTableHook.getSortingValueByColumnId(headLineCell.id)}
       filtration={filtration}
@@ -125,7 +140,8 @@ function DataTable(props: DataTableProps) {
       const RowComponent = row.render || Row
 
       const onRowClick = (event: any) => {
-        onBodyCheckboxClick(row)
+        onRowClickProps?.(row)
+        selectable && onBodyCheckboxClick(row)
       }
 
       const onCheckboxClick = (event: any) => {
