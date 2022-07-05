@@ -34,7 +34,7 @@ export type DataTableProps = {
   onSelected?: (rows: Array<TableRowProps<BodyLineCell>>) => void,
   onSortChange?: (headLineCell: HeadLineCell, sortValue: SORT_VALUES) => void,
   onSearchChange?: (headLineCell: HeadLineCell, value: string) => void,
-  tableProps?: TableProps,
+  tableProps?: Omit<TableProps, 'children'>,
   headProps?: HeadProps
   bodyProps?: BodyProps
   headLines: Array<TableRowProps<HeadLineCell>>,

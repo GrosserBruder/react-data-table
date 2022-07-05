@@ -1,8 +1,6 @@
 .head-cell {
-  & .MuiPopover-paper {
-    padding: 5px;
-    padding-top: 10px;
-
+  &__popper .MuiBox-root {
+    width: 250px;
     & > *:not(:last-child) {
       margin-bottom: 8px;
     }
@@ -25,10 +23,6 @@
 
   .cell__wrapper {
     padding: unset;
-  }
-
-  .MuiPaper-root.MuiPaper-elevation.MuiPopover-paper {
-    width: 250px;
   }
 
   .filtration-button--setted {

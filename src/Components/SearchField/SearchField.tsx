@@ -1,5 +1,5 @@
 import SearchOutlined from "@mui/icons-material/SearchOutlined";
-import { TextField } from "@mui/material";
+import { FormControl, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import { HTMLAttributes, InputHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
 import Button from "../Button";
@@ -12,10 +12,11 @@ export type SearchFieldProps = TextFieldProps & {
   onSearch?: (value: string) => void
   withoutButton?: boolean
   inputProps?: InputHTMLAttributes<HTMLInputElement>
+  fullWidth?: boolean
 }
 
 export default function SearchField(props: SearchFieldProps) {
-  const { label = "Поиск", onSearch, initialValue = '', withoutButton, inputProps, ...restProps } = props;
+  const { label = "Поиск", onSearch, initialValue = '', withoutButton, inputProps, fullWidth, ...restProps } = props;
   const [searchValue, setSearchValue] = useState<string>(initialValue);
   const [callOnButtonClickAfterUpdate, setCallOnButtonClickAfterUpdate] = useState(false);
   const searchRef = useRef<HTMLDivElement | null>(null);
@@ -56,7 +57,7 @@ export default function SearchField(props: SearchFieldProps) {
     }
   }, [])
 
-  return <div className="search-field">
+  return <FormControl fullWidth={fullWidth} className="search-field">
     <TextField
       ref={searchRef}
       type="search"
@@ -85,5 +86,5 @@ export default function SearchField(props: SearchFieldProps) {
       Найти
     </Button>
     }
-  </div>
+  </FormControl>
 }
