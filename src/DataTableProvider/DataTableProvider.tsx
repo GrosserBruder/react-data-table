@@ -16,7 +16,6 @@ type Filter = {
 }
 
 type InitialValues = {
-  headLines: Array<TableRowProps<HeadLineCell>>
   bodyLines: Array<TableRowProps<BodyLineCell>>
   filters?: Filter
 }
