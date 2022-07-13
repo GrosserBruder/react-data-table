@@ -1,7 +1,7 @@
-import { createContext, useState, ReactNode, useEffect, useRef, useCallback } from 'react';
+import { createContext, useState, ReactNode, useRef, useCallback } from 'react';
 import { SORT_VALUES } from '../const';
-import { HeadLineCell, BodyLineCell, TableRowProps } from '..';
-import { compareByAlphabetically, compareNumberOrBoolean, ascSorting, descSorting } from "../utils"
+import { BodyLineCell, TableRowProps } from '..';
+import { compareByAlphabetically, compareNumberOrBoolean, descSorting } from "../utils"
 
 export interface TableContextType {
   resultBodyLines: Array<TableRowProps<BodyLineCell>>
@@ -61,7 +61,7 @@ export function DataTableProvider(props: TableProviderProps) {
 
       if (sortedCell !== 0) {
         if (sortValue === SORT_VALUES.ASC) {
-          return ascSorting(sortedCell)
+          return sortedCell
         }
 
         if (sortValue === SORT_VALUES.DESC) {

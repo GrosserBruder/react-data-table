@@ -2,17 +2,17 @@ import { FC, useCallback, useEffect, useState, memo, useMemo } from 'react';
 import { Table, Body, BodyProps, Cell, CellProps, Head, HeadProps, Row, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
-import { useDataTable } from './DataTableProvider/useDataTable';
 import './styles/DataTable.scss';
 import { SORT_VALUES } from './const';
 import Checkbox from './Components/Checkbox/Checkbox';
-import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, usePrevious } from "./hooks"
+import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, useFilter } from "./hooks"
 
 export type LineCell = {
   id: string | number,
   value?: any,
   renderComponent?: FC<RowProps>,
   cellComponent?: FC<any>,
+  filterKey?: string,
 }
 
 export type HeadLineCell = LineCell & {
@@ -45,10 +45,15 @@ export type DataTableProps = {
 }
 
 function DataTable(props: DataTableProps) {
-  const { headLines, filtration, tableProps, selectable, onRowClick: onRowClickProps, onSelected, onSearchChange, onSortChange } = props;
-  const dataTableHook = useDataTable();
+  const {
+    headLines, bodyLines, filtration, tableProps, selectable, onRowClick: onRowClickProps, onSelected, onSearchChange, onSortChange
+  } = props;
+  const filterHook = useFilter(bodyLines);
   const selectRowsHook = useSelectRows<TableRowProps<BodyLineCell>>()
-  const [selectAllStatus, setSelectedAllStatus] = useSelectAllStatus(dataTableHook.resultBodyLines.length, selectRowsHook.selectedRows.length)
+  const [selectAllStatus, setSelectedAllStatus] = useSelectAllStatus(
+    filterHook.filteredRows.length,
+    selectRowsHook.selectedRows.length
+  )
 
   const onBodyCheckboxClick = useCallback((row: TableRowProps<BodyLineCell>) => {
     const isSelected = selectRowsHook.isRowSelected(row);
@@ -64,19 +69,23 @@ function DataTable(props: DataTableProps) {
       selectRowsHook.resetSelectedRows([])
       setSelectedAllStatus(SELECT_ALL_STATUSES.NOT_SELECTED)
     } else {
-      selectRowsHook.resetSelectedRows(dataTableHook.resultBodyLines)
+      selectRowsHook.resetSelectedRows(filterHook.filteredRows)
       setSelectedAllStatus(SELECT_ALL_STATUSES.SELECTED)
     }
-  }, [selectAllStatus, dataTableHook.resultBodyLines])
+  }, [selectAllStatus, filterHook.filteredRows])
 
   const onSortHandler = (headLineCell: HeadLineCell, value: SORT_VALUES) => {
+    if (!headLineCell.filterKey) return;
+
     onSortChange?.(headLineCell, value)
-    dataTableHook.onSort(headLineCell.id, value)
+    filterHook.setSort(headLineCell.filterKey, value)
   }
 
   const onSearchHandler = (headLineCell: HeadLineCell, value: string) => {
+    if (!headLineCell.filterKey) return;
+
     onSearchChange?.(headLineCell, value)
-    dataTableHook.onSearch(headLineCell.id, value)
+    filterHook.setSearch(headLineCell.filterKey, value)
   }
 
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
@@ -90,15 +99,15 @@ function DataTable(props: DataTableProps) {
     </CellComponent>
   }, [])
 
-  const getHeadCell = useCallback((headLineCell: HeadLineCell) => {
+  const getHeadCell = useCallback((headLineCell: HeadLineCell, index: number) => {
     const CellComponent = headLineCell.renderComponent || HeadCell
 
     return <CellComponent
       key={headLineCell.id}
       onSearch={(value: any) => onSearchHandler(headLineCell, value)}
       onSort={(sortValue: SORT_VALUES) => onSortHandler(headLineCell, sortValue)}
-      initialSearchValue={dataTableHook.getSearchValueByColumnId(headLineCell.id)}
-      initialSortValues={dataTableHook.getSortingValueByColumnId(headLineCell.id)}
+      initialSearchValue={headLineCell.filterKey ? filterHook.getSearchValueByFilterKey(headLineCell.filterKey) : undefined}
+      initialSortValues={headLineCell.filterKey ? filterHook.getSortValueByFilterKey(headLineCell.filterKey) as SORT_VALUES : undefined}
       filtration={filtration}
       {...headLineCell.config}
     >
@@ -124,7 +133,7 @@ function DataTable(props: DataTableProps) {
   }), [headLines, selectable, onHeadCheckboxClick, getHeadCell])
 
   const getRows = useCallback(() => {
-    return dataTableHook.resultBodyLines.map((row) => {
+    return filterHook.filteredRows.map((row) => {
       const RowComponent = row.render || Row
 
       const onRowClick = (event: any) => {
@@ -147,11 +156,11 @@ function DataTable(props: DataTableProps) {
         {row.cells.map(getBodyCell)}
       </RowComponent >
     })
-  }, [dataTableHook.resultBodyLines, getBodyCell, selectRowsHook.selectedRows])
+  }, [filterHook.filteredRows, getBodyCell, selectRowsHook.selectedRows])
 
 
   const getRowsOrEmptyRow = useCallback(() => {
-    const isEmpty = dataTableHook.resultBodyLines.length === 0;
+    const isEmpty = filterHook.filteredRows.length === 0;
 
     if (isEmpty) {
       let columnCount = headLines[0].cells.reduce((acc, value) => acc + (value.config?.colSpan || 1), 0)
@@ -165,7 +174,7 @@ function DataTable(props: DataTableProps) {
     }
 
     return getRows()
-  }, [dataTableHook.resultBodyLines, getBodyCell, selectRowsHook.selectedRows])
+  }, [filterHook.filteredRows, getBodyCell, selectRowsHook.selectedRows])
 
   const bodyRows = getRowsOrEmptyRow();
 

@@ -1,15 +1,5 @@
 export type ResultCompare = -1 | 0 | 1
 
-export const ascSorting = (resultCompare: ResultCompare) => {
-  if (resultCompare === -1) {
-    return -1;
-  }
-  if (resultCompare === 1) {
-    return 1
-  }
-  return 0
-}
-
 export const descSorting = (resultCompare: ResultCompare) => {
   if (resultCompare === -1) {
     return 1;

@@ -53,8 +53,13 @@ export function HeadCell(props: HeadCellProps) {
   }, [searchValue, selectedSortValues])
 
   const onResetButtonClick = useCallback(() => {
+    const selectedValue = SORT_LIST_VALUES.find((x) => x.id === initialSortValues) || SORT_LIST_VALUES[0]
     setSearchValue?.(initialSearchValue);
-    setSelectedSortValues?.(SORT_LIST_VALUES.find((x) => x.id === initialSortValues) || SORT_LIST_VALUES[0]);
+    setSelectedSortValues?.(selectedValue);
+
+    onSearch?.(initialSearchValue);
+    onSort?.(selectedValue.id as SORT_VALUES);
+
     handleClose();
   }, [])
 

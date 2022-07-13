@@ -1,0 +1,69 @@
+import { useState } from "react";
+import { compareNumberOrBoolean, compareByAlphabetically, descSorting } from "../utils";
+import { SORT_VALUES } from "../const";
+import { TableRowProps, BodyLineCell } from "../DataTable";
+
+const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
+  const typeValue = typeof a.value
+
+  if (typeValue === "string") {
+    return compareByAlphabetically(a.value, b.value)
+  }
+
+  if (typeValue === "number" || typeValue === "boolean") {
+    return compareNumberOrBoolean(a.value, b.value)
+  }
+
+  return 0;
+}
+
+export function useSorting() {
+  const [sortValues, setSortValues] = useState(new Map<string, string>())
+
+  const setSort = (filterKey: string, value: any) => {
+    setSortValues((x) => new Map<string, string>(x.set(filterKey, value)))
+  }
+
+  const getSortValueByFilterKey = (filterKey: string) => {
+    return sortValues.get(filterKey)
+  }
+
+  const compare = (
+    first: TableRowProps<BodyLineCell>,
+    second: TableRowProps<BodyLineCell>
+  ) => {
+    const firstFilteredCells = first.cells
+      .filter((x) => Boolean(x.filterKey))
+      .filter((cell) => sortValues.has(cell.filterKey!))
+
+    for (let i = 0; i < firstFilteredCells.length; i++) {
+      const firstCell = firstFilteredCells[i]
+      const sortValue: SORT_VALUES = getSortValueByFilterKey(firstCell.filterKey!) as SORT_VALUES
+
+      const secondCell = second.cells.find((x) => x.id === firstCell.id)!
+
+      const sortedCell = sortCell(firstCell, secondCell)
+
+      if (sortedCell !== 0) {
+        if (sortValue === SORT_VALUES.ASC) {
+          return sortedCell
+        }
+
+        if (sortValue === SORT_VALUES.DESC) {
+          return descSorting(sortedCell)
+        }
+      }
+    }
+
+    return 0
+  }
+
+  return {
+    sortValues,
+    setSort,
+    getSortValueByFilterKey,
+    compare
+  };
+}
+
+export default useSorting

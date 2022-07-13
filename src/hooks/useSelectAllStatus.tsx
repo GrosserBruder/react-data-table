@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 export enum SELECT_ALL_STATUSES {
   NOT_SELECTED,
@@ -28,10 +28,6 @@ export function useSelectAllStatus(allRowsLenght: number, selectedRowsLength: nu
   const setSelectedAllStatus = useCallback((status: SELECT_ALL_STATUSES) => {
     setStatus(status)
   }, [])
-
-  useEffect(() => {
-    console.log(status)
-  }, [status])
 
   return [status, setSelectedAllStatus]
 }
