@@ -53,6 +53,7 @@ function DataTable(props: DataTableProps) {
     headLines, bodyLines, filterable, tableProps, selectable, onRowClick: onRowClickProps, onSelected, onSearchChange, onSortChange,
     filterProps, toolbar: Toolbar = CrudToolbar, additionalToolbar, showToolbar = true
   } = props;
+
   const filterHook = useFilter(bodyLines, filterProps);
   const selectRowsHook = useSelectRows<TableRowProps<BodyLineCell>>()
   const [selectAllStatus, setSelectedAllStatus] = useSelectAllStatus(
@@ -79,14 +80,14 @@ function DataTable(props: DataTableProps) {
     }
   }, [selectAllStatus, filterHook.filteredRows])
 
-  const onSortHandler = (headLineCell: HeadLineCell, value: SORT_VALUES) => {
+  const onSortHandler = useCallback((headLineCell: HeadLineCell, value: SORT_VALUES) => {
     if (!headLineCell.filterKey) return;
 
     onSortChange?.(headLineCell, value)
     filterHook.setSort(headLineCell.filterKey, value)
-  }
+  }, [onSortChange, filterHook.setSort,])
 
-  const onSearchHandler = (headLineCell: HeadLineCell, value: string) => {
+  const onSearchHandler = useCallback((headLineCell: HeadLineCell, value: string) => {
     if (!headLineCell.filterKey) return;
 
     onSearchChange?.(headLineCell, value)
@@ -96,7 +97,7 @@ function DataTable(props: DataTableProps) {
     if (value !== '') {
       selectRowsHook.resetSelectedRows([])
     }
-  }
+  }, [onSearchChange, filterHook.setSearch, selectRowsHook.resetSelectedRows])
 
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
     const CellComponent = bodyLineCell.renderComponent || Cell

@@ -1,4 +1,6 @@
 .data-table {
+  table-layout: auto;
+
   &__empty-row {
     height: 50px;
     text-align: center;
