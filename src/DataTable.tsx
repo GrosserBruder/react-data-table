@@ -1,11 +1,13 @@
-import { FC, useCallback, useEffect, useState, memo, useMemo } from 'react';
-import { Table, Body, BodyProps, Cell, CellProps, Head, HeadProps, Row, RowProps, TableProps } from "@grossb/react-table"
+import { FC, ReactNode, useCallback, useMemo } from 'react';
+import { Table, Body, Cell, CellProps, Head, Row, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
 import { DataTableProvider } from './DataTableProvider/DataTableProvider';
-import './styles/DataTable.scss';
 import { SORT_VALUES } from './const';
 import Checkbox from './Components/Checkbox/Checkbox';
 import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, useFilter } from "./hooks"
+import CrudToolbar, { ToolbarProps } from './Components/Toolbar/CrudToolbar';
+import './styles/DataTable.scss';
+import { FilterProps } from './hooks/useFilter';
 
 export type LineCell = {
   id: string | number,
@@ -36,19 +38,22 @@ export type DataTableProps = {
   onSortChange?: (headLineCell: HeadLineCell, sortValue: SORT_VALUES) => void,
   onSearchChange?: (headLineCell: HeadLineCell, value: string) => void,
   tableProps?: Omit<TableProps, 'children'>,
-  headProps?: HeadProps
-  bodyProps?: BodyProps
+  filterProps: FilterProps,
   headLines: Array<TableRowProps<HeadLineCell>>,
   bodyLines: Array<TableRowProps<BodyLineCell>>,
-  filtration?: boolean,
+  filterable?: boolean,
   selectable?: boolean,
+  toolbar: FC<ToolbarProps>
+  showToolbar?: boolean
+  additionalToolbar: FC<ToolbarProps>
 }
 
 function DataTable(props: DataTableProps) {
   const {
-    headLines, bodyLines, filtration, tableProps, selectable, onRowClick: onRowClickProps, onSelected, onSearchChange, onSortChange
+    headLines, bodyLines, filterable, tableProps, selectable, onRowClick: onRowClickProps, onSelected, onSearchChange, onSortChange,
+    filterProps, toolbar: Toolbar = CrudToolbar, additionalToolbar, showToolbar = true
   } = props;
-  const filterHook = useFilter(bodyLines);
+  const filterHook = useFilter(bodyLines, filterProps);
   const selectRowsHook = useSelectRows<TableRowProps<BodyLineCell>>()
   const [selectAllStatus, setSelectedAllStatus] = useSelectAllStatus(
     filterHook.filteredRows.length,
@@ -86,6 +91,11 @@ function DataTable(props: DataTableProps) {
 
     onSearchChange?.(headLineCell, value)
     filterHook.setSearch(headLineCell.filterKey, value)
+
+    // if the filter is set and not reset
+    if (value !== '') {
+      selectRowsHook.resetSelectedRows([])
+    }
   }
 
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
@@ -108,7 +118,7 @@ function DataTable(props: DataTableProps) {
       onSort={(sortValue: SORT_VALUES) => onSortHandler(headLineCell, sortValue)}
       initialSearchValue={headLineCell.filterKey ? filterHook.getSearchValueByFilterKey(headLineCell.filterKey) : undefined}
       initialSortValues={headLineCell.filterKey ? filterHook.getSortValueByFilterKey(headLineCell.filterKey) as SORT_VALUES : undefined}
-      filtration={filtration}
+      filterable={filterable}
       {...headLineCell.config}
     >
       {headLineCell.value}
@@ -158,18 +168,19 @@ function DataTable(props: DataTableProps) {
     })
   }, [filterHook.filteredRows, getBodyCell, selectRowsHook.selectedRows])
 
+  const columnCount = useMemo(() => headLines[0].cells.reduce((acc, value) => acc + (value.config?.colSpan || 1), 0), [headLines])
 
   const getRowsOrEmptyRow = useCallback(() => {
     const isEmpty = filterHook.filteredRows.length === 0;
 
     if (isEmpty) {
-      let columnCount = headLines[0].cells.reduce((acc, value) => acc + (value.config?.colSpan || 1), 0)
+      let colSpan = columnCount
       if (selectable) {
-        columnCount = columnCount + 1
+        colSpan = colSpan + 1
       }
 
       return <Row>
-        <Cell className="data-table__empty-row" colSpan={columnCount}>Список пуст</Cell>
+        <Cell className="data-table__empty-row" colSpan={colSpan}>Список пуст</Cell>
       </Row>
     }
 
@@ -180,6 +191,23 @@ function DataTable(props: DataTableProps) {
 
   return <Table fixedTopTitle className="data-table" {...tableProps}>
     <Head>
+      {showToolbar && <Row className='row__toolbar'>
+        <Cell
+          className='cell__toolbar'
+          colSpan={selectable ? columnCount + 1 : columnCount}
+        >
+          <Toolbar
+            selectable={selectable}
+            sortValues={filterHook.sortValues}
+            filteredRows={filterHook.filteredRows}
+            searchValues={filterHook.searchValues}
+            filterable={filterable}
+            selectedRows={selectRowsHook.selectedRows}
+            additionalToolbar={additionalToolbar}
+          />
+        </Cell>
+      </Row>
+      }
       {headRows}
     </Head>
     <Body>

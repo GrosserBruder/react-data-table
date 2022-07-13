@@ -3,11 +3,17 @@ import { TableRowProps, BodyLineCell } from "../DataTable"
 import useSearching from "./useSearching"
 import useSorting from "./useSorting"
 
-export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>) {
-  const [filteredRows, setFilteredRows] = useState<Array<TableRowProps<BodyLineCell>>>([])
+export type FilterProps = {
+  initialSearchValues?: Map<string, string>
+  initialSortValues?: Map<string, string>,
+  initialFilteredRows?: Array<TableRowProps<BodyLineCell>>
+}
 
-  const searchHook = useSearching()
-  const sortingHook = useSorting()
+export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, props?: FilterProps) {
+  const [filteredRows, setFilteredRows] = useState<Array<TableRowProps<BodyLineCell>>>(props?.initialFilteredRows ?? [])
+
+  const searchHook = useSearching(props?.initialSearchValues)
+  const sortingHook = useSorting(props?.initialSortValues)
 
   useEffect(() => {
     const result = searchHook.filtering(bodyLines)

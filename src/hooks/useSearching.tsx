@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { TableRowProps, BodyLineCell } from "../DataTable";
 
-export function useSearching() {
-  const [searchValues, setSearchValues] = useState(new Map<string, string>())
+export function useSearching(initialSearchValues?: Map<string, string>) {
+  const [searchValues, setSearchValues] = useState(new Map<string, string>(initialSearchValues))
 
   const setSearch = (filterKey: string, value: any) => {
     setSearchValues((x) => new Map<string, string>(x.set(filterKey, value)))

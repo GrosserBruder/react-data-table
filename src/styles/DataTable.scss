@@ -4,7 +4,8 @@
     text-align: center;
   }
 
-  .cell__select-all {
+  .cell__select-all,
+  .cell__select {
     min-width: 50px;
     width: 50px;
   }
@@ -18,5 +19,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .cell__toolbar {
+    .cell__wrapper {
+      border-top: unset !important;
+      border-left: unset;
+      border-right: unset;
+      justify-content: unset;
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { ReactNode, ThHTMLAttributes, useRef, useState, useCallback } from "react";
 import classnames from 'classnames';
 import Cell from "@grossb/react-table/dist/Cell";
-import { IconButton, Popper, Box, ButtonGroup, Stack, ClickAwayListener } from "@mui/material";
+import { IconButton, Popper, Box, Stack, ClickAwayListener } from "@mui/material";
 import SearchField from "../SearchField/SearchField";
 import MoreVert from "@mui/icons-material/MoreVert"
 import { SORT_VALUES } from '../../const'
@@ -12,7 +12,7 @@ import '../styles/HeadCell.scss';
 export type HeadCellProps = ThHTMLAttributes<HTMLElement>
   & {
     children?: ReactNode,
-    filtration?: boolean,
+    filterable?: boolean,
     onSearch?: (value: string) => void,
     onSort?: (sortValue: SORT_VALUES) => void,
     initialSearchValue?: string,
@@ -27,7 +27,7 @@ const SORT_LIST_VALUES: Array<SelectListItem> = [
 ]
 
 export function HeadCell(props: HeadCellProps) {
-  const { children, filtration, onSearch, onSort, initialSearchValue = '', initialSortValues = SORT_LIST_VALUES[0].id, ...rest } = props;
+  const { children, filterable, onSearch, onSort, initialSearchValue = '', initialSortValues = SORT_LIST_VALUES[0].id, ...rest } = props;
   const className = classnames('head-cell', props.className)
   const filterButtonRef = useRef(null)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
@@ -81,7 +81,7 @@ export function HeadCell(props: HeadCellProps) {
     <div className="head-cell__content">
       <div className="head-cell__children">{children}</div>
       <div className="head-cell__filters">
-        {filtration && (
+        {filterable && (
           <IconButton ref={filterButtonRef} onClick={toggleFilters} className={filtrationButtonClassName}>
             <MoreVert />
           </IconButton>

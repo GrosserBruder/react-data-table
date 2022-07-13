@@ -17,8 +17,8 @@ const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
   return 0;
 }
 
-export function useSorting() {
-  const [sortValues, setSortValues] = useState(new Map<string, string>())
+export function useSorting(initialSortValues?: Map<string, string>) {
+  const [sortValues, setSortValues] = useState(new Map<string, string>(initialSortValues))
 
   const setSort = (filterKey: string, value: any) => {
     setSortValues((x) => new Map<string, string>(x.set(filterKey, value)))

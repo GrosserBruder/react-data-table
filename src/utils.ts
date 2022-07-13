@@ -21,3 +21,8 @@ export const compareNumberOrBoolean = (a: any, b: any) => {
   if (a > b) return 1;
   return 0;
 }
+
+export function primitiveOrFunction(primitiveOrFunction: Function | boolean | string | number | undefined | null, dataToFunction: { [key: string]: any }) {
+  if (typeof primitiveOrFunction === "function") return primitiveOrFunction(dataToFunction)
+  return primitiveOrFunction;
+}

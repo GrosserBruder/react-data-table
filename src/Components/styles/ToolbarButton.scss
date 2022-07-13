@@ -1,0 +1,11 @@
+.toolbar-button {
+  display: none !important;
+
+  & + & {
+    margin-left: 10px;
+  }
+
+  &--showing {
+    display: inline-flex !important;
+  }
+}
