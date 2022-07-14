@@ -1,7 +1,6 @@
-import { FC, ReactNode, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { Table, Body, Cell, CellProps, Head, Row, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
-import { DataTableProvider } from './DataTableProvider/DataTableProvider';
 import { SORT_VALUES } from './const';
 import Checkbox from './Components/Checkbox/Checkbox';
 import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, useFilter } from "./hooks"
@@ -34,7 +33,6 @@ export type TableRowProps<CellType> = {
 
 export type DataTableProps = {
   onRowClick?: (row: TableRowProps<BodyLineCell>) => void,
-  onSelected?: (rows: Array<TableRowProps<BodyLineCell>>) => void,
   onSortChange?: (headLineCell: HeadLineCell, sortValue: SORT_VALUES) => void,
   onSearchChange?: (headLineCell: HeadLineCell, value: string) => void,
   tableProps?: Omit<TableProps, 'children'>,
@@ -45,13 +43,16 @@ export type DataTableProps = {
   selectable?: boolean,
   toolbar: FC<ToolbarProps>
   showToolbar?: boolean
-  additionalToolbar: FC<ToolbarProps>
+  additionalToolbar?: FC<ToolbarProps>
+  disableSetCheckboxAfterRowClick?: boolean
 }
 
 function DataTable(props: DataTableProps) {
   const {
-    headLines, bodyLines, filterable, tableProps, selectable, onRowClick: onRowClickProps, onSelected, onSearchChange, onSortChange,
-    filterProps, toolbar: Toolbar = CrudToolbar, additionalToolbar, showToolbar = true
+    headLines, bodyLines, filterable, tableProps, selectable, filterProps,
+    toolbar: Toolbar = CrudToolbar, additionalToolbar, showToolbar = true,
+    disableSetCheckboxAfterRowClick, onRowClick: onRowClickProps,
+    onSearchChange, onSortChange,
   } = props;
 
   const filterHook = useFilter(bodyLines, filterProps);
@@ -85,7 +86,7 @@ function DataTable(props: DataTableProps) {
 
     onSortChange?.(headLineCell, value)
     filterHook.setSort(headLineCell.filterKey, value)
-  }, [onSortChange, filterHook.setSort,])
+  }, [onSortChange, filterHook.setSort])
 
   const onSearchHandler = useCallback((headLineCell: HeadLineCell, value: string) => {
     if (!headLineCell.filterKey) return;
@@ -124,7 +125,7 @@ function DataTable(props: DataTableProps) {
     >
       {headLineCell.value}
     </CellComponent>
-  }, [])
+  }, [onSearchHandler, onSortHandler])
 
   const headRows = useMemo(() => headLines.map((row) => {
     const RowComponent = row.render || Row
@@ -149,7 +150,7 @@ function DataTable(props: DataTableProps) {
 
       const onRowClick = (event: any) => {
         onRowClickProps?.(row)
-        selectable && onBodyCheckboxClick(row)
+        selectable && !disableSetCheckboxAfterRowClick && onBodyCheckboxClick(row)
       }
 
       const onCheckboxClick = (event: any) => {
@@ -186,9 +187,11 @@ function DataTable(props: DataTableProps) {
     }
 
     return getRows()
-  }, [filterHook.filteredRows, getBodyCell, selectRowsHook.selectedRows])
+  }, [filterHook.filteredRows, getBodyCell, selectRowsHook.selectedRows, columnCount])
 
-  const bodyRows = getRowsOrEmptyRow();
+  const bodyRows = useMemo(() => getRowsOrEmptyRow(),
+    [filterHook.filteredRows, getBodyCell, selectRowsHook.selectedRows, columnCount]
+  );
 
   return <Table fixedTopTitle className="data-table" {...tableProps}>
     <Head>
@@ -217,8 +220,4 @@ function DataTable(props: DataTableProps) {
   </Table>
 }
 
-export default (props: DataTableProps) => {
-  return <DataTableProvider initialValues={props}>
-    <DataTable {...props} />
-  </DataTableProvider>
-}
+export default DataTable

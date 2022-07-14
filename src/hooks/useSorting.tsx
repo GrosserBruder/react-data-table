@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { compareNumberOrBoolean, compareByAlphabetically, descSorting } from "../utils";
 import { SORT_VALUES } from "../const";
 import { TableRowProps, BodyLineCell } from "../DataTable";
@@ -20,15 +20,15 @@ const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
 export function useSorting(initialSortValues?: Map<string, string>) {
   const [sortValues, setSortValues] = useState(new Map<string, string>(initialSortValues))
 
-  const setSort = (filterKey: string, value: any) => {
+  const setSort = useCallback((filterKey: string, value: any) => {
     setSortValues((x) => new Map<string, string>(x.set(filterKey, value)))
-  }
+  }, [setSortValues])
 
-  const getSortValueByFilterKey = (filterKey: string) => {
+  const getSortValueByFilterKey = useCallback((filterKey: string) => {
     return sortValues.get(filterKey)
-  }
+  }, [sortValues])
 
-  const compare = (
+  const compare = useCallback((
     first: TableRowProps<BodyLineCell>,
     second: TableRowProps<BodyLineCell>
   ) => {
@@ -56,7 +56,7 @@ export function useSorting(initialSortValues?: Map<string, string>) {
     }
 
     return 0
-  }
+  }, [getSortValueByFilterKey, sortValues])
 
   return {
     sortValues,

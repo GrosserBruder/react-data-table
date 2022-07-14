@@ -18,7 +18,7 @@ export function useSelectRows<T>(fieldNameForCompare: keyof T = "id" as keyof T,
 
   const resetSelectedRows = useCallback((rows: Array<T>) => {
     setSelectedRows(rows)
-  }, [selectedRows])
+  }, [setSelectedRows])
 
   return {
     selectedRows,

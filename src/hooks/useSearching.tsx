@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TableRowProps, BodyLineCell } from "../DataTable";
 
 export function useSearching(initialSearchValues?: Map<string, string>) {
   const [searchValues, setSearchValues] = useState(new Map<string, string>(initialSearchValues))
 
-  const setSearch = (filterKey: string, value: any) => {
+  const setSearch = useCallback((filterKey: string, value: any) => {
     setSearchValues((x) => new Map<string, string>(x.set(filterKey, value)))
-  }
+  }, [setSearchValues])
 
   const getSearchValueByFilterKey = (filterKey: string) => {
     return searchValues.get(filterKey)
   }
 
-  const filtering = (bodyLines: Array<TableRowProps<BodyLineCell>>) => {
+  const filtering = useCallback((bodyLines: Array<TableRowProps<BodyLineCell>>) => {
     return bodyLines.filter((line) => {
       return line.cells
         .filter((x) => Boolean(x.filterKey))
@@ -22,7 +22,7 @@ export function useSearching(initialSearchValues?: Map<string, string>) {
         })
 
     })
-  }
+  }, [searchValues])
 
   return {
     searchValues,
