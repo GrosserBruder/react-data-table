@@ -35,6 +35,9 @@ export type DataTableProps = {
   onRowClick?: (row: TableRowProps<BodyLineCell>) => void,
   onSortChange?: (headLineCell: HeadLineCell, sortValue: SORT_VALUES) => void,
   onSearchChange?: (headLineCell: HeadLineCell, value: string) => void,
+  onSelect?: (row: TableRowProps<BodyLineCell>, isSelected: boolean) => void,
+  onSelectAll?: (selectedRows: Array<TableRowProps<BodyLineCell>>) => void,
+
   tableProps?: Omit<TableProps, 'children'>,
   filterProps: FilterProps,
   headLines: Array<TableRowProps<HeadLineCell>>,
@@ -42,7 +45,7 @@ export type DataTableProps = {
   filterable?: boolean,
   selectable?: boolean,
   toolbar: FC<ToolbarProps>
-  showToolbar?: boolean
+  disableToolbar?: boolean
   additionalToolbar?: FC<ToolbarProps>
   disableSetCheckboxAfterRowClick?: boolean
 }
@@ -50,9 +53,9 @@ export type DataTableProps = {
 function DataTable(props: DataTableProps) {
   const {
     headLines, bodyLines, filterable, tableProps, selectable, filterProps,
-    toolbar: Toolbar = CrudToolbar, additionalToolbar, showToolbar = true,
+    toolbar: Toolbar = CrudToolbar, additionalToolbar, disableToolbar,
     disableSetCheckboxAfterRowClick, onRowClick: onRowClickProps,
-    onSearchChange, onSortChange,
+    onSearchChange, onSortChange, onSelect, onSelectAll
   } = props;
 
   const filterHook = useFilter(bodyLines, filterProps);
@@ -69,15 +72,18 @@ function DataTable(props: DataTableProps) {
     } else {
       selectRowsHook.addToSelectedRows(row)
     }
+    onSelect?.(row, isSelected)
   }, [selectRowsHook.isRowSelected, selectRowsHook.removeFromSelectedRows, selectRowsHook.addToSelectedRows])
 
   const onHeadCheckboxClick = useCallback(() => {
     if (selectAllStatus !== SELECT_ALL_STATUSES.NOT_SELECTED) {
       selectRowsHook.resetSelectedRows([])
       setSelectedAllStatus(SELECT_ALL_STATUSES.NOT_SELECTED)
+      onSelectAll?.([])
     } else {
       selectRowsHook.resetSelectedRows(filterHook.filteredRows)
       setSelectedAllStatus(SELECT_ALL_STATUSES.SELECTED)
+      onSelectAll?.(filterHook.filteredRows)
     }
   }, [selectAllStatus, filterHook.filteredRows])
 
@@ -195,7 +201,7 @@ function DataTable(props: DataTableProps) {
 
   return <Table fixedTopTitle className="data-table" {...tableProps}>
     <Head>
-      {showToolbar && <Row className='row__toolbar'>
+      {!disableToolbar && <Row className='row__toolbar'>
         <Cell
           className='cell__toolbar'
           colSpan={selectable ? columnCount + 1 : columnCount}
