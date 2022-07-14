@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo, forwardRef, ForwardedRef } from 'react';
 import { Table, Body, Cell, CellProps, Head, Row, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
 import { SORT_VALUES } from './const';
@@ -37,7 +37,6 @@ export type DataTableProps = {
   onSearchChange?: (headLineCell: HeadLineCell, value: string) => void,
   onSelect?: (row: TableRowProps<BodyLineCell>, isSelected: boolean) => void,
   onSelectAll?: (selectedRows: Array<TableRowProps<BodyLineCell>>) => void,
-
   tableProps?: Omit<TableProps, 'children'>,
   filterProps: FilterProps,
   headLines: Array<TableRowProps<HeadLineCell>>,
@@ -50,7 +49,7 @@ export type DataTableProps = {
   disableSetCheckboxAfterRowClick?: boolean
 }
 
-function DataTable(props: DataTableProps) {
+function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
   const {
     headLines, bodyLines, filterable, tableProps, selectable, filterProps,
     toolbar: Toolbar = CrudToolbar, additionalToolbar, disableToolbar,
@@ -199,7 +198,7 @@ function DataTable(props: DataTableProps) {
     [filterHook.filteredRows, getBodyCell, selectRowsHook.selectedRows, columnCount]
   );
 
-  return <Table fixedTopTitle className="data-table" {...tableProps}>
+  return <Table ref={ref} fixedTopTitle className="data-table" {...tableProps}>
     <Head>
       {!disableToolbar && <Row className='row__toolbar'>
         <Cell
@@ -226,4 +225,4 @@ function DataTable(props: DataTableProps) {
   </Table>
 }
 
-export default DataTable
+export default forwardRef(DataTable)
