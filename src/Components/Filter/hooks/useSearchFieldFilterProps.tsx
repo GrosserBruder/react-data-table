@@ -5,20 +5,10 @@ type useSearchFieldProps = {
 
 }
 
-type useSearchFieldPropsResult = SearchFieldProps & {
-  show: boolean
-}
+type useSearchFieldPropsResult = SearchFieldProps
 
 export function useSearchFieldFilterProps(filterType: FILTER_TYPE, props?: useSearchFieldProps): useSearchFieldPropsResult {
-  if (!filterType || (filterType !== FILTER_TYPES.STRING && filterType !== FILTER_TYPES.NUMBER)) {
-    return {
-      show: false
-    }
-  }
-
-  return {
-    show: true
-  }
+  return {}
 }
 
 export default useSearchFieldFilterProps

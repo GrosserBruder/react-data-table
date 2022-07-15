@@ -18,7 +18,7 @@ export function useSearching(initialSearchValues?: Map<string, string>) {
         .filter((x) => Boolean(x.filterKey))
         .filter((cell) => searchValues.has(cell.filterKey!))
         .every((cell) => {
-          return (cell.value as string || '').toLowerCase().includes(searchValues.get(cell.filterKey!)!)
+          return (cell.value?.toString() || '').toLowerCase().includes(searchValues.get(cell.filterKey!)!)
         })
 
     })

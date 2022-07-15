@@ -9,7 +9,7 @@ export type FILTER_TYPE = FILTER_TYPES | null
 
 const getFilterType = (value: any) => {
   switch (true) {
-    case typeof value === "string" && Date.parse(value) !== NaN:
+    case (typeof value === "string") && !isNaN(Date.parse(value)):
       return FILTER_TYPES.DATE
     case typeof value === "boolean":
       return FILTER_TYPES.BOOLEAN
