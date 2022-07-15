@@ -8,6 +8,7 @@ import { SORT_VALUES } from '../../const'
 import SelectList, { SelectListItem } from "../SelectList/SelectList";
 import Button from "../Button";
 import '../styles/HeadCell.scss';
+import Filter from "../Filter/Filter";
 
 export type HeadCellProps = ThHTMLAttributes<HTMLElement>
   & {
@@ -17,7 +18,8 @@ export type HeadCellProps = ThHTMLAttributes<HTMLElement>
     onSort?: (sortValue: SORT_VALUES) => void,
     initialSearchValue?: string,
     initialSortValues?: SORT_VALUES.NOT_SELECTED | SORT_VALUES.ASC | SORT_VALUES.DESC,
-    width?: number
+    width?: number,
+    columnValue?: any
   };
 
 const SORT_LIST_VALUES: Array<SelectListItem> = [
@@ -27,7 +29,7 @@ const SORT_LIST_VALUES: Array<SelectListItem> = [
 ]
 
 export function HeadCell(props: HeadCellProps) {
-  const { children, filterable, onSearch, onSort, initialSearchValue = '', initialSortValues = SORT_LIST_VALUES[0].id, ...rest } = props;
+  const { children, filterable, onSearch, onSort, initialSearchValue = '', initialSortValues = SORT_LIST_VALUES[0].id, columnValue, ...rest } = props;
   const className = classnames('head-cell', props.className)
   const filterButtonRef = useRef(null)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
@@ -104,6 +106,9 @@ export function HeadCell(props: HeadCellProps) {
               value={searchValue}
               initialValue={initialSearchValue}
               fullWidth
+            />
+            <Filter
+              columnValue={columnValue}
             />
             <SelectList
               list={SORT_LIST_VALUES}
