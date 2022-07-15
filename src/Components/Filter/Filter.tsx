@@ -68,7 +68,7 @@ export function Filter(props: FilterProps) {
       showNumberRangeFilter && <NumberRange />
     }
     {
-      showDateRangeFilter && <DateRange />
+      showDateRangeFilter && <DateRange onChange={console.log} />
     }
     {
       showBooleanFilter && <BooleanFilter />

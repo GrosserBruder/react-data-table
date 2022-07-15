@@ -2,12 +2,12 @@ import { HTMLAttributes, InputHTMLAttributes, useCallback } from "react"
 
 export type DateType = string | null
 
-export type DateFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type | onChange"> & {
+export type DateFieldProps = {
   onChange?: (value: DateType, event: any) => void
-}
+} & Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange">
 
 export function DateField(props: DateFieldProps) {
-  const { onChange, ...otherProps } = props;
+  const { onChange, min = "1900-01-01", max = "2099-12-31", ...otherProps } = props;
 
   const onChangeHandler = useCallback((event: any) => {
     const value = event.target.value
