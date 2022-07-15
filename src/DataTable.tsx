@@ -38,7 +38,7 @@ export type DataTableProps = {
   onSelect?: (row: TableRowProps<BodyLineCell>, isSelected: boolean) => void,
   onSelectAll?: (selectedRows: Array<TableRowProps<BodyLineCell>>) => void,
   tableProps?: Omit<TableProps, 'children'>,
-  filterProps: FilterProps,
+  filterProps?: FilterProps,
   headLines: Array<TableRowProps<HeadLineCell>>,
   bodyLines: Array<TableRowProps<BodyLineCell>>,
   filterable?: boolean,
