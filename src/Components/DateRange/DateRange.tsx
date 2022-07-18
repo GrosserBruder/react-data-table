@@ -1,5 +1,6 @@
 import { useCallback, useRef } from "react";
 import DateField, { DateFieldProps, DateType } from "../DateField/DateField";
+import classnames from "classnames"
 
 export type DateRange = {
   from: DateType,
@@ -7,14 +8,16 @@ export type DateRange = {
 }
 
 export type DateRangeProps = {
-  fieldFromProps?: Omit<DateFieldProps, "onChange | defaultValue">,
-  fieldToProps?: Omit<DateFieldProps, "onChange | defaultValue">,
+  dateFromProps?: Omit<DateFieldProps, "onChange" | "defaultValue">,
+  dateToProps?: Omit<DateFieldProps, "onChange" | "defaultValue">,
   onChange?: (value: DateRange) => void,
   defaultValue?: DateRange
 }
 
 export function DateRange(props: DateRangeProps) {
-  const { fieldFromProps, fieldToProps, defaultValue = { from: null, to: null }, onChange } = props;
+  const {
+    dateFromProps, dateToProps, defaultValue = { from: null, to: null }, onChange
+  } = props;
   const dateRangeValue = useRef(defaultValue)
 
   const onChangeHandler = useCallback(() => {
@@ -31,10 +34,25 @@ export function DateRange(props: DateRangeProps) {
     onChangeHandler()
   }, [dateRangeValue])
 
+  const dateFromClassName = classnames("date-range__date-from", dateFromProps?.className)
+  const dateToClassName = classnames("date-range__date-to", dateToProps?.className)
+
 
   return <div>
-    <DateField className="date-range__date-from" {...fieldFromProps} placeholder="С даты" onChange={onDateFromChange} defaultValue={defaultValue?.from ?? undefined} />
-    <DateField className="date-range__date-to" {...fieldToProps} placeholder="По дату" onChange={onDateToChange} defaultValue={defaultValue?.to ?? undefined} />
+    <DateField
+      {...dateFromProps}
+      className={dateFromClassName}
+      placeholder="С даты"
+      onChange={onDateFromChange}
+      defaultValue={defaultValue?.from ?? undefined}
+    />
+    <DateField
+      {...dateToProps}
+      className={dateToClassName}
+      placeholder="По дату"
+      onChange={onDateToChange}
+      defaultValue={defaultValue?.to ?? undefined}
+    />
   </div>
 }
 

@@ -1,39 +1,47 @@
 import { useCallback, useRef } from "react";
+import { SORT_VALUES } from "../../const";
 import DateRange from "../DateRange/DateRange";
 import NumberRange from "../NumberRange/NumberRange";
 import SearchField from "../SearchField/SearchField";
 import BooleanFilter from "./BooleanFilter";
-import {
-  FILTER_TYPES,
-  useBooleanFilterProps,
-  useDateRangeFilterProps,
-  useFilterType,
-  useNumberRangeFilterProps,
-  useSearchFieldFilterProps
-} from "./hooks";
+import { FILTER_TYPES, useFilterType, } from "./hooks";
+import SelectList, { SelectListItem } from "../SelectList/SelectList";
+import Button from "../Button";
+import Stack from "@mui/material/Stack/Stack";
+
+export type FilterValue = {
+  search?: string,
+  dateRange?: DateRange
+  numberRange?: NumberRange
+  boolean?: boolean
+  sort?: SORT_VALUES
+  [key: string]: any
+}
 
 export type FilterProps = {
   columnValue: any
-  searchFieldProps?: any
-  onFilterChange?: (value: any) => void
+  onFilterChange?: (value: FilterValue) => void,
+  initialFilters?: FilterValue
 }
 
-const enum FILTER_KEY {
+const SORT_LIST_VALUES: Array<SelectListItem> = [
+  { id: SORT_VALUES.NOT_SELECTED, value: "Не выбрано" },
+  { id: SORT_VALUES.ASC, value: "По возрастанию" },
+  { id: SORT_VALUES.DESC, value: "По убыванию" },
+]
+
+const enum FILTER_FIELD_KEY {
   SEARCH = "search",
   NUMBER_RANGE = "numberRange",
   DATE_RANGE = "dateRange",
-  BOOLEAN = "boolean"
+  BOOLEAN = "boolean",
+  SORT = "sort"
 }
 
 export function Filter(props: FilterProps) {
-  const { columnValue } = props;
+  const { columnValue, onFilterChange, initialFilters = {} } = props;
   const filterType = useFilterType(columnValue)
-  const filterValues = useRef({})
-
-  const searchFieldFilterProps = useSearchFieldFilterProps(filterType);
-  const booleanFilterProps = useBooleanFilterProps(filterType);
-  const dateRangeFilterProps = useDateRangeFilterProps(filterType);
-  const numberRangeFilterProps = useNumberRangeFilterProps(filterType);
+  const filterValues = useRef(initialFilters)
 
   const showSearchField = filterType === FILTER_TYPES.STRING || filterType === FILTER_TYPES.NUMBER
   const showNumberRangeFilter = filterType === FILTER_TYPES.NUMBER
@@ -41,38 +49,78 @@ export function Filter(props: FilterProps) {
   const showBooleanFilter = filterType === FILTER_TYPES.BOOLEAN
 
   const setFilter = useCallback((key: string, value: any) => {
-    filterValues.current = Object.assign({}, filterValues, { [key]: value })
+    filterValues.current = Object.assign({}, filterValues.current, { [key]: value })
   }, [filterValues])
 
-  const onSearchHandler = useCallback((value: any) => {
-    setFilter(FILTER_KEY.SEARCH, value)
+  const onSearchHandler = useCallback((value: string) => {
+    setFilter(FILTER_FIELD_KEY.SEARCH, value)
   }, [filterValues])
 
-  const onSearchChange = useCallback((event: any) => {
-    setFilter(FILTER_KEY.SEARCH, event.target.value);
+  const onNumberRangeChange = useCallback((value: NumberRange) => {
+    setFilter(FILTER_FIELD_KEY.NUMBER_RANGE, value)
   }, [filterValues])
 
+  const onDateRangeChange = useCallback((value: DateRange) => {
+    setFilter(FILTER_FIELD_KEY.DATE_RANGE, value)
+  }, [filterValues])
+
+  const onBooleanFilterChange = useCallback((value: boolean | undefined) => {
+    setFilter(FILTER_FIELD_KEY.BOOLEAN, value)
+  }, [filterValues])
+
+  const onSortChange = useCallback((value: SelectListItem) => {
+    setFilter(FILTER_FIELD_KEY.SORT, value.id)
+  }, [filterValues])
+
+  const onAccepteButtonClick = useCallback(() => {
+    onFilterChange?.(filterValues.current)
+  }, [filterValues])
+
+  const onResetButtonClick = useCallback(() => {
+    filterValues.current = {}
+    onFilterChange?.(filterValues.current)
+  }, [filterValues])
 
   return <div>
-    {showSearchField && <SearchField
-      autoFocus
-      withoutButton
-      onSearch={onSearchHandler}
-      onChange={onSearchChange}
-      // value={searchValue}
-      // initialValue={initialSearchValue}
-      fullWidth
+    {
+      showSearchField && <SearchField
+        autoFocus
+        withoutButton
+        onChange={onSearchHandler}
+        defaultValue={filterValues?.current.search}
+        fullWidth
+      />
+    }
+    {
+      showNumberRangeFilter && <NumberRange
+        onChange={onNumberRangeChange}
+        defaultValue={filterValues?.current.numberRange}
+      />
+    }
+    {
+      showDateRangeFilter && <DateRange
+        onChange={onDateRangeChange}
+        defaultValue={filterValues?.current.dateRange}
+      />
+    }
+    {
+      showBooleanFilter && <BooleanFilter
+        defaultValue={filterValues?.current.boolean}
+        onChange={onBooleanFilterChange}
+      />
+    }
+
+    <SelectList
+      list={SORT_LIST_VALUES}
+      label="Сортировать"
+      defaultValue={SORT_LIST_VALUES.find((x) => x.id === initialFilters.sort) || SORT_LIST_VALUES[0]}
+      onChange={onSortChange}
     />
-    }
-    {
-      showNumberRangeFilter && <NumberRange />
-    }
-    {
-      showDateRangeFilter && <DateRange onChange={console.log} />
-    }
-    {
-      showBooleanFilter && <BooleanFilter />
-    }
+
+    <Stack direction="row" spacing={1} justifyContent="center">
+      <Button onClick={onAccepteButtonClick} size="small">Применить</Button>
+      <Button color="error" onClick={onResetButtonClick} size="small">Сбросить</Button>
+    </Stack>
   </div>
 }
 

@@ -1,22 +1,23 @@
 import SearchOutlined from "@mui/icons-material/SearchOutlined";
 import { FormControl, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
-import { HTMLAttributes, InputHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
+import { InputHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
 import Button from "../Button";
 import { TextFieldProps } from "../TextField/TextField";
 import '../styles/SearchField.scss';
 
-export type SearchFieldProps = TextFieldProps & {
+export type SearchFieldProps = Omit<TextFieldProps, "onChange"> & {
   initialValue?: string
   label?: string
   onSearch?: (value: string) => void
+  onChange?: (value: string) => void
   withoutButton?: boolean
   inputProps?: InputHTMLAttributes<HTMLInputElement>
   fullWidth?: boolean
 }
 
 export default function SearchField(props: SearchFieldProps) {
-  const { label = "Поиск", onSearch, initialValue = '', withoutButton, inputProps, fullWidth, ...restProps } = props;
+  const { label = "Поиск", onSearch, onChange: onChangeProps, initialValue = '', withoutButton, inputProps, fullWidth, ...restProps } = props;
   const [searchValue, setSearchValue] = useState<string>(initialValue);
   const [callOnButtonClickAfterUpdate, setCallOnButtonClickAfterUpdate] = useState(false);
   const searchRef = useRef<HTMLDivElement | null>(null);
@@ -47,6 +48,7 @@ export default function SearchField(props: SearchFieldProps) {
 
   const onChange = useCallback((event: any) => {
     setSearchValue(event.target.value)
+    onChangeProps?.(event.target.value)
   }, [])
 
   const onKeyDown = useCallback((event: any) => {

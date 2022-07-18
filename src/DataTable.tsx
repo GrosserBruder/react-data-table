@@ -7,6 +7,7 @@ import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, useFilter } fro
 import CrudToolbar, { ToolbarProps } from './Components/Toolbar/CrudToolbar';
 import './styles/DataTable.scss';
 import { FilterProps } from './hooks/useFilter';
+import { FilterValue } from './Components/Filter/Filter';
 
 export type LineCell = {
   id: string | number,
@@ -105,6 +106,12 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
     }
   }, [onSearchChange, filterHook.setSearch, selectRowsHook.resetSelectedRows])
 
+  const onSetFilterHandler = useCallback((headLineCell: HeadLineCell, value: FilterValue) => {
+    if (!headLineCell.filterKey) return;
+
+    filterHook.setFilter(headLineCell.filterKey, value)
+  }, [onSortChange, filterHook.setSort])
+
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
     const CellComponent = bodyLineCell.renderComponent || Cell
 
@@ -119,17 +126,24 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
   const getHeadCell = useCallback((headLineCell: HeadLineCell, index: number) => {
     const CellComponent = headLineCell.renderComponent || HeadCell
 
+    const filterProps = Object.assign
+
     return <CellComponent
       key={headLineCell.id}
-      onSearch={(value: any) => onSearchHandler(headLineCell, value)}
-      onSort={(sortValue: SORT_VALUES) => onSortHandler(headLineCell, sortValue)}
-      initialSearchValue={headLineCell.filterKey ? filterHook.getSearchValueByFilterKey(headLineCell.filterKey) : undefined}
-      initialSortValues={headLineCell.filterKey ? filterHook.getSortValueByFilterKey(headLineCell.filterKey) as SORT_VALUES : undefined}
+      onFilterChange={(value) => onSetFilterHandler(headLineCell, value)}
+      // onSearch={(value: any) => onSearchHandler(headLineCell, value)}
+      // onSort={(sortValue: SORT_VALUES) => onSortHandler(headLineCell, sortValue)}
       filterable={filterable}
+
       {...headLineCell.config}
+
+      initialFilters={{
+        search: headLineCell.filterKey ? filterHook.getSearchValueByFilterKey(headLineCell.filterKey) : undefined,
+        sort: headLineCell.filterKey ? filterHook.getSortValueByFilterKey(headLineCell.filterKey) as SORT_VALUES : undefined,
+      }}
     >
       {headLineCell.value}
-    </CellComponent>
+    </CellComponent >
   }, [onSearchHandler, onSortHandler])
 
   const headRows = useMemo(() => headLines.map((row) => {

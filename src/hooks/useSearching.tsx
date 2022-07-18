@@ -16,7 +16,7 @@ export function useSearching(initialSearchValues?: Map<string, string>) {
     return bodyLines.filter((line) => {
       return line.cells
         .filter((x) => Boolean(x.filterKey))
-        .filter((cell) => searchValues.has(cell.filterKey!))
+        .filter((cell) => Boolean(searchValues.get(cell.filterKey!)))
         .every((cell) => {
           return (cell.value?.toString() || '').toLowerCase().includes(searchValues.get(cell.filterKey!)!)
         })
