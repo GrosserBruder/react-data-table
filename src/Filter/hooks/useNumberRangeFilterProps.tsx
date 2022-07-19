@@ -1,4 +1,5 @@
-import { FILTER_TYPE, FILTER_TYPES } from "./useFilterType"
+import { FILTER_TYPES } from "../../const"
+import { FILTER_TYPE } from "./useFilterType"
 
 type useNumberRangeFilterPropsResult = {
   show?: boolean

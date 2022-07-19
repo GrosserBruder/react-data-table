@@ -1,6 +1,6 @@
 import { NumberRange } from './Components/NumberRange/NumberRange';
 import { DateRange } from './Components/DateRange/DateRange';
-import { FilterValue } from "./Components/Filter/Filter";
+import { FilterValue } from "./Filter/Filter";
 import { FILTER_TYPES } from "./const";
 
 export type ResultCompare = -1 | 0 | 1

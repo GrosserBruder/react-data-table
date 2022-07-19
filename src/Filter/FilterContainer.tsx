@@ -3,7 +3,7 @@ import { Popper, PopperProps, Box, ClickAwayListener } from "@mui/material";
 
 export type FilterContainerProps = PopperProps & {
   onClose?: () => void
-  children: Array<ReactElement> | ReactElement
+  children?: Array<ReactElement> | ReactElement
 }
 
 export function FilterContainer(props: FilterContainerProps) {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { FilterValue } from "../Components/Filter/Filter"
+import { FilterValue } from "../Filter/Filter"
 import { TableRowProps, BodyLineCell } from "../DataTable"
 import useSearching from "./useSearching"
 import useSorting from "./useSorting"

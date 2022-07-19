@@ -1,11 +1,9 @@
-import { ReactNode, ThHTMLAttributes, useRef, useState, useCallback } from "react";
+import { ReactNode, ThHTMLAttributes, useRef, useState, useCallback, FC, ReactElement, useMemo } from "react";
 import classnames from 'classnames';
 import Cell from "@grossb/react-table/dist/Cell";
 import { IconButton } from "@mui/material";
 import MoreVert from "@mui/icons-material/MoreVert"
-import Filter, { FilterValue } from "../Filter/Filter";
-import FilterContainer from "../Filter/FilterContainer";
-import { isEmptyDeep } from "../../utils"
+import { FilterContainerProps } from "../../Filter/FilterContainer";
 import '../styles/HeadCell.scss';
 
 export type HeadCellProps = ThHTMLAttributes<HTMLElement>
@@ -13,17 +11,15 @@ export type HeadCellProps = ThHTMLAttributes<HTMLElement>
     children?: ReactNode,
     filterable?: boolean,
     width?: number,
-    columnValue?: any;
-    initialFilters?: FilterValue | undefined,
-    onFilterChange?: (value: FilterValue) => void,
+    filter?: ReactElement
+    filterContainer?: FC<FilterContainerProps>
   };
 
 export function HeadCell(props: HeadCellProps) {
-  const { children, filterable, onFilterChange: onFilterChangeProps, columnValue, initialFilters, ...rest } = props;
+  const { children, filterable, filter, filterContainer, ...rest } = props;
   const className = classnames('head-cell', props.className)
   const filterButtonRef = useRef(null)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
-  const [isFilterSetted, setIsFilterSetted] = useState<boolean>(false);
 
   const toggleFilters = useCallback((event: any) => {
     setIsPopoverOpen((x) => !x)
@@ -34,13 +30,17 @@ export function HeadCell(props: HeadCellProps) {
   }, [])
 
   const filtrationButtonClassName = classnames({
-    "filtration-button--setted": isFilterSetted
+    // "filtration-button--setted": isFilterSetted
   })
 
-  const onFilterChangeHandler = useCallback((x: FilterValue) => {
-    setIsFilterSetted(!isEmptyDeep(x))
-    onFilterChangeProps?.(x)
-  }, [])
+  const filterContainerProps: FilterContainerProps = useMemo(() => ({
+    className: "head-cell__popper",
+    disablePortal: true,
+    open: isPopoverOpen,
+    anchorEl: filterButtonRef?.current,
+    onClose: handleClose,
+    children: filter
+  }), [isPopoverOpen, filterButtonRef, handleClose, filter])
 
   return <Cell component="th" {...rest} className={className}>
     <div className="head-cell__content">
@@ -56,19 +56,7 @@ export function HeadCell(props: HeadCellProps) {
           </IconButton>
         )}
       </div>
-      <FilterContainer
-        className="head-cell__popper"
-        disablePortal
-        open={isPopoverOpen}
-        anchorEl={filterButtonRef?.current}
-        onClose={handleClose}
-      >
-        <Filter
-          columnValue={columnValue}
-          onFilterChange={onFilterChangeHandler}
-          initialFilters={initialFilters}
-        />
-      </FilterContainer>
+      {filterContainer?.(filterContainerProps)}
     </div>
   </Cell >
 }

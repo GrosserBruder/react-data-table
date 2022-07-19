@@ -1,12 +1,12 @@
 import { useCallback, useRef } from "react";
-import { SORT_VALUES } from "../../const";
-import DateRange from "../DateRange/DateRange";
-import NumberRange from "../NumberRange/NumberRange";
-import SearchField from "../SearchField/SearchField";
+import { FILTER_TYPES, SORT_VALUES } from "../const";
+import DateRange from "../Components/DateRange/DateRange";
+import NumberRange from "../Components/NumberRange/NumberRange";
+import SearchField from "../Components/SearchField/SearchField";
 import BooleanFilter from "./BooleanFilter";
-import { FILTER_TYPES, useFilterType, } from "./hooks";
-import SelectList, { SelectListItem } from "../SelectList/SelectList";
-import Button from "../Button";
+import { useFilterType } from "./hooks";
+import SelectList, { SelectListItem } from "../Components/SelectList/SelectList";
+import Button from "../Components/Button";
 import Stack from "@mui/material/Stack/Stack";
 
 export type FilterValue = {

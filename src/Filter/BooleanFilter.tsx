@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react"
-import CheckBox, { CheckBoxProps } from "../Checkbox/Checkbox"
+import { useCallback, useState } from "react"
+import CheckBox, { CheckBoxProps } from "../Components/Checkbox/Checkbox"
 
 export type BooleanFilterProps = {
   trueOptionProps?: Omit<CheckBoxProps, "onClick" | "defaultValue" | "value" | "checked">,

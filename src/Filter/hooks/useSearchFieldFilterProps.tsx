@@ -1,5 +1,5 @@
-import { SearchFieldProps } from "../../SearchField/SearchField"
-import { FILTER_TYPE, FILTER_TYPES } from "./useFilterType"
+import { SearchFieldProps } from "../../Components/SearchField/SearchField"
+import { FILTER_TYPE } from "./useFilterType"
 
 type useSearchFieldProps = {
 

@@ -1,5 +1,5 @@
-import { FILTER_TYPES } from "../../../const"
-import { getFilterType } from "../../../utils"
+import { FILTER_TYPES } from "../../const"
+import { getFilterType } from "../../utils"
 
 export type FILTER_TYPE = FILTER_TYPES | null
 
