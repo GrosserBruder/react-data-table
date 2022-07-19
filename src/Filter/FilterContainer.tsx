@@ -1,5 +1,7 @@
 import { ReactElement, useCallback } from "react";
 import { Popper, PopperProps, Box, ClickAwayListener } from "@mui/material";
+import classnames from "classnames"
+import "../styles/FilterContainer.scss"
 
 export type FilterContainerProps = PopperProps & {
   onClose?: () => void
@@ -7,7 +9,7 @@ export type FilterContainerProps = PopperProps & {
 }
 
 export function FilterContainer(props: FilterContainerProps) {
-  const { children, onClose, ...containerProps } = props;
+  const { children, onClose, className, ...containerProps } = props;
 
   const onClickAwayListener = useCallback((event: any) => {
     //workaround for Node as Portal
@@ -17,8 +19,10 @@ export function FilterContainer(props: FilterContainerProps) {
     onClose?.()
   }, [onClose])
 
+  const popperClassName = classnames("data-table__filter-container__popper", className)
+
   return <Popper
-    className="head-cell__popper"
+    className={popperClassName}
     disablePortal
     placement="bottom-end"
     {...containerProps}

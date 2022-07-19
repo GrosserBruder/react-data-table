@@ -1,4 +1,4 @@
-import { FC, MutableRefObject, useCallback, useRef } from "react";
+import { FC, useCallback, useRef } from "react";
 import { FILTER_FIELD_KEY, FILTER_TYPES, SORT_VALUES } from "../const";
 import DateRange from "../Components/DateRange/DateRange";
 import NumberRange from "../Components/NumberRange/NumberRange";
@@ -9,6 +9,7 @@ import SelectList, { SelectListItem } from "../Components/SelectList/SelectList"
 import Button from "../Components/Button";
 import Stack from "@mui/material/Stack/Stack";
 import { FILTER_TYPE } from "./hooks/useFilterType";
+import "../styles/Filter.scss"
 
 export type FilterValue = {
   search?: string,
@@ -82,7 +83,7 @@ export function Filter(props: FilterProps) {
     onFilterChange?.(filterValues.current)
   }, [filterValues])
 
-  return <div>
+  return <div className="data-table__filter">
     {
       showSearchField && <SearchField
         autoFocus

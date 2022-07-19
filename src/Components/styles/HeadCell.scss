@@ -1,11 +1,4 @@
 .head-cell {
-  &__popper .MuiBox-root {
-    width: 250px;
-    & > *:not(:last-child) {
-      margin-bottom: 8px;
-    }
-  }
-
   &__content {
     display: flex;
     flex: 1 1 0;
