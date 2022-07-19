@@ -34,12 +34,15 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
     first: TableRowProps<BodyLineCell>,
     second: TableRowProps<BodyLineCell>
   ) => {
+    // отсеиваем ячейки, у которых нет filtertkey или не установлены фильтры
     const firstFilteredCells = first.cells
       .filter((cell) => Boolean(cell.filterKey))
       .filter((cell) => !isEmptyDeep(filterState.get(cell.filterKey!)))
 
+    // цикл for сделан, потому что его можно прервать
     for (let i = 0; i < firstFilteredCells.length; i++) {
       const firstCell = firstFilteredCells[i]
+      // ячейку со второй строки берем, потому что они изначаться не отфильтрованы
       const secondCell = second.cells.find((x) => x.id === firstCell.id)
 
       if (!secondCell) {
@@ -52,6 +55,8 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
 
       const filterValueKeys = Object.keys(filterValue)
 
+      // собираем все значения из полученных filterComparers
+      // ToDo: исправить на получение первого ненулевого результата
       const compareResults = filterValueKeys.map((filterValueKey) => {
         const comparer = filterComparers[filterValueKey]
 
@@ -60,8 +65,13 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
         }
       })
 
+      // получаем первый ненулевой результат. проверка на тип значения нужна,
+      // т.к. поле searh на данный момент проверяется тоже и в массив
+      // сохраняется значение undefined
       const compareResult = compareResults.find((x) => typeof x === "number" && x !== 0)
 
+      // если найдено ненулевой результат, то можно прекратить дальнейшее
+      // сравнение ячеек строк
       if (compareResult) {
         return compareResult
       }
@@ -88,8 +98,6 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
             return checker(cell, filterValue)
           })
         })
-
-
     })
   }, [filterState])
 
