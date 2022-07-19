@@ -111,12 +111,15 @@ export function Filter(props: FilterProps) {
         onChange={onBooleanFilterChange}
       />
     }
-    {additionalFilter?.({
-      filterType,
-      filterValues,
-      columnValue,
-      setFilter,
-    })}
+
+    {
+      additionalFilter?.({
+        filterType,
+        filterValues,
+        columnValue,
+        setFilter,
+      })
+    }
 
     <SelectList
       list={SORT_LIST_VALUES}
