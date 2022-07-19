@@ -1,14 +1,15 @@
 import { FC, useCallback, useMemo, forwardRef, ForwardedRef } from 'react';
 import { Table, Body, Cell, CellProps, Head, Row, RowProps, TableProps } from "@grossb/react-table"
-import { HeadCell, HeadCellProps } from './Components/HeadCell/HeadCell';
-import { SORT_VALUES } from './const';
-import Checkbox from './Components/Checkbox/Checkbox';
+import { HeadCell, HeadCellProps } from '../Components/HeadCell/HeadCell';
+import { SORT_VALUES, FILTER_FIELD_KEY } from '../const';
+import Checkbox from '../Components/Checkbox/Checkbox';
 import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, useFilter } from "./hooks"
-import CrudToolbar, { ToolbarProps } from './Components/Toolbar/CrudToolbar';
-import './styles/DataTable.scss';
+import CrudToolbar, { ToolbarProps } from '../Components/Toolbar/CrudToolbar';
 import { FilterProps } from './hooks/useFilter';
-import Filter, { FilterValue } from './Filter/Filter';
-import FilterContainer, { FilterContainerProps } from './Filter/FilterContainer';
+import Filter, { FilterValue } from '../Filter/Filter';
+import FilterContainer, { FilterContainerProps } from '../Filter/FilterContainer';
+import '../styles/DataTable.scss';
+import { compareByAlphabetically, compareNumberOrBoolean, descSorting, isDateInDataRange, isNumberInNumberRange } from '../utils';
 
 export type LineCell = {
   id: string | number,
@@ -36,8 +37,6 @@ export type TableRowProps<CellType> = {
 
 export type DataTableProps = {
   onRowClick?: (row: TableRowProps<BodyLineCell>) => void,
-  onSortChange?: (headLineCell: HeadLineCell, sortValue: SORT_VALUES) => void,
-  onSearchChange?: (headLineCell: HeadLineCell, value: string) => void,
   onSelect?: (row: TableRowProps<BodyLineCell>, isSelected: boolean) => void,
   onSelectAll?: (selectedRows: Array<TableRowProps<BodyLineCell>>) => void,
   tableProps?: Omit<TableProps, 'children'>,
@@ -52,17 +51,53 @@ export type DataTableProps = {
   disableSetCheckboxAfterRowClick?: boolean
 }
 
+const filterCheckers = {
+  [FILTER_FIELD_KEY.BOOLEAN_FILTER]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.boolean ? cell.value === filterValue.boolean : true,
+  [FILTER_FIELD_KEY.DATE_RANGE]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.dateRange ? isDateInDataRange(cell.value, filterValue.dateRange) : true,
+  [FILTER_FIELD_KEY.NUMBER_RANGE]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.numberRange ? isNumberInNumberRange(cell.value, filterValue.numberRange) : true,
+  [FILTER_FIELD_KEY.SEARCH]: (cell: BodyLineCell, filterValue?: FilterValue) => Boolean(filterValue?.search) ? (cell.value?.toString() || '').toLowerCase().includes(filterValue?.search) : true,
+}
+
+const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
+  const typeValue = typeof a.value
+
+  if (typeValue === "string") {
+    return compareByAlphabetically(a.value, b.value)
+  }
+
+  if (typeValue === "number" || typeValue === "boolean") {
+    return compareNumberOrBoolean(a.value, b.value)
+  }
+
+  return 0;
+}
+
+const filterComparers = {
+  [FILTER_FIELD_KEY.SORT]: (first: BodyLineCell, second: BodyLineCell, filterValue?: FilterValue) => {
+    const sortedCell = sortCell(first, second)
+
+    if (sortedCell === 0) {
+      return 0;
+    }
+
+    if (filterValue?.sort === SORT_VALUES.DESC) {
+      return descSorting(sortedCell)
+    }
+
+    return sortedCell
+  }
+}
+
 const filterContainer = ({ children, ...otherProps }: FilterContainerProps) => <FilterContainer {...otherProps}>{children}</FilterContainer>
 
 function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
   const {
     headLines, bodyLines, filterable, tableProps, selectable, filterProps,
     toolbar: Toolbar = CrudToolbar, additionalToolbar, disableToolbar,
-    disableSetCheckboxAfterRowClick, onRowClick: onRowClickProps,
-    onSearchChange, onSortChange, onSelect, onSelectAll
+    disableSetCheckboxAfterRowClick, onRowClick: onRowClickProps, onSelect, onSelectAll
   } = props;
 
-  const filterHook = useFilter(bodyLines, filterProps);
+  const filterHook = useFilter(bodyLines, filterCheckers, filterComparers, filterProps);
   const selectRowsHook = useSelectRows<TableRowProps<BodyLineCell>>()
   const [selectAllStatus, setSelectedAllStatus] = useSelectAllStatus(
     filterHook.filteredRows.length,
@@ -91,30 +126,11 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
     }
   }, [selectAllStatus, filterHook.filteredRows])
 
-  const onSortHandler = useCallback((headLineCell: HeadLineCell, value: SORT_VALUES) => {
-    if (!headLineCell.filterKey) return;
-
-    onSortChange?.(headLineCell, value)
-    filterHook.setSort(headLineCell.filterKey, value)
-  }, [onSortChange, filterHook.setSort])
-
-  const onSearchHandler = useCallback((headLineCell: HeadLineCell, value: string) => {
-    if (!headLineCell.filterKey) return;
-
-    onSearchChange?.(headLineCell, value)
-    filterHook.setSearch(headLineCell.filterKey, value)
-
-    // if the filter is set and not reset
-    if (value !== '') {
-      selectRowsHook.resetSelectedRows([])
-    }
-  }, [onSearchChange, filterHook.setSearch, selectRowsHook.resetSelectedRows])
-
   const onSetFilterHandler = useCallback((headLineCell: HeadLineCell, value: FilterValue) => {
     if (!headLineCell.filterKey) return;
 
     filterHook.setFilter(headLineCell.filterKey, value)
-  }, [onSortChange, filterHook.setSort])
+  }, [filterHook.setSort])
 
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
     const CellComponent = bodyLineCell.renderComponent || Cell
@@ -149,7 +165,7 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
       {headLineCell.value}
     </CellComponent >
   }, [
-    onSearchHandler, onSortHandler, filterContainer, onSetFilterHandler,
+    filterContainer, onSetFilterHandler,
     filterHook.getSearchValueByFilterKey, filterHook.getSortValueByFilterKey
   ])
 

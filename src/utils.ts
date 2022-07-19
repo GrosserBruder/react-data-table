@@ -1,6 +1,5 @@
 import { NumberRange } from './Components/NumberRange/NumberRange';
 import { DateRange } from './Components/DateRange/DateRange';
-import { FilterValue } from "./Filter/Filter";
 import { FILTER_TYPES } from "./const";
 
 export type ResultCompare = -1 | 0 | 1
@@ -15,19 +14,19 @@ export const descSorting = (resultCompare: ResultCompare) => {
   return 0
 }
 
-export const compareByAlphabetically = (a: any, b: any) => {
+export const compareByAlphabetically = (a: string, b: string) => {
   if (a.toLocaleLowerCase() < b.toLocaleLowerCase()) return -1;
   if (a.toLocaleLowerCase() > b.toLocaleLowerCase()) return 1;
   return 0;
 }
 
-export const compareNumberOrBoolean = (a: any, b: any) => {
+export const compareNumberOrBoolean = (a: number | boolean, b: number | boolean) => {
   if (a < b) return -1;
   if (a > b) return 1;
   return 0;
 }
 
-export const compareDate = (a: any, b: any) => {
+export const compareDate = (a: string | Date, b: string | Date) => {
   const aDate = new Date(a)
   const bDate = new Date(b)
 
@@ -36,20 +35,16 @@ export const compareDate = (a: any, b: any) => {
   return 0;
 }
 
-export const isDateInDataRange = (date: string, dateRange: DateRange) => {
-  if (!dateRange.from || !dateRange.to) return;
-
-  const checkFrom = new Date(date) >= new Date(dateRange.from)
-  const checkTo = new Date(date) <= new Date(dateRange.to)
+export const isDateInDataRange = (date: string | Date, dateRange: DateRange) => {
+  const checkFrom = dateRange.from ? new Date(date) >= new Date(dateRange.from) : true
+  const checkTo = dateRange.to ? new Date(date) <= new Date(dateRange.to) : true
 
   return checkFrom && checkTo;
 }
 
 export const isNumberInNumberRange = (number: number, numberRange: NumberRange) => {
-  if (!numberRange.from || !numberRange.to) return;
-
-  const checkFrom = number >= numberRange.from
-  const checkTo = number <= numberRange.to
+  const checkFrom = numberRange.from ? number >= numberRange.from : true
+  const checkTo = numberRange.to ? number <= numberRange.to : true
 
   return checkFrom && checkTo;
 }
@@ -65,11 +60,6 @@ export const isEmptyDeep = (value: any): boolean => {
   }
 
   return !Boolean(value)
-}
-
-
-export const isFilterSetted = (filterValue: FilterValue) => {
-  return isEmptyDeep(filterValue)
 }
 
 export const getFilterType = (value: any) => {

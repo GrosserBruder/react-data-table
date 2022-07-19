@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { FILTER_TYPES, SORT_VALUES } from "../const";
+import { FILTER_FIELD_KEY, FILTER_TYPES, SORT_VALUES } from "../const";
 import DateRange from "../Components/DateRange/DateRange";
 import NumberRange from "../Components/NumberRange/NumberRange";
 import SearchField from "../Components/SearchField/SearchField";
@@ -30,14 +30,6 @@ const SORT_LIST_VALUES: Array<SelectListItem> = [
   { id: SORT_VALUES.DESC, value: "По убыванию" },
 ]
 
-const enum FILTER_FIELD_KEY {
-  SEARCH = "search",
-  NUMBER_RANGE = "numberRange",
-  DATE_RANGE = "dateRange",
-  BOOLEAN = "boolean",
-  SORT = "sort"
-}
-
 export function Filter(props: FilterProps) {
   const { columnValue, onFilterChange, initialFilters = {} } = props;
   const filterType = useFilterType(columnValue)
@@ -65,7 +57,7 @@ export function Filter(props: FilterProps) {
   }, [filterValues])
 
   const onBooleanFilterChange = useCallback((value: boolean | undefined) => {
-    setFilter(FILTER_FIELD_KEY.BOOLEAN, value)
+    setFilter(FILTER_FIELD_KEY.BOOLEAN_FILTER, value)
   }, [filterValues])
 
   const onSortChange = useCallback((value: SelectListItem) => {

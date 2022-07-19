@@ -3,7 +3,7 @@ import Edit from "@mui/icons-material/Edit"
 import Delete from "@mui/icons-material/Delete"
 import "../styles/CrudToolbar.scss"
 import ToolbarButton, { ToolbarButtonProps } from "./ToolbarButton"
-import { TableRowProps, BodyLineCell } from "../../DataTable"
+import { TableRowProps, BodyLineCell } from "../../DataTable/DataTable"
 import { primitiveOrFunction } from "../../utils"
 import { FC } from "react"
 
