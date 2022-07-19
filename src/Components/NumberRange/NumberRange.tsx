@@ -8,16 +8,17 @@ export type NumberRange = {
 }
 
 export type NumberRangeProps = {
-  dateFromProps?: Omit<NumberFieldProps, "onChange" | "defaultValue">,
-  dateToProps?: Omit<NumberFieldProps, "onChange" | "defaultValue">,
+  numberFromProps?: Omit<NumberFieldProps, "onChange" | "defaultValue">,
+  numberToProps?: Omit<NumberFieldProps, "onChange" | "defaultValue">,
   onChange?: (value: NumberRange) => void,
   defaultValue?: NumberRange
 }
 
 export function NumberRange(props: NumberRangeProps) {
   const {
-    dateFromProps, dateToProps, defaultValue = { from: null, to: null }, onChange
+    numberFromProps, numberToProps, defaultValue = { from: null, to: null }, onChange
   } = props;
+
   const dateRangeValue = useRef(defaultValue)
 
   const onChangeHandler = useCallback(() => {
@@ -34,12 +35,24 @@ export function NumberRange(props: NumberRangeProps) {
     onChangeHandler()
   }, [dateRangeValue])
 
-  const dateFromClassName = classnames("date-range__date-from", dateFromProps?.className)
-  const dateToClassName = classnames("date-range__date-to", dateToProps?.className)
+  const numberFromClassName = classnames("number-range__number-from", numberFromProps?.className)
+  const numberToClassName = classnames("number-range__number-to", numberToProps?.className)
 
   return <div>
-    <NumberField placeholder="От" onChange={onFromChange} />
-    <NumberField placeholder="До" onChange={onToChange} />
+    <NumberField
+      placeholder="От"
+      {...numberFromProps}
+      className={numberFromClassName}
+      onChange={onFromChange}
+      defaultValue={dateRangeValue?.current.from ?? undefined}
+    />
+    <NumberField
+      placeholder="До"
+      {...numberToProps}
+      className={numberToClassName}
+      onChange={onToChange}
+      defaultValue={dateRangeValue?.current.to ?? undefined}
+    />
   </div>
 }
 
