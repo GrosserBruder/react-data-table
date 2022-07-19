@@ -1,15 +1,17 @@
 import { FC, useCallback, useMemo, forwardRef, ForwardedRef } from 'react';
 import { Table, Body, Cell, CellProps, Head, Row, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCell, HeadCellProps } from '../Components/HeadCell/HeadCell';
-import { SORT_VALUES, FILTER_FIELD_KEY } from '../const';
 import Checkbox from '../Components/Checkbox/Checkbox';
 import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, useFilter } from "./hooks"
 import CrudToolbar, { ToolbarProps } from '../Components/Toolbar/CrudToolbar';
-import { FilterProps } from './hooks/useFilter';
+import { FilterCheckers, FilterComparers, FilterProps } from './hooks/useFilter';
 import Filter, { FilterValue } from '../Filter/Filter';
 import FilterContainer, { FilterContainerProps } from '../Filter/FilterContainer';
+import {
+  filterComparers as defaultFilterComparers,
+  filterCheckers as defaultFilterCheckers,
+} from "./defaultProps"
 import '../styles/DataTable.scss';
-import { compareByAlphabetically, compareNumberOrBoolean, descSorting, isDateInDataRange, isNumberInNumberRange } from '../utils';
 
 export type LineCell = {
   id: string | number,
@@ -48,53 +50,30 @@ export type DataTableProps = {
   toolbar: FC<ToolbarProps>
   disableToolbar?: boolean
   additionalToolbar?: FC<ToolbarProps>
-  disableSetCheckboxAfterRowClick?: boolean
-}
-
-const filterCheckers = {
-  [FILTER_FIELD_KEY.BOOLEAN_FILTER]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.boolean ? cell.value === filterValue.boolean : true,
-  [FILTER_FIELD_KEY.DATE_RANGE]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.dateRange ? isDateInDataRange(cell.value, filterValue.dateRange) : true,
-  [FILTER_FIELD_KEY.NUMBER_RANGE]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.numberRange ? isNumberInNumberRange(cell.value, filterValue.numberRange) : true,
-  [FILTER_FIELD_KEY.SEARCH]: (cell: BodyLineCell, filterValue?: FilterValue) => Boolean(filterValue?.search) ? (cell.value?.toString() || '').toLowerCase().includes(filterValue?.search) : true,
-}
-
-const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
-  const typeValue = typeof a.value
-
-  if (typeValue === "string") {
-    return compareByAlphabetically(a.value, b.value)
-  }
-
-  if (typeValue === "number" || typeValue === "boolean") {
-    return compareNumberOrBoolean(a.value, b.value)
-  }
-
-  return 0;
-}
-
-const filterComparers = {
-  [FILTER_FIELD_KEY.SORT]: (first: BodyLineCell, second: BodyLineCell, filterValue?: FilterValue) => {
-    const sortedCell = sortCell(first, second)
-
-    if (sortedCell === 0) {
-      return 0;
-    }
-
-    if (filterValue?.sort === SORT_VALUES.DESC) {
-      return descSorting(sortedCell)
-    }
-
-    return sortedCell
-  }
+  disableSetCheckboxAfterRowClick?: boolean,
+  filterCheckers?: FilterCheckers
+  filterComparers?: FilterComparers
 }
 
 const filterContainer = ({ children, ...otherProps }: FilterContainerProps) => <FilterContainer {...otherProps}>{children}</FilterContainer>
 
 function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
   const {
-    headLines, bodyLines, filterable, tableProps, selectable, filterProps,
-    toolbar: Toolbar = CrudToolbar, additionalToolbar, disableToolbar,
-    disableSetCheckboxAfterRowClick, onRowClick: onRowClickProps, onSelect, onSelectAll
+    headLines,
+    bodyLines,
+    filterable,
+    tableProps,
+    selectable,
+    filterProps,
+    toolbar: Toolbar = CrudToolbar,
+    additionalToolbar,
+    disableToolbar,
+    disableSetCheckboxAfterRowClick,
+    onRowClick: onRowClickProps,
+    onSelect,
+    onSelectAll,
+    filterCheckers = defaultFilterCheckers,
+    filterComparers = defaultFilterComparers
   } = props;
 
   const filterHook = useFilter(bodyLines, filterCheckers, filterComparers, filterProps);
