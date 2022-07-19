@@ -130,7 +130,7 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
     if (!headLineCell.filterKey) return;
 
     filterHook.setFilter(headLineCell.filterKey, value)
-  }, [filterHook.setSort])
+  }, [filterHook.setFilter])
 
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
     const CellComponent = bodyLineCell.renderComponent || Cell
@@ -153,10 +153,7 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
       filter={<Filter
         columnValue={headLineCell.columnValue}
         onFilterChange={(value) => onSetFilterHandler(headLineCell, value)}
-        initialFilters={{
-          search: headLineCell.filterKey ? filterHook.getSearchValueByFilterKey(headLineCell.filterKey) : undefined,
-          sort: headLineCell.filterKey ? filterHook.getSortValueByFilterKey(headLineCell.filterKey) as SORT_VALUES : undefined,
-        }}
+        initialFilters={headLineCell.filterKey ? filterHook.getFilterStateByFilterKey(headLineCell.filterKey) : undefined}
       />}
 
       {...headLineCell.config}
@@ -164,10 +161,7 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
     >
       {headLineCell.value}
     </CellComponent >
-  }, [
-    filterContainer, onSetFilterHandler,
-    filterHook.getSearchValueByFilterKey, filterHook.getSortValueByFilterKey
-  ])
+  }, [filterContainer, onSetFilterHandler, filterHook.getFilterStateByFilterKey])
 
   const headRows = useMemo(() => headLines.map((row) => {
     const RowComponent = row.render || Row
@@ -244,9 +238,8 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
         >
           <Toolbar
             selectable={selectable}
-            sortValues={filterHook.sortValues}
+            filterState={filterHook.filterState}
             filteredRows={filterHook.filteredRows}
-            searchValues={filterHook.searchValues}
             filterable={filterable}
             selectedRows={selectRowsHook.selectedRows}
             additionalToolbar={additionalToolbar}

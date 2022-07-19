@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { isEmptyDeep, ResultCompare } from "../../utils"
 import { FilterValue } from "../../Filter/Filter"
 import { TableRowProps, BodyLineCell } from "../DataTable"
@@ -24,7 +24,6 @@ export type FilterComparers = {
 export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterCheckers: FilterCheckers, filterComparers: FilterComparers, props?: FilterProps) {
   const [filteredRows, setFilteredRows] = useState<Array<TableRowProps<BodyLineCell>>>(props?.initialFilteredRows ?? [])
   const [filterState, setFilterState] = useState<Map<string, FilterValue>>(new Map<string, FilterValue>())
-
 
   const setFilter = useCallback((filterKey: string, value: FilterValue) => {
     setFilterState((x) => new Map<string, FilterValue>(x.set(filterKey, value)))
@@ -108,29 +107,20 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
     setFilteredRows(result)
   }, [bodyLines, filterRows, filterState])
 
+  const getFilterStateByFilterKey = useCallback((filterKey: string) => {
+    return filterState.get(filterKey)
+  }, [filterState])
+
   useEffect(() => {
     refilter()
   }, [bodyLines, refilter, filterRows, filterState])
 
-  // refactor
-
-  const setSort = useCallback((filterKey: string, value: any) => {
-    // setSortValues((x) => new Map<string, string>(x.set(filterKey, value)))
-  }, [])
-
-  const getSearchValueByFilterKey = (key: string) => ""
-  const getSortValueByFilterKey = (key: string) => ""
-  const [sortValues, setSortValues] = useState(new Map<string, string>())
-  const [searchValues, setSearchValues] = useState(new Map<string, string>())
-
   return {
     filteredRows,
     setFilter,
-    setSort,
-    getSearchValueByFilterKey,
-    getSortValueByFilterKey,
-    sortValues,
-    searchValues,
+    filterState,
+    refilter,
+    getFilterStateByFilterKey
   }
 }
 

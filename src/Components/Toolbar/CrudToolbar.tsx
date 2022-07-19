@@ -6,13 +6,13 @@ import ToolbarButton, { ToolbarButtonProps } from "./ToolbarButton"
 import { TableRowProps, BodyLineCell } from "../../DataTable/DataTable"
 import { primitiveOrFunction } from "../../utils"
 import { FC } from "react"
+import { FilterValue } from "../../Filter/Filter"
 
 export type ToolbarProps = {
   selectable?: boolean,
   filterable?: boolean,
-  sortValues: Map<string, string>,
   filteredRows: Array<TableRowProps<BodyLineCell>>
-  searchValues: Map<string, string>
+  filterState: Map<string, FilterValue>
   selectedRows: Array<TableRowProps<BodyLineCell>>
   additionalToolbar?: FC<ToolbarProps>
 }
@@ -28,7 +28,7 @@ export type CrudToolbarProps = ToolbarProps & {
 
 export function CrudToolbar(props: CrudToolbarProps) {
   const {
-    filteredRows, selectable, filterable, sortValues, selectedRows, searchValues,
+    filteredRows, selectable, filterable, filterState, selectedRows,
     showCreate, showDelete, showUpdate, createButton, deleteButton, updateButton,
     additionalToolbar: AdditionalToolbar
   } = props;
@@ -36,9 +36,8 @@ export function CrudToolbar(props: CrudToolbarProps) {
   const toolbarProps: ToolbarProps = {
     selectable,
     filterable,
-    sortValues,
+    filterState,
     filteredRows,
-    searchValues,
     selectedRows
   }
 
