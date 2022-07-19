@@ -4,8 +4,8 @@ import { HeadCell, HeadCellProps } from '../Components/HeadCell/HeadCell';
 import Checkbox from '../Components/Checkbox/Checkbox';
 import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, useFilter } from "./hooks"
 import CrudToolbar, { ToolbarProps } from '../Components/Toolbar/CrudToolbar';
-import { FilterCheckers, FilterComparers, FilterProps } from './hooks/useFilter';
-import Filter, { FilterValue } from '../Filter/Filter';
+import { FilterCheckers, FilterComparers, FilterProps as HookFilterProps } from './hooks/useFilter';
+import Filter, { FilterProps, FilterValue } from '../Filter/Filter';
 import FilterContainer, { FilterContainerProps } from '../Filter/FilterContainer';
 import {
   filterComparers as defaultFilterComparers,
@@ -42,7 +42,8 @@ export type DataTableProps = {
   onSelect?: (row: TableRowProps<BodyLineCell>, isSelected: boolean) => void,
   onSelectAll?: (selectedRows: Array<TableRowProps<BodyLineCell>>) => void,
   tableProps?: Omit<TableProps, 'children'>,
-  filterProps?: FilterProps,
+  filterProps?: HookFilterProps,
+  filterComponentProps?: FilterProps
   headLines: Array<TableRowProps<HeadLineCell>>,
   bodyLines: Array<TableRowProps<BodyLineCell>>,
   filterable?: boolean,
@@ -73,7 +74,8 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
     onSelect,
     onSelectAll,
     filterCheckers = defaultFilterCheckers,
-    filterComparers = defaultFilterComparers
+    filterComparers = defaultFilterComparers,
+    filterComponentProps,
   } = props;
 
   const filterHook = useFilter(bodyLines, filterCheckers, filterComparers, filterProps);
@@ -133,6 +135,7 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
         columnValue={headLineCell.columnValue}
         onFilterChange={(value) => onSetFilterHandler(headLineCell, value)}
         initialFilters={headLineCell.filterKey ? filterHook.getFilterStateByFilterKey(headLineCell.filterKey) : undefined}
+        {...filterComponentProps}
       />}
 
       {...headLineCell.config}

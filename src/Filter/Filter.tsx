@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { FC, MutableRefObject, useCallback, useRef } from "react";
 import { FILTER_FIELD_KEY, FILTER_TYPES, SORT_VALUES } from "../const";
 import DateRange from "../Components/DateRange/DateRange";
 import NumberRange from "../Components/NumberRange/NumberRange";
@@ -8,6 +8,7 @@ import { useFilterType } from "./hooks";
 import SelectList, { SelectListItem } from "../Components/SelectList/SelectList";
 import Button from "../Components/Button";
 import Stack from "@mui/material/Stack/Stack";
+import { FILTER_TYPE } from "./hooks/useFilterType";
 
 export type FilterValue = {
   search?: string,
@@ -21,7 +22,15 @@ export type FilterValue = {
 export type FilterProps = {
   columnValue: any
   onFilterChange?: (value: FilterValue) => void,
-  initialFilters?: FilterValue
+  initialFilters?: FilterValue,
+  additionalFilter?: FC<AdditionalFilterProps>
+}
+
+export type AdditionalFilterProps = FilterProps & {
+  columnValue: any,
+  filterType: FILTER_TYPE,
+  filterValues: FilterValue,
+  setFilter: (key: string, value: any) => void
 }
 
 const SORT_LIST_VALUES: Array<SelectListItem> = [
@@ -31,7 +40,7 @@ const SORT_LIST_VALUES: Array<SelectListItem> = [
 ]
 
 export function Filter(props: FilterProps) {
-  const { columnValue, onFilterChange, initialFilters = {} } = props;
+  const { columnValue, onFilterChange, initialFilters = {}, additionalFilter } = props;
   const filterType = useFilterType(columnValue)
   const filterValues = useRef(initialFilters)
 
@@ -101,6 +110,12 @@ export function Filter(props: FilterProps) {
         onChange={onBooleanFilterChange}
       />
     }
+    {additionalFilter?.({
+      filterType,
+      filterValues,
+      columnValue,
+      setFilter,
+    })}
 
     <SelectList
       list={SORT_LIST_VALUES}
