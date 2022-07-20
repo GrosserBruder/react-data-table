@@ -1,13 +1,19 @@
 import { FilterValue } from "../Filter/Filter"
-import { compareByAlphabetically, compareNumberOrBoolean, descSorting, isDateInDataRange, isNumberInNumberRange } from "../utils"
-import { FILTER_FIELD_KEY, SORT_VALUES } from "../const"
+import { compareByAlphabetically, compareNumberOrBoolean, descSorting, getValueType, isDateInDataRange, isNumberInNumberRange } from "../utils"
+import { FILTER_FIELD_KEY, SORT_VALUES, VALUE_TYPES } from "../const"
 import { BodyLineCell } from "./DataTable"
 
 export const filterCheckers = {
-  [FILTER_FIELD_KEY.BOOLEAN_FILTER]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.boolean ? cell.value === filterValue.boolean : true,
-  [FILTER_FIELD_KEY.DATE_RANGE]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.dateRange ? isDateInDataRange(cell.value, filterValue.dateRange) : true,
-  [FILTER_FIELD_KEY.NUMBER_RANGE]: (cell: BodyLineCell, filterValue?: FilterValue) => filterValue?.numberRange ? isNumberInNumberRange(cell.value, filterValue.numberRange) : true,
-  [FILTER_FIELD_KEY.SEARCH]: (cell: BodyLineCell, filterValue?: FilterValue) => Boolean(filterValue?.search) ? (cell.value?.toString() || '').toLowerCase().includes(filterValue?.search) : true,
+  [FILTER_FIELD_KEY.BOOLEAN_FILTER]: (cell: BodyLineCell, filterValue?: FilterValue) =>
+    filterValue?.boolean_filter !== undefined ? cell.value === filterValue.boolean_filter : true,
+  [FILTER_FIELD_KEY.DATE_RANGE]: (cell: BodyLineCell, filterValue?: FilterValue) =>
+    filterValue?.dateRange ? isDateInDataRange(cell.value, filterValue.dateRange) : true,
+  [FILTER_FIELD_KEY.NUMBER_RANGE]: (cell: BodyLineCell, filterValue?: FilterValue) =>
+    filterValue?.numberRange ? isNumberInNumberRange(cell.value, filterValue.numberRange) : true,
+  [FILTER_FIELD_KEY.SEARCH]: (cell: BodyLineCell, filterValue?: FilterValue) =>
+    Boolean(filterValue?.search)
+      ? (cell.value?.toString() || '').toLowerCase().includes(filterValue?.search)
+      : true,
 }
 
 const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
@@ -37,5 +43,26 @@ export const filterComparers = {
     }
 
     return sortedCell
+  }
+}
+
+export const renderBoolean = (value: boolean) => {
+  return value ? "Да" : "Нет"
+}
+
+export const renderDate = (value: string | Date) => {
+  return new Date(value).toLocaleString("ru-RU")
+}
+
+export const renderBodyCellValue = (value: any) => {
+  const valueType = getValueType(value)
+
+  switch (true) {
+    case valueType === VALUE_TYPES.DATE:
+      return renderDate(value)
+    case valueType === VALUE_TYPES.BOOLEAN:
+      return renderBoolean(value)
+    default:
+      return value
   }
 }

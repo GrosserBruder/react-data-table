@@ -4,12 +4,14 @@ export enum SORT_VALUES {
   DESC = 'desc'
 }
 
-export const enum FILTER_TYPES {
+export const enum VALUE_TYPES {
   DATE = "date",
   NUMBER = "number",
   BOOLEAN = "boolean",
   STRING = "string",
 }
+
+export type VALUE_TYPE = VALUE_TYPES | null
 
 export const enum FILTER_FIELD_KEY {
   SEARCH = "search",

@@ -1,10 +1,8 @@
-import { FILTER_TYPES } from "../../const"
-import { getFilterType } from "../../utils"
+import { VALUE_TYPE } from "../../const"
+import { getValueType } from "../../utils"
 
-export type FILTER_TYPE = FILTER_TYPES | null
-
-export function useFilterType(value: any): FILTER_TYPE {
-  return getFilterType(value)
+export function useValueType(value: any): VALUE_TYPE {
+  return getValueType(value)
 }
 
-export default useFilterType
+export default useValueType

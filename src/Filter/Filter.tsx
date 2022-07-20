@@ -1,21 +1,20 @@
 import { FC, useCallback, useRef } from "react";
-import { FILTER_FIELD_KEY, FILTER_TYPES, SORT_VALUES } from "../const";
+import { FILTER_FIELD_KEY, VALUE_TYPES, SORT_VALUES, VALUE_TYPE } from "../const";
 import DateRange from "../Components/DateRange/DateRange";
 import NumberRange from "../Components/NumberRange/NumberRange";
 import SearchField from "../Components/SearchField/SearchField";
 import BooleanFilter from "./BooleanFilter";
-import { useFilterType } from "./hooks";
+import { useValueType } from "./hooks";
 import SelectList, { SelectListItem } from "../Components/SelectList/SelectList";
 import Button from "../Components/Button";
 import Stack from "@mui/material/Stack/Stack";
-import { FILTER_TYPE } from "./hooks/useFilterType";
 import "../styles/Filter.scss"
 
 export type FilterValue = {
   search?: string,
   dateRange?: DateRange
   numberRange?: NumberRange
-  boolean?: boolean
+  boolean_filter?: boolean
   sort?: SORT_VALUES
   [key: string]: any
 }
@@ -29,7 +28,7 @@ export type FilterProps = {
 
 export type AdditionalFilterProps = FilterProps & {
   columnValue: any,
-  filterType: FILTER_TYPE,
+  valueType: VALUE_TYPE,
   filterValues: FilterValue,
   setFilter: (key: string, value: any) => void
 }
@@ -42,13 +41,13 @@ const SORT_LIST_VALUES: Array<SelectListItem> = [
 
 export function Filter(props: FilterProps) {
   const { columnValue, onFilterChange, initialFilters = {}, additionalFilter } = props;
-  const filterType = useFilterType(columnValue)
+  const valueType = useValueType(columnValue)
   const filterValues = useRef(initialFilters)
 
-  const showSearchField = filterType === FILTER_TYPES.STRING || filterType === FILTER_TYPES.NUMBER
-  const showNumberRangeFilter = filterType === FILTER_TYPES.NUMBER
-  const showDateRangeFilter = filterType === FILTER_TYPES.DATE
-  const showBooleanFilter = filterType === FILTER_TYPES.BOOLEAN
+  const showSearchField = valueType === VALUE_TYPES.STRING || valueType === VALUE_TYPES.NUMBER
+  const showNumberRangeFilter = valueType === VALUE_TYPES.NUMBER
+  const showDateRangeFilter = valueType === VALUE_TYPES.DATE
+  const showBooleanFilter = valueType === VALUE_TYPES.BOOLEAN
 
   const setFilter = useCallback((key: string, value: any) => {
     filterValues.current = Object.assign({}, filterValues.current, { [key]: value })
@@ -75,6 +74,7 @@ export function Filter(props: FilterProps) {
   }, [filterValues])
 
   const onAccepteButtonClick = useCallback(() => {
+    console.log(filterValues.current)
     onFilterChange?.(filterValues.current)
   }, [filterValues])
 
@@ -113,7 +113,7 @@ export function Filter(props: FilterProps) {
     }
     {
       additionalFilter?.({
-        filterType,
+        valueType: valueType,
         filterValues,
         columnValue,
         setFilter,

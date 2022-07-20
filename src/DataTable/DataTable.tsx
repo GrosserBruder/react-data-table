@@ -10,6 +10,7 @@ import FilterContainer, { FilterContainerProps } from '../Filter/FilterContainer
 import {
   filterComparers as defaultFilterComparers,
   filterCheckers as defaultFilterCheckers,
+  renderBodyCellValue,
 } from "./defaultProps"
 import '../styles/DataTable.scss';
 import { mergeObjects } from '../utils';
@@ -17,7 +18,7 @@ import { mergeObjects } from '../utils';
 export type LineCell = {
   id: string | number,
   value?: any,
-  renderComponent?: FC<RowProps>,
+  renderComponent?: FC<BodyLineCell>,
   cellComponent?: FC<any>,
   filterKey?: string,
 }
@@ -117,20 +118,20 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
   }, [filterHook.setFilter])
 
   const getBodyCell = useCallback((bodyLineCell: BodyLineCell) => {
-    const CellComponent = bodyLineCell.renderComponent || Cell
-
-    return <CellComponent
+    return <Cell
       key={bodyLineCell.id}
       {...bodyLineCell.config}
     >
-      {bodyLineCell.value}
-    </CellComponent>
+      {
+        bodyLineCell.renderComponent
+          ? bodyLineCell.renderComponent?.(bodyLineCell)
+          : renderBodyCellValue(bodyLineCell.value)
+      }
+    </Cell>
   }, [])
 
   const getHeadCell = useCallback((headLineCell: HeadLineCell, index: number) => {
-    const CellComponent = headLineCell.renderComponent || HeadCell
-
-    return <CellComponent
+    return <HeadCell
       key={headLineCell.id}
       filterable={filterable}
       filterContainer={filterContainer}
@@ -144,8 +145,8 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
       {...headLineCell.config}
 
     >
-      {headLineCell.value}
-    </CellComponent >
+      {headLineCell.renderComponent ? headLineCell.renderComponent?.(headLineCell) : headLineCell.value}
+    </HeadCell >
   }, [filterContainer, onSetFilterHandler, filterHook.getFilterStateByFilterKey])
 
   const headRows = useMemo(() => headLines.map((row) => {

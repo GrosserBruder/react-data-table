@@ -1,6 +1,6 @@
 import { NumberRange } from './Components/NumberRange/NumberRange';
 import { DateRange } from './Components/DateRange/DateRange';
-import { FILTER_TYPES } from "./const";
+import { VALUE_TYPE, VALUE_TYPES } from "./const";
 
 export type ResultCompare = -1 | 0 | 1
 
@@ -62,16 +62,16 @@ export const isEmptyDeep = (value: any): boolean => {
   return !Boolean(value)
 }
 
-export const getFilterType = (value: any) => {
+export const getValueType = (value: any): VALUE_TYPE => {
   switch (true) {
-    case (typeof value === "string") && !isNaN(Date.parse(value)):
-      return FILTER_TYPES.DATE
+    case (typeof value === "string") && isNaN(+value) && !isNaN(Date.parse(value)):
+      return VALUE_TYPES.DATE
     case typeof value === "boolean":
-      return FILTER_TYPES.BOOLEAN
+      return VALUE_TYPES.BOOLEAN
     case typeof value === "number":
-      return FILTER_TYPES.NUMBER
+      return VALUE_TYPES.NUMBER
     case typeof value === "string":
-      return FILTER_TYPES.STRING
+      return VALUE_TYPES.STRING
     default:
       return null
   }

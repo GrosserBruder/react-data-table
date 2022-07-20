@@ -1,5 +1,1 @@
-export { default as useBooleanFilterProps } from "./useBooleanFilterProps"
-export { default as useDateRangeFilterProps } from "./useDateRangeFilterProps"
-export { default as useFilterType } from "./useFilterType"
-export { default as useNumberRangeFilterProps } from "./useNumberRangeFilterProps"
-export { default as useSearchFieldFilterProps } from "./useSearchFieldFilterProps"
+export { default as useValueType } from "./useFilterType"
