@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, forwardRef, ForwardedRef } from 'react';
+import { FC, useCallback, useMemo, forwardRef, ForwardedRef, useRef } from 'react';
 import { Table, Body, Cell, CellProps, Head, Row, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCell, HeadCellProps } from '../Components/HeadCell/HeadCell';
 import Checkbox from '../Components/Checkbox/Checkbox';
@@ -12,6 +12,7 @@ import {
   filterCheckers as defaultFilterCheckers,
 } from "./defaultProps"
 import '../styles/DataTable.scss';
+import { mergeObjects } from '../utils';
 
 export type LineCell = {
   id: string | number,
@@ -73,12 +74,14 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
     onRowClick: onRowClickProps,
     onSelect,
     onSelectAll,
-    filterCheckers = defaultFilterCheckers,
-    filterComparers = defaultFilterComparers,
+    filterCheckers = {},
+    filterComparers = {},
     filterComponentProps,
   } = props;
+  const mergedFilterCheckers = useRef(mergeObjects(filterCheckers, defaultFilterCheckers))
+  const mergedFilterComparers = useRef(mergeObjects(filterComparers, defaultFilterComparers))
 
-  const filterHook = useFilter(bodyLines, filterCheckers, filterComparers, filterProps);
+  const filterHook = useFilter(bodyLines, mergedFilterCheckers.current, mergedFilterComparers.current, filterProps);
   const selectRowsHook = useSelectRows<TableRowProps<BodyLineCell>>()
   const [selectAllStatus, setSelectedAllStatus] = useSelectAllStatus(
     filterHook.filteredRows.length,

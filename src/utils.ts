@@ -76,3 +76,9 @@ export const getFilterType = (value: any) => {
       return null
   }
 }
+
+export const mergeObjects = (first: { [key: string]: any }, second: { [key: string]: any }) => {
+  const firstCopy = { ...first };
+  const secondCopy = { ...second };
+  return Object.assign({}, firstCopy, secondCopy)
+}

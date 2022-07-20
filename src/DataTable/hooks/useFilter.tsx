@@ -76,7 +76,7 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
       }
     }
     return 0;
-  }, [filterState])
+  }, [filterState, filterComparers])
 
   const filterRows = useCallback((bodyLines: Array<TableRowProps<BodyLineCell>>) => {
     return bodyLines.filter((line) => {
@@ -98,7 +98,7 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
           })
         })
     })
-  }, [filterState])
+  }, [filterState, filterCheckers])
 
   const refilter = useCallback(() => {
     const result = filterRows(bodyLines)
