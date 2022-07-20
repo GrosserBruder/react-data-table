@@ -107,8 +107,8 @@ export function Filter(props: FilterProps) {
     }
     {
       showBooleanFilter && <BooleanFilter
-        defaultValue={filterValues?.current.boolean}
         onChange={onBooleanFilterChange}
+        defaultValue={filterValues?.current.boolean_filter}
       />
     }
     {
