@@ -38,22 +38,22 @@ export function NumberRange(props: NumberRangeProps) {
   const numberFromClassName = classnames("number-range__number-from", numberFromProps?.className)
   const numberToClassName = classnames("number-range__number-to", numberToProps?.className)
 
-  return <div>
+  return <>
     <NumberField
-      placeholder="От"
+      label="От"
       {...numberFromProps}
       className={numberFromClassName}
       onChange={onFromChange}
       defaultValue={dateRangeValue?.current.from ?? undefined}
     />
     <NumberField
-      placeholder="До"
+      label="До"
       {...numberToProps}
       className={numberToClassName}
       onChange={onToChange}
       defaultValue={dateRangeValue?.current.to ?? undefined}
     />
-  </div>
+  </>
 }
 
 export default NumberRange

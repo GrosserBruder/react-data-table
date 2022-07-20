@@ -37,23 +37,22 @@ export function DateRange(props: DateRangeProps) {
   const dateFromClassName = classnames("date-range__date-from", dateFromProps?.className)
   const dateToClassName = classnames("date-range__date-to", dateToProps?.className)
 
-
-  return <div>
+  return <>
     <DateField
       {...dateFromProps}
       className={dateFromClassName}
-      placeholder="С даты"
+      label="С даты"
       onChange={onDateFromChange}
       defaultValue={defaultValue?.from ?? undefined}
     />
     <DateField
       {...dateToProps}
       className={dateToClassName}
-      placeholder="По дату"
+      label="По дату"
       onChange={onDateToChange}
       defaultValue={defaultValue?.to ?? undefined}
     />
-  </div>
+  </>
 }
 
 export default DateRange
