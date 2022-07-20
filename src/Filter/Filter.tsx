@@ -111,7 +111,6 @@ export function Filter(props: FilterProps) {
         onChange={onBooleanFilterChange}
       />
     }
-
     {
       additionalFilter?.({
         filterType,

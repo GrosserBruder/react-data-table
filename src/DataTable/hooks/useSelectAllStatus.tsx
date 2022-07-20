@@ -13,7 +13,7 @@ export function useSelectAllStatus(allRowsLenght: number, selectedRowsLength: nu
 
   useEffect(() => {
     switch (true) {
-      case allRowsLenght === selectedRowsLength:
+      case selectedRowsLength !== 0 && allRowsLenght === selectedRowsLength:
         setStatus(SELECT_ALL_STATUSES.SELECTED)
         return;
       case selectedRowsLength > 0 && selectedRowsLength < allRowsLenght:
