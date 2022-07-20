@@ -11,12 +11,21 @@ import Stack from "@mui/material/Stack/Stack";
 import "../styles/Filter.scss"
 
 export type FilterValue = {
-  search?: string,
-  dateRange?: DateRange
-  numberRange?: NumberRange
-  boolean_filter?: boolean
-  sort?: SORT_VALUES
+  [FILTER_FIELD_KEY.SEARCH]?: string,
+  [FILTER_FIELD_KEY.DATE_RANGE]?: DateRange
+  [FILTER_FIELD_KEY.NUMBER_RANGE]?: NumberRange
+  [FILTER_FIELD_KEY.BOOLEAN_FILTER]?: boolean
+  [FILTER_FIELD_KEY.SORT]?: SORT_VALUES
   [key: string]: any
+}
+
+export type FILTER_SHOW = {
+  [FILTER_FIELD_KEY.SEARCH]?: boolean,
+  [FILTER_FIELD_KEY.DATE_RANGE]?: boolean
+  [FILTER_FIELD_KEY.NUMBER_RANGE]?: boolean
+  [FILTER_FIELD_KEY.BOOLEAN_FILTER]?: boolean
+  [FILTER_FIELD_KEY.SORT]?: boolean
+  [key: string]: boolean | undefined
 }
 
 export type FilterProps = {
@@ -24,12 +33,14 @@ export type FilterProps = {
   onFilterChange?: (value: FilterValue) => void,
   initialFilters?: FilterValue,
   additionalFilter?: FC<AdditionalFilterProps>
+  show?: FILTER_SHOW
 }
 
-export type AdditionalFilterProps = FilterProps & {
+export type AdditionalFilterProps = {
   columnValue: any,
   valueType: VALUE_TYPE,
   filterValues: FilterValue,
+  show?: FILTER_SHOW | undefined,
   setFilter: (key: string, value: any) => void
 }
 
@@ -40,7 +51,7 @@ const SORT_LIST_VALUES: Array<SelectListItem> = [
 ]
 
 export function Filter(props: FilterProps) {
-  const { columnValue, onFilterChange, initialFilters = {}, additionalFilter } = props;
+  const { columnValue, onFilterChange, initialFilters = {}, additionalFilter, show } = props;
   const valueType = useValueType(columnValue)
   const filterValues = useRef(initialFilters)
 
@@ -85,7 +96,7 @@ export function Filter(props: FilterProps) {
 
   return <div className="data-table__filter">
     {
-      showSearchField && <SearchField
+      (show?.search ?? showSearchField) && <SearchField
         autoFocus
         withoutButton
         onChange={onSearchHandler}
@@ -94,19 +105,19 @@ export function Filter(props: FilterProps) {
       />
     }
     {
-      showNumberRangeFilter && <NumberRange
+      (show?.numberRange ?? showNumberRangeFilter) && <NumberRange
         onChange={onNumberRangeChange}
         defaultValue={filterValues?.current.numberRange}
       />
     }
     {
-      showDateRangeFilter && <DateRange
+      (show?.dateRange ?? showDateRangeFilter) && <DateRange
         onChange={onDateRangeChange}
         defaultValue={filterValues?.current.dateRange}
       />
     }
     {
-      showBooleanFilter && <BooleanFilter
+      (show?.boolean_filter ?? showBooleanFilter) && <BooleanFilter
         onChange={onBooleanFilterChange}
         defaultValue={filterValues?.current.boolean_filter}
       />
@@ -115,6 +126,7 @@ export function Filter(props: FilterProps) {
       additionalFilter?.({
         valueType: valueType,
         filterValues,
+        show,
         columnValue,
         setFilter,
       })
