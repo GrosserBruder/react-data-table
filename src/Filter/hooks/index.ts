@@ -1,1 +1,1 @@
-export { default as useValueType } from "./useFilterType"
+export { default as useValueType } from "./useValueType"
