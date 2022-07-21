@@ -85,7 +85,6 @@ export function Filter(props: FilterProps) {
   }, [filterValues])
 
   const onAccepteButtonClick = useCallback(() => {
-    console.log(filterValues.current)
     onFilterChange?.(filterValues.current)
   }, [filterValues])
 
@@ -100,44 +99,45 @@ export function Filter(props: FilterProps) {
         autoFocus
         withoutButton
         onChange={onSearchHandler}
-        defaultValue={filterValues?.current.search}
+        defaultValue={filterValues?.current[FILTER_FIELD_KEY.SEARCH]}
         fullWidth
       />
     }
     {
       (show?.numberRange ?? showNumberRangeFilter) && <NumberRange
         onChange={onNumberRangeChange}
-        defaultValue={filterValues?.current.numberRange}
+        defaultValue={filterValues?.current[FILTER_FIELD_KEY.NUMBER_RANGE]}
       />
     }
     {
       (show?.dateRange ?? showDateRangeFilter) && <DateRange
         onChange={onDateRangeChange}
-        defaultValue={filterValues?.current.dateRange}
+        defaultValue={filterValues?.current[FILTER_FIELD_KEY.DATE_RANGE]}
       />
     }
     {
       (show?.boolean_filter ?? showBooleanFilter) && <BooleanFilter
         onChange={onBooleanFilterChange}
-        defaultValue={filterValues?.current.boolean_filter}
+        defaultValue={filterValues?.current[FILTER_FIELD_KEY.BOOLEAN_FILTER]}
       />
     }
     {
       additionalFilter?.({
-        valueType: valueType,
+        valueType,
         filterValues,
         show,
         columnValue,
         setFilter,
       })
     }
-
-    <SelectList
-      list={SORT_LIST_VALUES}
-      label="Сортировать"
-      defaultValue={SORT_LIST_VALUES.find((x) => x.id === initialFilters.sort) || SORT_LIST_VALUES[0]}
-      onChange={onSortChange}
-    />
+    {
+      (show?.boolean_filter ?? true) && <SelectList
+        list={SORT_LIST_VALUES}
+        label="Сортировать"
+        defaultValue={SORT_LIST_VALUES.find((x) => x.id === filterValues?.current[FILTER_FIELD_KEY.SORT]) || SORT_LIST_VALUES[0]}
+        onChange={onSortChange}
+      />
+    }
 
     <Stack direction="row" spacing={1} justifyContent="center">
       <Button onClick={onAccepteButtonClick} size="small">Применить</Button>
