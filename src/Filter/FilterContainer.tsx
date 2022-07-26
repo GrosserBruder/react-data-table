@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, cloneElement, isValidElement } from "react";
+import { ReactElement, useCallback, cloneElement, isValidElement, useEffect } from "react";
 import { Popper, PopperProps, Box, ClickAwayListener } from "@mui/material";
 import classnames from "classnames"
 import "../styles/FilterContainer.scss"
@@ -19,6 +19,19 @@ export function FilterContainer(props: FilterContainerProps) {
     }
     onClose?.()
   }, [onClose])
+
+  const onKeyDown = useCallback((event: any) => {
+    if (event.key === 'Escape') {
+      onClose?.()
+    }
+  }, [onClose])
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+    }
+  }, [onKeyDown])
 
   const popperClassName = classnames("data-table__filter-container__popper", className)
 

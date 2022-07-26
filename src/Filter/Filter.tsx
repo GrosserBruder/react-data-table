@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef } from "react";
+import { FC, useCallback, useEffect, useRef } from "react";
 import { FILTER_FIELD_KEY, VALUE_TYPES, SORT_VALUES, VALUE_TYPE } from "../const";
 import DateRange from "../Components/DateRange/DateRange";
 import NumberRange from "../Components/NumberRange/NumberRange";
@@ -92,6 +92,19 @@ export function Filter(props: FilterProps) {
     filterValues.current = {}
     onFilterChange?.(filterValues.current)
   }, [filterValues])
+
+  const onKeyDown = useCallback((event: any) => {
+    if (event.key === 'Enter') {
+      onAccepteButtonClick()
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+    }
+  }, [onKeyDown])
 
   return <div className="data-table__filter">
     {
