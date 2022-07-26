@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-
-export enum SELECT_ALL_STATUSES {
-  NOT_SELECTED,
-  INDETERMINATE,
-  SELECTED
-}
+import { SELECT_ALL_STATUSES } from "../../const"
 
 type RETURN = [status: SELECT_ALL_STATUSES, setSelectedAllStatus: (status: SELECT_ALL_STATUSES) => void]
 

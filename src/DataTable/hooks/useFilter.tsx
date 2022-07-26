@@ -1,25 +1,10 @@
 import { useCallback, useEffect, useState } from "react"
 import { isEmptyDeep, ResultCompare } from "../../utils"
-import { FilterValue } from "../../Filter/Filter"
-import { TableRowProps, BodyLineCell } from "../DataTable"
+import { FilterValue } from "../../Filter"
+import { TableRowProps, BodyLineCell } from "../types"
+import { FilterCheckers, FilterComparers, FilterProps } from "./types"
 
-export type FilterProps = {
-  initialFilteredRows?: Array<TableRowProps<BodyLineCell>>
-}
 
-export type FilterChecker = (cell: BodyLineCell, filterValue?: FilterValue) => boolean;
-export type FilterCheckers = {
-  [filterFieldKey: string]: FilterChecker
-};
-
-export type FilterComparer = (
-  first: BodyLineCell,
-  second: BodyLineCell,
-  filterValue?: FilterValue
-) => ResultCompare;
-export type FilterComparers = {
-  [filterFieldKey: string]: FilterComparer
-};
 
 export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterCheckers: FilterCheckers, filterComparers: FilterComparers, props?: FilterProps) {
   const [filteredRows, setFilteredRows] = useState<Array<TableRowProps<BodyLineCell>>>(props?.initialFilteredRows ?? [])

@@ -20,3 +20,9 @@ export const enum FILTER_FIELD_KEY {
   BOOLEAN_FILTER = "boolean_filter",
   SORT = "sort"
 }
+
+export enum SELECT_ALL_STATUSES {
+  NOT_SELECTED,
+  INDETERMINATE,
+  SELECTED
+}

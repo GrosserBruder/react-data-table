@@ -2,7 +2,7 @@ import { ReactElement, useCallback, cloneElement, isValidElement, useEffect } fr
 import { Popper, PopperProps, Box, ClickAwayListener } from "@mui/material";
 import classnames from "classnames"
 import "../styles/FilterContainer.scss"
-import { FilterValue } from "./Filter";
+import { FilterValue } from "./types";
 
 export type FilterContainerProps = PopperProps & {
   onClose?: () => void

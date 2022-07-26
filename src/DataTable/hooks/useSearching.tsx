@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { TableRowProps, BodyLineCell } from "../DataTable";
+import { TableRowProps, BodyLineCell } from "../types";
 
 export function useSearching(initialSearchValues?: Map<string, string>) {
   const [searchValues, setSearchValues] = useState(new Map<string, string>(initialSearchValues))

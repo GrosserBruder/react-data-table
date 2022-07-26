@@ -1,7 +1,7 @@
-import { FilterValue } from "../Filter/Filter"
+import { FilterValue } from "../Filter"
 import { compareByAlphabetically, compareNumberOrBoolean, descSorting, getValueType, isDateInDataRange, isNumberInNumberRange } from "../utils"
 import { FILTER_FIELD_KEY, SORT_VALUES, VALUE_TYPES } from "../const"
-import { BodyLineCell } from "./DataTable"
+import { BodyLineCell } from "./"
 
 export const filterCheckers = {
   [FILTER_FIELD_KEY.BOOLEAN_FILTER]: (cell: BodyLineCell, filterValue?: FilterValue) =>

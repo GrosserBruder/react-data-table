@@ -1,12 +1,8 @@
 import { useCallback, useState } from "react"
-import CheckBox, { CheckBoxProps } from "../Components/Checkbox/Checkbox"
+import CheckBox from "../Components/Checkbox/Checkbox"
+import { BooleanFilterProps } from "./types"
 
-export type BooleanFilterProps = {
-  trueOptionProps?: Omit<CheckBoxProps, "onClick" | "defaultValue" | "value" | "checked">,
-  falseOptionToProps?: Omit<CheckBoxProps, "onClick" | "defaultValue" | "value" | "checked">,
-  onChange?: (value: boolean | undefined) => void,
-  defaultValue?: boolean
-}
+
 
 export function BooleanFilter(props: BooleanFilterProps) {
   const { defaultValue, onChange, trueOptionProps, falseOptionToProps } = props

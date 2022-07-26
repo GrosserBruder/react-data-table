@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { compareNumberOrBoolean, compareByAlphabetically, descSorting } from "../../utils";
 import { SORT_VALUES } from "../../const";
-import { TableRowProps, BodyLineCell } from "../DataTable";
+import { TableRowProps, BodyLineCell } from "../types";
 
 const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
   const typeValue = typeof a.value

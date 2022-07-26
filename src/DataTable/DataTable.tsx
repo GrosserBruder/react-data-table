@@ -1,11 +1,10 @@
-import { FC, useCallback, useMemo, forwardRef, ForwardedRef, useRef } from 'react';
-import { Table, Body, Cell, CellProps, Head, Row, RowProps, TableProps } from "@grossb/react-table"
-import { HeadCell, HeadCellProps } from '../Components/HeadCell/HeadCell';
+import { useCallback, useMemo, forwardRef, ForwardedRef, useRef } from 'react';
+import { Table, Body, Cell, Head, Row } from "@grossb/react-table"
+import { HeadCell } from '../Components/HeadCell/HeadCell';
 import Checkbox from '../Components/Checkbox/Checkbox';
-import { useSelectRows, useSelectAllStatus, SELECT_ALL_STATUSES, useFilter } from "./hooks"
-import CrudToolbar, { ToolbarProps } from '../Components/Toolbar/CrudToolbar';
-import { FilterCheckers, FilterComparers, FilterProps as HookFilterProps } from './hooks/useFilter';
-import Filter, { FilterProps, FilterValue } from '../Filter/Filter';
+import { useSelectRows, useSelectAllStatus, useFilter } from "./hooks"
+import CrudToolbar from '../Components/Toolbar/CrudToolbar';
+import { Filter, FilterValue } from '../Filter';
 import FilterContainer, { FilterContainerProps } from '../Filter/FilterContainer';
 import {
   filterComparers as defaultFilterComparers,
@@ -14,49 +13,8 @@ import {
 } from "./defaultProps"
 import '../styles/DataTable.scss';
 import { mergeObjects } from '../utils';
-
-export type LineCell = {
-  id: string | number,
-  value?: any,
-  renderComponent?: FC<BodyLineCell>,
-  cellComponent?: FC<any>,
-  filterKey?: string,
-}
-
-export type HeadLineCell = LineCell & {
-  config?: HeadCellProps
-  columnValue?: any
-}
-
-export type BodyLineCell = LineCell & {
-  config?: CellProps
-}
-
-export type TableRowProps<CellType> = {
-  id: string | number,
-  cells: Array<CellType>,
-  render?: FC<RowProps>
-  config?: RowProps
-}
-
-export type DataTableProps = {
-  onRowClick?: (row: TableRowProps<BodyLineCell>) => void,
-  onSelect?: (row: TableRowProps<BodyLineCell>, isSelected: boolean) => void,
-  onSelectAll?: (selectedRows: Array<TableRowProps<BodyLineCell>>) => void,
-  tableProps?: Omit<TableProps, 'children'>,
-  filterProps?: HookFilterProps,
-  filterComponentProps?: FilterProps
-  headLines: Array<TableRowProps<HeadLineCell>>,
-  bodyLines: Array<TableRowProps<BodyLineCell>>,
-  filterable?: boolean,
-  selectable?: boolean,
-  toolbar: FC<ToolbarProps>
-  disableToolbar?: boolean
-  additionalToolbar?: FC<ToolbarProps>
-  disableSetCheckboxAfterRowClick?: boolean,
-  filterCheckers?: FilterCheckers
-  filterComparers?: FilterComparers
-}
+import { BodyLineCell, DataTableProps, HeadLineCell, TableRowProps } from './types';
+import { SELECT_ALL_STATUSES } from '../const';
 
 const filterContainer = ({ children, ...otherProps }: FilterContainerProps) => <FilterContainer {...otherProps}>{children}</FilterContainer>
 

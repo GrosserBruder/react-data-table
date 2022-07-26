@@ -2,10 +2,10 @@ import Add from "@mui/icons-material/Add"
 import Edit from "@mui/icons-material/Edit"
 import Delete from "@mui/icons-material/Delete"
 import ToolbarButton, { ToolbarButtonProps } from "./ToolbarButton"
-import { TableRowProps, BodyLineCell } from "../../DataTable/DataTable"
+import { TableRowProps, BodyLineCell } from "../../DataTable"
 import { primitiveOrFunction } from "../../utils"
 import { FC, useCallback } from "react"
-import { FilterValue } from "../../Filter/Filter"
+import { FilterValue } from "../../Filter"
 import "../styles/CrudToolbar.scss"
 
 export type ToolbarProps = {

@@ -2,7 +2,6 @@ import Chip, { ChipProps } from "@mui/material/Chip"
 import classnames from "classnames"
 import { useEffect } from "react"
 import "../styles/ToolbarButton.scss"
-import { ToolbarProps } from "./CrudToolbar"
 
 export type ToolbarButtonProps = Omit<ChipProps, "clickable"> & {
   show?: boolean,

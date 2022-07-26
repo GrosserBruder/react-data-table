@@ -9,40 +9,7 @@ import SelectList, { SelectListItem } from "../Components/SelectList/SelectList"
 import Button from "../Components/Button";
 import Stack from "@mui/material/Stack/Stack";
 import "../styles/Filter.scss"
-
-export type FilterValue = {
-  [FILTER_FIELD_KEY.SEARCH]?: string,
-  [FILTER_FIELD_KEY.DATE_RANGE]?: DateRange
-  [FILTER_FIELD_KEY.NUMBER_RANGE]?: NumberRange
-  [FILTER_FIELD_KEY.BOOLEAN_FILTER]?: boolean
-  [FILTER_FIELD_KEY.SORT]?: SORT_VALUES
-  [key: string]: any
-}
-
-export type FILTER_SHOW = {
-  [FILTER_FIELD_KEY.SEARCH]?: boolean,
-  [FILTER_FIELD_KEY.DATE_RANGE]?: boolean
-  [FILTER_FIELD_KEY.NUMBER_RANGE]?: boolean
-  [FILTER_FIELD_KEY.BOOLEAN_FILTER]?: boolean
-  [FILTER_FIELD_KEY.SORT]?: boolean
-  [key: string]: boolean | undefined
-}
-
-export type FilterProps = {
-  columnValue: any
-  onFilterChange?: (value: FilterValue) => void,
-  initialFilters?: FilterValue,
-  additionalFilter?: FC<AdditionalFilterProps>
-  show?: FILTER_SHOW
-}
-
-export type AdditionalFilterProps = {
-  columnValue: any,
-  valueType: VALUE_TYPE,
-  filterValues: FilterValue,
-  show?: FILTER_SHOW | undefined,
-  setFilter: (key: string, value: any) => void
-}
+import { FilterProps } from "./types";
 
 const SORT_LIST_VALUES: Array<SelectListItem> = [
   { id: SORT_VALUES.NOT_SELECTED, value: "Не выбрано" },
