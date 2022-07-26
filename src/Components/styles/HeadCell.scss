@@ -1,17 +1,8 @@
 .head-cell {
-  & .MuiPopover-paper {
-    padding: 5px;
-    padding-top: 10px;
-
-    & > *:not(:last-child) {
-      margin-bottom: 8px;
-    }
-  }
-
   &__content {
     display: flex;
     flex: 1 1 0;
-    align-items: baseline;
+    align-items: center;
   }
 
   &__children {
@@ -25,10 +16,6 @@
 
   .cell__wrapper {
     padding: unset;
-  }
-
-  .MuiPaper-root.MuiPaper-elevation.MuiPopover-paper {
-    width: 250px;
   }
 
   .filtration-button--setted {

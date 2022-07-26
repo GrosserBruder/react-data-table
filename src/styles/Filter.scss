@@ -1,0 +1,5 @@
+.data-table__filter {
+  & > *:not(:last-child) {
+    margin-bottom: 8px;
+  }
+}

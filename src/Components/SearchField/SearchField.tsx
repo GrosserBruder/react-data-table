@@ -1,22 +1,24 @@
 import SearchOutlined from "@mui/icons-material/SearchOutlined";
-import { TextField } from "@mui/material";
+import { FormControl, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
-import { HTMLAttributes, InputHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
+import { InputHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
 import Button from "../Button";
 import { TextFieldProps } from "../TextField/TextField";
 import '../styles/SearchField.scss';
 
-export type SearchFieldProps = TextFieldProps & {
-  initialValue?: string
+export type SearchFieldProps = Omit<TextFieldProps, "onChange"> & {
   label?: string
   onSearch?: (value: string) => void
+  onChange?: (value: string) => void
   withoutButton?: boolean
   inputProps?: InputHTMLAttributes<HTMLInputElement>
+  fullWidth?: boolean
+  defaultValue?: string
 }
 
 export default function SearchField(props: SearchFieldProps) {
-  const { label = "Поиск", onSearch, initialValue = '', withoutButton, inputProps, ...restProps } = props;
-  const [searchValue, setSearchValue] = useState<string>(initialValue);
+  const { label = "Поиск", onSearch, onChange: onChangeProps, defaultValue = '', withoutButton, inputProps, fullWidth, ...restProps } = props;
+  const [searchValue, setSearchValue] = useState<string>(defaultValue);
   const [callOnButtonClickAfterUpdate, setCallOnButtonClickAfterUpdate] = useState(false);
   const searchRef = useRef<HTMLDivElement | null>(null);
 
@@ -46,6 +48,7 @@ export default function SearchField(props: SearchFieldProps) {
 
   const onChange = useCallback((event: any) => {
     setSearchValue(event.target.value)
+    onChangeProps?.(event.target.value)
   }, [])
 
   const onKeyDown = useCallback((event: any) => {
@@ -56,7 +59,7 @@ export default function SearchField(props: SearchFieldProps) {
     }
   }, [])
 
-  return <div className="search-field">
+  return <FormControl fullWidth={fullWidth} className="search-field">
     <TextField
       ref={searchRef}
       type="search"
@@ -85,5 +88,5 @@ export default function SearchField(props: SearchFieldProps) {
       Найти
     </Button>
     }
-  </div>
+  </FormControl>
 }
