@@ -1,15 +1,16 @@
-import { ReactElement, useCallback } from "react";
+import { ReactElement, useCallback, cloneElement, isValidElement } from "react";
 import { Popper, PopperProps, Box, ClickAwayListener } from "@mui/material";
 import classnames from "classnames"
 import "../styles/FilterContainer.scss"
+import { FilterValue } from "./Filter";
 
 export type FilterContainerProps = PopperProps & {
   onClose?: () => void
-  children?: Array<ReactElement> | ReactElement
+  children?: ReactElement
 }
 
 export function FilterContainer(props: FilterContainerProps) {
-  const { children, onClose, className, ...containerProps } = props;
+  const { children: propsChildren, onClose, className, ...containerProps } = props;
 
   const onClickAwayListener = useCallback((event: any) => {
     //workaround for Node as Portal
@@ -20,6 +21,15 @@ export function FilterContainer(props: FilterContainerProps) {
   }, [onClose])
 
   const popperClassName = classnames("data-table__filter-container__popper", className)
+
+  const onFilterChange = useCallback((value: FilterValue) => {
+    propsChildren?.props.onFilterChange?.(value)
+    onClose?.()
+  }, [propsChildren])
+
+  const children = isValidElement(propsChildren)
+    ? cloneElement(propsChildren, { onFilterChange })
+    : null
 
   return <Popper
     className={popperClassName}
