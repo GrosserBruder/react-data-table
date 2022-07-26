@@ -6,6 +6,7 @@ type RETURN = [status: SELECT_ALL_STATUSES, setSelectedAllStatus: (status: SELEC
 export function useSelectAllStatus(allRowsLenght: number, selectedRowsLength: number): RETURN {
   const [status, setStatus] = useState<SELECT_ALL_STATUSES>(SELECT_ALL_STATUSES.NOT_SELECTED)
 
+  // вызывает еще одну перерисовку при монтировании компонента
   useEffect(() => {
     switch (true) {
       case selectedRowsLength !== 0 && allRowsLenght === selectedRowsLength:

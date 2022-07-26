@@ -91,6 +91,7 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
   const getHeadCell = useCallback((headLineCell: HeadLineCell, index: number) => {
     return <HeadCell
       key={headLineCell.id}
+      isFiltersInstalled={headLineCell.filterKey ? filterHook.isInstalledFilters(headLineCell.filterKey) : false}
       filterable={filterable}
       filterContainer={filterContainer}
       filter={<Filter
@@ -105,7 +106,7 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
     >
       {headLineCell.renderComponent ? headLineCell.renderComponent?.(headLineCell) : headLineCell.value}
     </HeadCell >
-  }, [filterContainer, onSetFilterHandler, filterHook.getFilterStateByFilterKey])
+  }, [filterContainer, onSetFilterHandler, filterHook.getFilterStateByFilterKey, filterHook.isInstalledFilters])
 
   const headRows = useMemo(() => headLines.map((row) => {
     const RowComponent = row.render || Row

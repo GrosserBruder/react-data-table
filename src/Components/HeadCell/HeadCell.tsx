@@ -1,7 +1,7 @@
 import { ReactNode, ThHTMLAttributes, useRef, useState, useCallback, FC, ReactElement, useMemo } from "react";
 import classnames from 'classnames';
 import Cell from "@grossb/react-table/dist/Cell";
-import { IconButton } from "@mui/material";
+import { Badge, IconButton } from "@mui/material";
 import MoreVert from "@mui/icons-material/MoreVert"
 import { FilterContainerProps } from "../../Filter/FilterContainer";
 import '../styles/HeadCell.scss';
@@ -13,10 +13,11 @@ export type HeadCellProps = ThHTMLAttributes<HTMLElement>
     width?: number,
     filter?: ReactElement
     filterContainer?: FC<FilterContainerProps>
+    isFiltersInstalled?: boolean
   };
 
 export function HeadCell(props: HeadCellProps) {
-  const { children, filterable, filter, filterContainer, ...rest } = props;
+  const { children, filterable, filter, filterContainer, isFiltersInstalled, ...rest } = props;
   const className = classnames('head-cell', props.className)
   const filterButtonRef = useRef(null)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
@@ -47,13 +48,15 @@ export function HeadCell(props: HeadCellProps) {
       <div className="head-cell__children">{children}</div>
       <div className="head-cell__filters">
         {filterable && (
-          <IconButton
-            ref={filterButtonRef}
-            onClick={toggleFilters}
-            className={filtrationButtonClassName}
-          >
-            <MoreVert />
-          </IconButton>
+          <Badge color="secondary" badgeContent={" "} invisible={!isFiltersInstalled} overlap="circular" variant="dot">
+            <IconButton
+              ref={filterButtonRef}
+              onClick={toggleFilters}
+              className={filtrationButtonClassName}
+            >
+              <MoreVert />
+            </IconButton>
+          </Badge>
         )}
       </div>
       {filterContainer?.(filterContainerProps)}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { isEmptyDeep, ResultCompare } from "../../utils"
+import { isEmptyDeep } from "../../utils"
 import { FilterValue } from "../../Filter"
 import { TableRowProps, BodyLineCell } from "../types"
 import { FilterCheckers, FilterComparers, FilterProps } from "./types"
@@ -96,6 +96,18 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
     return filterState.get(filterKey)
   }, [filterState])
 
+  const isInstalledFilters = useCallback((filterKey: string) => {
+    const state = filterState.get(filterKey) ?? {}
+
+    const isInstalled = Object.keys(state).some((key) => {
+      if (Boolean(state[key])) {
+        return true
+      }
+    })
+
+    return isInstalled;
+  }, [filterState])
+
   useEffect(() => {
     refilter()
   }, [bodyLines, refilter, filterRows, filterState])
@@ -105,7 +117,8 @@ export function useFilter(bodyLines: Array<TableRowProps<BodyLineCell>>, filterC
     setFilter,
     filterState,
     refilter,
-    getFilterStateByFilterKey
+    getFilterStateByFilterKey,
+    isInstalledFilters,
   }
 }
 
