@@ -42,7 +42,7 @@ export type DataTableProps = {
   bodyLines: Array<TableRowProps<BodyLineCell>>,
   filterable?: boolean,
   selectable?: boolean,
-  toolbar: FC<ToolbarProps>
+  toolbar?: FC<ToolbarProps>
   disableToolbar?: boolean
   additionalToolbar?: FC<ToolbarProps>
   disableSetCheckboxAfterRowClick?: boolean,
