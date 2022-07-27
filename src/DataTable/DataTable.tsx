@@ -151,6 +151,7 @@ function DataTable(props: DataTableProps, ref: ForwardedRef<any>) {
     })
   }, [filterHook.filteredRows, getBodyCell, selectRowsHook.selectedRows])
 
+  //ToDo: crash
   const columnCount = useMemo(() => headLines[0].cells.reduce((acc, value) => acc + (value.config?.colSpan || 1), 0), [headLines])
 
   const getRowsOrEmptyRow = useCallback(() => {
