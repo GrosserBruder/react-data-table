@@ -1,10 +1,12 @@
 import { Body, Cell, Row } from "@grossb/react-table"
 import { memo, useCallback } from "react";
+import useDataTableApiContext from "../Context/DataTableApiContext/useDataTableApiContext";
 import useDataTableBodyRowsContext from "../Context/DataTableContext/useDataTableBodyRowsContext";
 import { DataTableBodyCell, DataTableBodyRow } from "./types";
 
 function DataTableBody() {
-  const context = useDataTableBodyRowsContext()
+  const bodyRowsContext = useDataTableBodyRowsContext()
+  const apiContext = useDataTableApiContext()
 
   const onRowClick = useCallback(() => { }, [])
   const onCheckboxClick = useCallback(() => { }, [])
@@ -36,7 +38,7 @@ function DataTableBody() {
   const getRow = useCallback((row: DataTableBodyRow) => {
     const RowComponent = row.render || Row
 
-    return <RowComponent key={row.id} {...row.config} onClick={onRowClick}>
+    return <RowComponent key={row.id} {...row.config} onClick={apiContext.onRowClick}>
       {/* {selectable && <Cell className="cell__select">
         <Checkbox
           checked={selectRowsHook.isRowSelected(row)}
@@ -48,7 +50,7 @@ function DataTableBody() {
 
   }, [onRowClick])
 
-  const bodyRows = context.bodyRows.map(getRow)
+  const bodyRows = bodyRowsContext.bodyRows.map(getRow)
 
   return <Body>
     {bodyRows}

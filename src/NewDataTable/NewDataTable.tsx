@@ -1,7 +1,9 @@
 import { Cell, Head, Row, Table, TableProps } from "@grossb/react-table"
-import DataTableBodyRowsContextProvider from "../Context/DataTableContext/DataTableBodyRowsContext";
+import DataTableApiContext from "../Context/DataTableApiContext/DataTableApiContextProvider";
+import DataTableBodyRowsContextProvider from "../Context/DataTableContext/DataTableBodyRowsContextProvider";
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
+import { useDataTableProps } from "./hooks/useDataTableProps";
 import { DataTableBodyRow, DataTableHeadRow } from "./types";
 
 export type NewDataTableProps = {
@@ -12,12 +14,17 @@ export type NewDataTableProps = {
 
 function NewDataTable(props: NewDataTableProps) {
   const { tableProps, headRows } = props
+
+  const processedProps = useDataTableProps(props)
+
   return <div>
     <DataTableBodyRowsContextProvider bodyRows={props.bodyRows}>
-      <Table {...tableProps}>
-        <DataTableHead rows={headRows} />
-        <DataTableBody />
-      </Table>
+      <DataTableApiContext props={processedProps}>
+        <Table {...tableProps}>
+          <DataTableHead rows={headRows} />
+          <DataTableBody />
+        </Table>
+      </DataTableApiContext>
     </DataTableBodyRowsContextProvider>
   </div>
 }

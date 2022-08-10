@@ -1,4 +1,4 @@
-import { CellProps, RowProps } from "@grossb/react-table"
+import { CellProps, RowProps, TableProps } from "@grossb/react-table"
 import { HeadCellProps } from "../Components"
 
 export type DataTableCell = {
@@ -27,4 +27,20 @@ export type DataTableHeadRow = DataTableRow & {
 
 export type DataTableBodyRow = DataTableRow & {
   cells?: Array<DataTableBodyCell>,
+}
+
+export type ProcessedDataTableProps = {
+  headRows?: Array<DataTableHeadRow>,
+  bodyRows?: Array<DataTableBodyRow>
+  tableProps?: TableProps,
+  onRowClick?: (event: any, row: DataTableBodyRow) => void
+  selectable?: boolean
+  disableSetCheckboxAfterRowClick?: boolean
+}
+
+export type DataTableApi = {
+  onSelect?: (row: DataTableBodyRow, isSelected: boolean) => void,
+  onBodyCheckboxClick: (row: DataTableBodyRow) => void,
+  onRowClick: (event: any, row: DataTableBodyRow) => void,
+  onCheckboxClick: (event: any, row: DataTableBodyRow) => void,
 }
