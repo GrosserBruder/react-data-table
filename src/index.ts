@@ -3,3 +3,5 @@ export * from "./DataTable";
 export * from "./Components";
 export * from "./const";
 export * from "./utils";
+
+export * from "./NewDataTable"
