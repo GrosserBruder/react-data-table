@@ -1,18 +1,18 @@
 import { Body, Cell, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
-import { DataTableBodyRow, DataTableColumn } from "./types";
+import { DataItem, DataTableBodyRow, DataTableColumn } from "./types";
 
 export type DataTableBodyProps = {
   renderRow?: (row: DataTableBodyRow) => JSX.Element
   onRowClick?: (event: any, row: DataTableBodyRow) => void
   columns: Array<DataTableColumn>
-  data?: Array<any>
+  data?: Array<DataItem>
 }
 
 function DataTableBody(props: DataTableBodyProps) {
   const { columns, data } = props;
 
-  const getCell = useCallback((dataItem: any, column: DataTableColumn) => {
+  const getCell = useCallback((dataItem: DataItem, column: DataTableColumn) => {
     if (!column.dataField) return <Cell />
 
     return <Cell key={column.id ?? column.dataField}>
@@ -20,7 +20,7 @@ function DataTableBody(props: DataTableBodyProps) {
     </Cell>
   }, [])
 
-  const getCells = useCallback((dataItem: any) => {
+  const getCells = useCallback((dataItem: DataItem) => {
     return columns.map((column) => getCell(dataItem, column))
   }, [columns, getCell])
 

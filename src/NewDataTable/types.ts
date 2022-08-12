@@ -51,3 +51,8 @@ export type DataTableColumn = {
   dataField?: string,
   header?: ReactNode,
 }
+
+export type DataItem = {
+  id: number | string,
+  [key: string]: any,
+}

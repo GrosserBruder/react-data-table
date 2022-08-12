@@ -1,7 +1,7 @@
-import { Body, Cell, Head, Row } from "@grossb/react-table"
+import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
 import { HeadCell } from "../Components/HeadCell";
-import { DataTableColumn, DataTableHeadCell, DataTableHeadRow } from "./types";
+import { DataTableColumn } from "./types";
 
 export type DataTableHeadProps = {
   columns: Array<DataTableColumn>
@@ -11,9 +11,9 @@ function DataTableHead(props: DataTableHeadProps) {
   const { columns } = props
 
   const getCell = useCallback((column: DataTableColumn) => {
-    return <Cell key={column.id ?? column.dataField}>
+    return <HeadCell key={column.id ?? column.dataField}>
       {column.header}
-    </Cell>
+    </HeadCell>
   }, [])
 
   const getCells = useCallback(() => {
