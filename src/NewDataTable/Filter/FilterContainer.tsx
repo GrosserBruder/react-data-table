@@ -6,10 +6,12 @@ import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import classnames from "classnames";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { FilterWrapper } from "./FilterWrapper";
 
 export type FilterContainer = {
   className?: string
   children?: ReactNode
+  filter?: ReactNode
 }
 
 export function FilterContainer(props: FilterContainer) {
@@ -74,8 +76,10 @@ export function FilterContainer(props: FilterContainer) {
     >
       <ClickAwayListener onClickAway={onClickAwayListener}>
         <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
-          {children}
-          hello
+          <FilterWrapper>
+            {children}
+            hello
+          </FilterWrapper>
         </Box>
       </ClickAwayListener>
     </Popper>

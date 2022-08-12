@@ -1,27 +1,31 @@
 import { Body, Cell, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
-import { DataItem, DataTableBodyRow, DataTableColumn } from "./types";
+import { DataRow, DataTableBodyRow, DataTableColumn } from "./types";
 
 export type DataTableBodyProps = {
   renderRow?: (row: DataTableBodyRow) => JSX.Element
   onRowClick?: (event: any, row: DataTableBodyRow) => void
   columns: Array<DataTableColumn>
-  data?: Array<DataItem>
+  data?: Array<DataRow>
 }
 
 function DataTableBody(props: DataTableBodyProps) {
   const { columns, data } = props;
 
-  const getCell = useCallback((dataItem: DataItem, column: DataTableColumn) => {
+  const getCell = useCallback((dataRow: DataRow, column: DataTableColumn) => {
     if (!column.dataField) return <Cell />
 
+    const value = column.valueGetter !== undefined
+      ? column.valueGetter(dataRow)
+      : dataRow[column.dataField]
+
     return <Cell key={column.id ?? column.dataField}>
-      {dataItem[column.dataField]}
+      {value}
     </Cell>
   }, [])
 
-  const getCells = useCallback((dataItem: DataItem) => {
-    return columns.map((column) => getCell(dataItem, column))
+  const getCells = useCallback((dataRow: DataRow) => {
+    return columns.map((column) => getCell(dataRow, column))
   }, [columns, getCell])
 
   const getRows = useCallback(() => {
@@ -33,8 +37,8 @@ function DataTableBody(props: DataTableBodyProps) {
       </Row>
     }
 
-    return data?.map((dataItem) => <Row key={dataItem.id}>
-      {getCells(dataItem)}
+    return data?.map((dataRow) => <Row key={dataRow.id}>
+      {getCells(dataRow)}
     </Row>)
   }, [data, columns.length, getCells])
 

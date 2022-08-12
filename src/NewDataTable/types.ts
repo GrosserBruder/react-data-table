@@ -50,9 +50,11 @@ export type DataTableColumn = {
   id?: string,
   dataField?: string,
   header?: ReactNode,
+  valueGetter?: (value: DataRow) => ReactNode | JSX.Element,
+  comparer?: (first: DataRow, second: DataRow) => -1 | 0 | 1
 }
 
-export type DataItem = {
+export type DataRow = {
   id: number | string,
   [key: string]: any,
 }

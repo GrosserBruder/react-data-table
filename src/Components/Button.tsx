@@ -15,11 +15,11 @@ export default function Button(props: ButtonProps) {
   } = props
   return (
     <LoadingButton
-      {...rest}
-      loading={isLoading}
       loadingPosition={loadingPosition}
       variant={variant}
       disabled={isLoading || disabled}
+      {...rest}
+      loading={isLoading}
     >
       {children}
     </LoadingButton>
