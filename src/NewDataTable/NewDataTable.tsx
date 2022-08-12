@@ -2,6 +2,7 @@ import { Table, TableProps } from "@grossb/react-table"
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
 import { DataItem, DataTableColumn } from "./types";
+import "../styles/DataTableHead.scss"
 
 export type NewDataTableProps = {
   tableProps?: TableProps,

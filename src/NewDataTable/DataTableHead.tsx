@@ -1,6 +1,7 @@
 import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
-import { HeadCell } from "../Components/HeadCell";
+import { HeadCellV2 as HeadCell } from "../Components/HeadCell";
+import { FilterContainer } from "./Filter/FilterContainer";
 import { DataTableColumn } from "./types";
 
 export type DataTableHeadProps = {
@@ -11,8 +12,11 @@ function DataTableHead(props: DataTableHeadProps) {
   const { columns } = props
 
   const getCell = useCallback((column: DataTableColumn) => {
-    return <HeadCell key={column.id ?? column.dataField}>
-      {column.header}
+    return <HeadCell
+      key={column.id ?? column.dataField}
+    >
+      <div className="head-cell__title">{column.header}</div>
+      <FilterContainer />
     </HeadCell>
   }, [])
 
@@ -28,7 +32,7 @@ function DataTableHead(props: DataTableHeadProps) {
 
   const headRows = useMemo(getRows, [getRows])
 
-  return <Head>
+  return <Head className="data-table-head">
     {headRows}
   </Head>
 }
