@@ -1,30 +1,26 @@
-import { Cell, Head, Row, Table, TableProps } from "@grossb/react-table"
-import DataTableApiContext from "../Context/DataTableApiContext/DataTableApiContextProvider";
+import { Table, TableProps } from "@grossb/react-table"
 import DataTableBodyRowsContextProvider from "../Context/DataTableContext/DataTableBodyRowsContextProvider";
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
-import { useDataTableProps } from "./hooks/useDataTableProps";
-import { DataTableBodyRow, DataTableHeadRow } from "./types";
+import { DataTableBodyRow, DataTableColumn, DataTableHeadRow } from "./types";
 
 export type NewDataTableProps = {
   headRows?: Array<DataTableHeadRow>,
   bodyRows?: Array<DataTableBodyRow>
   tableProps?: TableProps,
+  columns: Array<DataTableColumn>
+  data?: Array<any>
 }
 
 function NewDataTable(props: NewDataTableProps) {
-  const { tableProps, headRows } = props
-
-  const processedProps = useDataTableProps(props)
+  const { tableProps, columns, data } = props
 
   return <div>
     <DataTableBodyRowsContextProvider bodyRows={props.bodyRows}>
-      <DataTableApiContext props={processedProps}>
-        <Table {...tableProps}>
-          <DataTableHead rows={headRows} />
-          <DataTableBody />
-        </Table>
-      </DataTableApiContext>
+      <Table {...tableProps}>
+        <DataTableHead columns={columns} />
+        <DataTableBody columns={columns} data={data} />
+      </Table>
     </DataTableBodyRowsContextProvider>
   </div>
 }

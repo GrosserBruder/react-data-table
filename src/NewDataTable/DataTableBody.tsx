@@ -1,56 +1,44 @@
 import { Body, Cell, Row } from "@grossb/react-table"
-import { memo, useCallback } from "react";
-import useDataTableApiContext from "../Context/DataTableApiContext/useDataTableApiContext";
-import useDataTableBodyRowsContext from "../Context/DataTableContext/useDataTableBodyRowsContext";
-import { DataTableBodyCell, DataTableBodyRow } from "./types";
+import { memo, useCallback, useMemo } from "react";
+import { DataTableBodyRow, DataTableColumn } from "./types";
 
-function DataTableBody() {
-  const bodyRowsContext = useDataTableBodyRowsContext()
-  const apiContext = useDataTableApiContext()
+export type DataTableBodyProps = {
+  renderRow?: (row: DataTableBodyRow) => JSX.Element
+  onRowClick?: (event: any, row: DataTableBodyRow) => void
+  columns: Array<DataTableColumn>
+  data?: Array<any>
+}
 
-  const onRowClick = useCallback(() => { }, [])
-  const onCheckboxClick = useCallback(() => { }, [])
-  const renderBodyCellValue = useCallback((value: any) => value, [])
+function DataTableBody(props: DataTableBodyProps) {
+  const { columns, data } = props;
 
-  // const onRowClick = (event: any) => {
-  //   onRowClickProps?.(row)
-  //   selectable && !disableSetCheckboxAfterRowClick && onBodyCheckboxClick(row)
-  // }
+  const getCell = useCallback((dataItem: any, column: DataTableColumn) => {
+    if (!column.dataField) return <Cell />
 
-  // const onCheckboxClick = (event: any) => {
-  //   event.stopPropagation();
-  //   onBodyCheckboxClick(row)
-  // }
-
-  const getBodyCell = useCallback((bodyLineCell: DataTableBodyCell) => {
-    return <Cell
-      key={bodyLineCell.id}
-      {...bodyLineCell.config}
-    >
-      {
-        bodyLineCell.render
-          ? bodyLineCell.render?.(bodyLineCell)
-          : renderBodyCellValue(bodyLineCell.value)
-      }
+    return <Cell key={column.id ?? column.dataField}>
+      {dataItem[column.dataField]}
     </Cell>
   }, [])
 
-  const getRow = useCallback((row: DataTableBodyRow) => {
-    const RowComponent = row.render || Row
+  const getCells = useCallback((dataItem: any) => {
+    return columns.map((column) => getCell(dataItem, column))
+  }, [columns, getCell])
 
-    return <RowComponent key={row.id} {...row.config} onClick={apiContext.onRowClick}>
-      {/* {selectable && <Cell className="cell__select">
-        <Checkbox
-          checked={selectRowsHook.isRowSelected(row)}
-          onClick={onCheckboxClick}
-        />
-      </Cell>} */}
-      {row.cells?.map(getBodyCell)}
-    </RowComponent >
+  const getRows = useCallback(() => {
+    if (data?.length === 0) {
+      return <Row>
+        <Cell colSpan={columns.length}>
+          Список пуст
+        </Cell>
+      </Row>
+    }
 
-  }, [onRowClick])
+    return data?.map((dataItem) => <Row key={dataItem.id}>
+      {getCells(dataItem)}
+    </Row>)
+  }, [data, columns.length, getCells])
 
-  const bodyRows = bodyRowsContext.bodyRows.map(getRow)
+  const bodyRows = useMemo(getRows, [data, getRows])
 
   return <Body>
     {bodyRows}

@@ -1,4 +1,5 @@
 import { CellProps, RowProps, TableProps } from "@grossb/react-table"
+import { ReactNode } from "react"
 import { HeadCellProps } from "../Components"
 
 export type DataTableCell = {
@@ -40,7 +41,13 @@ export type ProcessedDataTableProps = {
 
 export type DataTableApi = {
   onSelect?: (row: DataTableBodyRow, isSelected: boolean) => void,
-  onBodyCheckboxClick: (row: DataTableBodyRow) => void,
-  onRowClick: (event: any, row: DataTableBodyRow) => void,
-  onCheckboxClick: (event: any, row: DataTableBodyRow) => void,
+  onBodyCheckboxClick?: (row: DataTableBodyRow) => void,
+  onRowClick?: (event: any, row: DataTableBodyRow) => void,
+  onCheckboxClick?: (event: any, row: DataTableBodyRow) => void,
+}
+
+export type DataTableColumn = {
+  id?: string,
+  dataField?: string,
+  header?: ReactNode,
 }
