@@ -6,8 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import classnames from "classnames";
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import FilterProvider from "../Context/FilterProvider";
-import useDataTableContext from "../Context/useDataTableBodyRowsContext";
+import useDataTableContext from "../Context/DataTableContext/useDataTableBodyRowsContext";
+import FilterProvider from "../Context/FilterContext/FilterProvider";
 import { DataTableColumn } from "../types";
 
 export type FilterContainer = {

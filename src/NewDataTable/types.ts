@@ -1,7 +1,6 @@
 import { CellProps, RowProps, TableProps } from "@grossb/react-table"
 import { ReactNode } from "react"
 import { HeadCellProps } from "../Components"
-import { ColumnFilter } from "./Context/useFilter"
 
 export type DataTableCell = {
   id: string | number,
@@ -45,6 +44,11 @@ export type DataTableApi = {
   onBodyCheckboxClick?: (row: DataTableBodyRow) => void,
   onRowClick?: (event: any, row: DataTableBodyRow) => void,
   onCheckboxClick?: (event: any, row: DataTableBodyRow) => void,
+}
+
+export type ColumnFilter = {
+  search?: string,
+  [key: string]: any,
 }
 
 export type DataTableColumn = {

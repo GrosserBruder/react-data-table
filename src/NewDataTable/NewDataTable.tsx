@@ -3,9 +3,9 @@ import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
 import { DataRow, DataTableColumn } from "./types";
 import "../styles/DataTableHead.scss"
-import DataTableProvider from "./Context/DataTableProvider";
-import useDataTableContext from "./Context/useDataTableBodyRowsContext";
-import { ReactNode, useMemo } from "react";
+import DataTableProvider from "./Context/DataTableContext/DataTableProvider";
+import { useMemo } from "react";
+import useDataTableContext from "./Context/DataTableContext/useDataTableBodyRowsContext";
 
 export type NewDataTableProps = {
   tableProps?: TableProps,

@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import { DataRow, DataTableColumn } from "../types";
+import { DataRow, DataTableColumn } from "../../types";
 
 export type UseSortResult = {
   sortFields: Map<string, SORT_STRATEGY>;

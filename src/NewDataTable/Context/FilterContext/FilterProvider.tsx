@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useCallback } from "react";
-import { DataTableColumn } from "../types";
+import { DataTableColumn } from "../../types";
 
 export type FilterContextType = {
   column?: DataTableColumn

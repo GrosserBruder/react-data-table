@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useCallback } from "react";
-import { DataRow, DataTableColumn } from "../types";
+import { DataRow, DataTableColumn } from "../../types";
 import useFilter, { UseFilterResult } from "./useFilter";
 import useSort, { UseSortResult } from "./useSort";
 

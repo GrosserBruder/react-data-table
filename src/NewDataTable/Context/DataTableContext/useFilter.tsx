@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import { DataRow, DataTableColumn } from "../types";
+import { ColumnFilter, DataRow, DataTableColumn } from "../../types";
 
 export type UseFilterResult = {
   filters: Map<string, any>
@@ -7,11 +7,6 @@ export type UseFilterResult = {
   removeFilter: (fieldKey: string) => void
   filterDataRows: (data: Array<DataRow>, columns: Array<DataTableColumn>) => DataRow[]
   getFilterByFieldKey: (fieldKey: string) => any
-}
-
-export type ColumnFilter = {
-  search?: string,
-  [key: string]: any,
 }
 
 export default function useFilter(): UseFilterResult {
