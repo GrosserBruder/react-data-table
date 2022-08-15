@@ -1,31 +1,30 @@
 import { createContext, ReactNode, useCallback } from "react";
-import { DataTableColumn } from "../../types";
+import { ColumnFilter, DataTableColumn } from "../../types";
 
 export type FilterContextType = {
-  column?: DataTableColumn
-  onAccepte?: () => void
-  onReset?: () => void
+  column: DataTableColumn
+  onAccepte: (fieldKey: string, filter: ColumnFilter) => void
+  onReset: (fieldKey: string) => void
 }
 
 export type FilterProviderProps = {
   children?: ReactNode,
-  column: DataTableColumn
-  onAccepte: () => void
-  onReset: () => void
+  column: DataTableColumn,
+  onAccepte: (fieldKey: string, filter: ColumnFilter) => void,
+  onReset: (fieldKey: string) => void,
+  filters: ColumnFilter
 }
 
 export const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
 export default function FilterProvider(props: FilterProviderProps) {
-  const { column, children } = props;
-
-  const onAccepte = () => void 0
-  const onReset = () => void 0
+  const { column, children, onAccepte, onReset, filters } = props;
 
   const value = {
     column,
     onAccepte,
     onReset,
+    filters,
   }
 
   return <FilterContext.Provider value={value}>

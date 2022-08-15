@@ -62,17 +62,15 @@ export function FilterContainer(props: FilterContainer) {
 
   const popperClassName = classnames("data-table__filter-container__popper", className)
 
-  const onAccepte = useCallback(() => { }, [])
-  const onReset = useCallback(() => { }, [])
-
   // в children находиться форма для установки фильтров
   // если ее нет, то не выводим кнопку для открытия формы
   if (!children) return <></>
 
   return <FilterProvider
     column={column}
-    onAccepte={onAccepte}
-    onReset={onReset}
+    onAccepte={dataTableContext.setFilter}
+    onReset={dataTableContext.removeFilter}
+    filters={dataTableContext.getFilterByFieldKey(column.id ?? column.dataField)}
   >
     <div className="filter-container">
 

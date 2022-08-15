@@ -30,12 +30,12 @@ export default function DataTableProvider(props: DataTableProviderProps) {
 
   const filterDataRows = useCallback((data: Array<DataRow>) => {
     return filterHook.filterDataRows(data, columns)
-  }, [sortHook.sortDataRows, columns])
+  }, [filterHook.filterDataRows, columns])
 
   const sortAndFilterDataRows = useCallback((data: Array<DataRow>) => {
     const filterDataRows = filterHook.filterDataRows(data, columns)
     return sortHook.sortDataRows(filterDataRows, columns)
-  }, [])
+  }, [filterDataRows, sortDataRows, columns])
 
   const value = {
     ...sortHook,

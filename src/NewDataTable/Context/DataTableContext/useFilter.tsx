@@ -6,14 +6,15 @@ export type UseFilterResult = {
   setFilter: (fieldKey: string, filter: ColumnFilter) => void
   removeFilter: (fieldKey: string) => void
   filterDataRows: (data: Array<DataRow>, columns: Array<DataTableColumn>) => DataRow[]
-  getFilterByFieldKey: (fieldKey: string) => any
+  getFilterByFieldKey: (fieldKey?: string) => any
 }
 
 export default function useFilter(): UseFilterResult {
   const [filters, setFilters] = useState<Map<string, any>>(new Map<string, ColumnFilter>())
 
   const setFilter = useCallback((fieldKey: string, filter: ColumnFilter) => {
-    setFilters(filters.set(fieldKey, filter))
+    const map = new Map(filters.set(fieldKey, filter))
+    setFilters(map)
   }, [setFilters])
 
   const removeFilter = useCallback((fieldKey: string) => {
@@ -33,7 +34,9 @@ export default function useFilter(): UseFilterResult {
     })
   }, [filters])
 
-  const getFilterByFieldKey = (fieldKey: string) => {
+  const getFilterByFieldKey = (fieldKey?: string) => {
+    if (fieldKey === undefined) return undefined
+
     return filters.get(fieldKey)
   }
 
@@ -47,5 +50,11 @@ export default function useFilter(): UseFilterResult {
     return data.filter((row) => filterer(row, filteredColumns))
   }, [filters])
 
-  return { filters, setFilter, removeFilter, filterDataRows, getFilterByFieldKey }
+  return {
+    filters,
+    setFilter,
+    removeFilter,
+    filterDataRows,
+    getFilterByFieldKey
+  }
 }
