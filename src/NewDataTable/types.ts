@@ -1,6 +1,7 @@
 import { CellProps, RowProps, TableProps } from "@grossb/react-table"
 import { ReactNode } from "react"
 import { HeadCellProps } from "../Components"
+import { ColumnFilter } from "./Context/useFilter"
 
 export type DataTableCell = {
   id: string | number,
@@ -52,6 +53,7 @@ export type DataTableColumn = {
   header?: ReactNode,
   valueGetter?: (value: DataRow) => ReactNode | JSX.Element,
   comparer?: (first: DataRow, second: DataRow) => -1 | 0 | 1
+  filter?: (row: DataRow, filter: ColumnFilter) => boolean
 }
 
 export type DataRow = {

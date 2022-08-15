@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { DataTableContext } from "./DataTableProvider";
 
-export default function useDataTableBodyRowsContext() {
+export default function useDataTableContext() {
   const context = useContext(DataTableContext)
 
   if (!context) {

@@ -4,6 +4,8 @@ import DataTableHead from "./DataTableHead";
 import { DataRow, DataTableColumn } from "./types";
 import "../styles/DataTableHead.scss"
 import DataTableProvider from "./Context/DataTableProvider";
+import useDataTableContext from "./Context/useDataTableBodyRowsContext";
+import { useMemo } from "react";
 
 export type NewDataTableProps = {
   tableProps?: TableProps,
@@ -11,19 +13,27 @@ export type NewDataTableProps = {
   data?: Array<DataRow>
 }
 
-function NewDataTable(props: NewDataTableProps) {
+function NewDataTableRaw(props: NewDataTableProps) {
   const { tableProps, columns, data } = props
 
-  // подумать как получить состояние из DataTableProvider
+  const dataTableContext = useDataTableContext()
+
+  const bodyData = useMemo(() => {
+    return dataTableContext.sortAndFilterDataRows(data ?? [])
+  }, [data, dataTableContext.sortAndFilterDataRows])
 
   return <div>
-    <DataTableProvider columns={columns}>
-      <Table {...tableProps}>
-        <DataTableHead columns={columns} />
-        <DataTableBody columns={columns} data={data} />
-      </Table>
-    </DataTableProvider>
+    <Table {...tableProps}>
+      <DataTableHead columns={columns} />
+      <DataTableBody columns={columns} data={bodyData} />
+    </Table>
   </div>
+}
+
+function NewDataTable(props: NewDataTableProps) {
+  return <DataTableProvider columns={props.columns}>
+    <NewDataTableRaw {...props} />
+  </DataTableProvider>
 }
 
 export default NewDataTable;

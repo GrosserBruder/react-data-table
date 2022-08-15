@@ -1,8 +1,15 @@
 import { createContext, ReactNode, useCallback } from "react";
 import { DataRow, DataTableColumn } from "../types";
+import useFilter, { UseFilterResult } from "./useFilter";
 import useSort, { UseSortResult } from "./useSort";
 
-export type DataTableContextType = UseSortResult
+export type DataTableContextType = Omit<UseSortResult, "sortDataRows">
+  & Omit<UseFilterResult, "filterDataRows">
+  & {
+    sortDataRows: (data: Array<DataRow>) => Array<DataRow>
+    filterDataRows: (data: Array<DataRow>) => Array<DataRow>
+    sortAndFilterDataRows: (data: Array<DataRow>) => Array<DataRow>
+  }
 
 export type DataTableProviderProps = {
   children?: ReactNode,
@@ -15,35 +22,27 @@ export default function DataTableProvider(props: DataTableProviderProps) {
   const { columns, children } = props;
 
   const sortHook = useSort();
-
-  const comparer = useCallback((first: DataRow, second: DataRow, columns: Array<DataTableColumn>) => {
-    for (let index = 0; index < columns.length; index++) {
-      const column = columns[index];
-
-      const comparerResult = column.comparer?.(first, second)
-
-      if (comparerResult !== undefined && comparerResult !== 0) {
-        // добавить стратегию сортировки
-        return comparerResult
-      }
-    }
-
-    return 0;
-  }, [])
+  const filterHook = useFilter();
 
   const sortDataRows = useCallback((data: Array<DataRow>) => {
-    const filteredColumns = columns.filter((x) => {
-      if (x.id === undefined) return false;
+    return sortHook.sortDataRows(data, columns)
+  }, [sortHook.sortDataRows, columns])
 
-      return sortHook.sortFields.includes(x.id)
-    })
+  const filterDataRows = useCallback((data: Array<DataRow>) => {
+    return filterHook.filterDataRows(data, columns)
+  }, [sortHook.sortDataRows, columns])
 
-    data.sort((first, second) => comparer(first, second, filteredColumns))
-  }, [sortHook.sortFields, columns])
+  const sortAndFilterDataRows = useCallback((data: Array<DataRow>) => {
+    const filterDataRows = filterHook.filterDataRows(data, columns)
+    return sortHook.sortDataRows(filterDataRows, columns)
+  }, [])
 
   const value = {
     ...sortHook,
+    ...filterHook,
     sortDataRows,
+    filterDataRows,
+    sortAndFilterDataRows,
   }
 
   return <DataTableContext.Provider value={value}>
