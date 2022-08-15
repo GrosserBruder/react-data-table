@@ -16,7 +16,9 @@ function DataTableHead(props: DataTableHeadProps) {
       key={column.id ?? column.dataField}
     >
       <div className="head-cell__title">{column.header}</div>
-      <FilterContainer />
+      <FilterContainer column={column}>
+        {column.filterComponent}
+      </FilterContainer>
     </HeadCell>
   }, [])
 

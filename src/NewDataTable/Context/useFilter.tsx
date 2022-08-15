@@ -6,6 +6,7 @@ export type UseFilterResult = {
   setFilter: (fieldKey: string, filter: ColumnFilter) => void
   removeFilter: (fieldKey: string) => void
   filterDataRows: (data: Array<DataRow>, columns: Array<DataTableColumn>) => DataRow[]
+  getFilterByFieldKey: (fieldKey: string) => any
 }
 
 export type ColumnFilter = {
@@ -28,14 +29,18 @@ export default function useFilter(): UseFilterResult {
 
   const filterer = useCallback((row: DataRow, columns: Array<DataTableColumn>) => {
     return columns.every((column) => {
-      if (column.filter === undefined) return true;
+      if (column.rowFilter === undefined) return true;
       if (column.id ?? column.dataField === undefined) return true;
 
       const filterColumm = filters.get(column.id ?? column.dataField)
 
-      return column.filter?.(row, filterColumm)
+      return column.rowFilter?.(row, filterColumm)
     })
   }, [filters])
+
+  const getFilterByFieldKey = (fieldKey: string) => {
+    return filters.get(fieldKey)
+  }
 
   const filterDataRows = useCallback((data: Array<DataRow>, columns: Array<DataTableColumn>) => {
     const filteredColumns = columns.filter((x) => {
@@ -47,5 +52,5 @@ export default function useFilter(): UseFilterResult {
     return data.filter((row) => filterer(row, filteredColumns))
   }, [filters])
 
-  return { filters, setFilter, removeFilter, filterDataRows }
+  return { filters, setFilter, removeFilter, filterDataRows, getFilterByFieldKey }
 }

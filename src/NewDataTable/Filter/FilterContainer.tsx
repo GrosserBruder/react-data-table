@@ -5,20 +5,31 @@ import ClickAwayListener from "@mui/material/ClickAwayListener";
 import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import classnames from "classnames";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { FilterWrapper } from "./FilterWrapper";
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import FilterProvider from "../Context/FilterProvider";
+import useDataTableContext from "../Context/useDataTableBodyRowsContext";
+import { DataTableColumn } from "../types";
 
 export type FilterContainer = {
   className?: string
   children?: ReactNode
   filter?: ReactNode
+  column: DataTableColumn,
 }
 
 export function FilterContainer(props: FilterContainer) {
-  const { children, className } = props;
+  const { children, className, column } = props;
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const filterButtonRef = useRef(null)
+
+  const dataTableContext = useDataTableContext()
+
+  const isFiltersInstalled = useMemo(() => {
+    if (column?.id ?? column?.dataField === undefined) return false;
+
+    return dataTableContext.filters.has(column.id ?? column.dataField)
+  }, [column, dataTableContext.filters])
 
   const togglePopover = useCallback(() => {
     setIsPopoverOpen((x) => !x)
@@ -51,37 +62,48 @@ export function FilterContainer(props: FilterContainer) {
 
   const popperClassName = classnames("data-table__filter-container__popper", className)
 
-  return <div className="filter-container">
-    <Badge
-      color="secondary"
-      badgeContent={" "}
-      // invisible={!isFiltersInstalled}
-      overlap="circular"
-      variant="dot"
-    >
-      <IconButton
-        ref={filterButtonRef}
-        onClick={togglePopover}
-      >
-        <MoreVert />
-      </IconButton>
-    </Badge>
+  const onAccepte = useCallback(() => { }, [])
+  const onReset = useCallback(() => { }, [])
 
-    <Popper
-      className={popperClassName}
-      disablePortal
-      open={isPopoverOpen}
-      anchorEl={filterButtonRef?.current}
-      placement="bottom-end"
-    >
-      <ClickAwayListener onClickAway={onClickAwayListener}>
-        <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
-          <FilterWrapper>
+  // в children находиться форма для установки фильтров
+  // если ее нет, то не выводим кнопку для открытия формы
+  if (!children) return <></>
+
+  return <FilterProvider
+    column={column}
+    onAccepte={onAccepte}
+    onReset={onReset}
+  >
+    <div className="filter-container">
+
+      <Badge
+        color="secondary"
+        badgeContent={" "}
+        invisible={!isFiltersInstalled}
+        overlap="circular"
+        variant="dot"
+      >
+        <IconButton
+          ref={filterButtonRef}
+          onClick={togglePopover}
+        >
+          <MoreVert />
+        </IconButton>
+      </Badge>
+
+      <Popper
+        className={popperClassName}
+        disablePortal
+        open={isPopoverOpen}
+        anchorEl={filterButtonRef?.current}
+        placement="bottom-end"
+      >
+        <ClickAwayListener onClickAway={onClickAwayListener}>
+          <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
             {children}
-            hello
-          </FilterWrapper>
-        </Box>
-      </ClickAwayListener>
-    </Popper>
-  </div>
+          </Box>
+        </ClickAwayListener>
+      </Popper>
+    </div>
+  </FilterProvider>
 }

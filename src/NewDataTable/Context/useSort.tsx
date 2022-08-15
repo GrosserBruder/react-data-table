@@ -34,7 +34,7 @@ export default function useSort(): UseSortResult {
         continue;
       };
 
-      const comparerResult = column.comparer?.(first, second)
+      const comparerResult = column.rowComparer?.(first, second)
 
       if (comparerResult !== undefined && comparerResult !== 0) {
 
