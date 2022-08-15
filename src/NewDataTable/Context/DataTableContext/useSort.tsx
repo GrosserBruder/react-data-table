@@ -17,7 +17,8 @@ export default function useSort(): UseSortResult {
   const [sortFields, setSortFields] = useState<Map<string, SORT_STRATEGY>>(new Map<string, SORT_STRATEGY>())
 
   const addFieldToSort = useCallback((fieldKey: string, sortStrategy: SORT_STRATEGY) => {
-    setSortFields(sortFields.set(fieldKey, sortStrategy))
+    const map = new Map(sortFields.set(fieldKey, sortStrategy))
+    setSortFields(map)
   }, [setSortFields])
 
   const removeFieldFromSort = useCallback((fieldKey: string) => {
