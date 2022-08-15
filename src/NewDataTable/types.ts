@@ -57,7 +57,7 @@ export type DataTableColumn = {
   header?: ReactNode,
   valueGetter?: (value: DataRow) => ReactNode | JSX.Element,
   rowComparer?: (first: DataRow, second: DataRow) => -1 | 0 | 1
-  rowFilter?: (row: DataRow, filter: ColumnFilter) => boolean
+  rowFilter?: (row: DataRow, filter?: ColumnFilter) => boolean
   filterComponent?: ReactNode
 }
 
