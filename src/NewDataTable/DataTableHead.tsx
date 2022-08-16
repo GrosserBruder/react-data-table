@@ -2,17 +2,19 @@ import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
 import { SortStrategyIcon } from "../Components";
 import { HeadCellV2 as HeadCell } from "../Components/HeadCell";
+import { SelectedAllCheckbox } from "./Components";
 import useDataTableContext from "./Context/DataTableContext/useDataTableBodyRowsContext";
 import { SORT_STRATEGY } from "./Context/DataTableContext/useSort";
 import { FilterContainer } from "./Filter/FilterContainer";
-import { DataTableColumn } from "./types";
+import { DataRow, DataTableColumn } from "./types";
 
 export type DataTableHeadProps = {
   columns: Array<DataTableColumn>
+  data?: Array<DataRow>
 }
 
 function DataTableHead(props: DataTableHeadProps) {
-  const { columns } = props
+  const { columns, data } = props
 
   const dataTableContext = useDataTableContext()
 
@@ -49,7 +51,9 @@ function DataTableHead(props: DataTableHeadProps) {
   }, [onHeadCellClick])
 
   const getCells = useCallback(() => {
-    return columns.map((column) => getCell(column))
+    const cells = columns.map((column) => getCell(column))
+    return [<SelectedAllCheckbox data={data} key="select-all-checkbox" />, cells]
+
   }, [columns, getCell])
 
   const getRows = useCallback(() => {

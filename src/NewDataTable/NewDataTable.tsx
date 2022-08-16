@@ -6,6 +6,7 @@ import "../styles/DataTableHead.scss"
 import DataTableProvider from "./Context/DataTableContext/DataTableProvider";
 import { useMemo } from "react";
 import useDataTableContext from "./Context/DataTableContext/useDataTableBodyRowsContext";
+import SelectedRowsProvider from "./Context/SelectableContext/SelectedRowsProvider";
 
 export type NewDataTableProps = {
   tableProps?: TableProps,
@@ -18,21 +19,23 @@ function NewDataTableRaw(props: NewDataTableProps) {
 
   const dataTableContext = useDataTableContext()
 
-  const bodyData = useMemo(() => {
+  const sortedAndFilteredData = useMemo(() => {
     return dataTableContext.sortAndFilterDataRows(data ?? [])
   }, [data, dataTableContext.sortAndFilterDataRows])
 
   return <div>
     <Table {...tableProps}>
-      <DataTableHead columns={columns} />
-      <DataTableBody columns={columns} data={bodyData} />
+      <DataTableHead columns={columns} data={sortedAndFilteredData} />
+      <DataTableBody columns={columns} data={sortedAndFilteredData} />
     </Table>
   </div>
 }
 
 function NewDataTable(props: NewDataTableProps) {
   return <DataTableProvider columns={props.columns}>
-    <NewDataTableRaw {...props} />
+    <SelectedRowsProvider dataRowsLength={props.data?.length}>
+      <NewDataTableRaw {...props} />
+    </SelectedRowsProvider>
   </DataTableProvider>
 }
 

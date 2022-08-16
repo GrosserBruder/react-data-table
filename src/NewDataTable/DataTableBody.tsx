@@ -1,5 +1,6 @@
 import { Body, Cell, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
+import { SelectedCheckbox } from "./Components";
 import { DataRow, DataTableBodyRow, DataTableColumn } from "./types";
 
 export type DataTableBodyProps = {
@@ -25,7 +26,8 @@ function DataTableBody(props: DataTableBodyProps) {
   }, [])
 
   const getCells = useCallback((dataRow: DataRow) => {
-    return columns.map((column) => getCell(dataRow, column))
+    const cells = columns.map((column) => getCell(dataRow, column))
+    return [<SelectedCheckbox row={dataRow} key="select-checkbox" />, cells]
   }, [columns, getCell])
 
   const getRows = useCallback(() => {
