@@ -66,7 +66,7 @@ export default function SelectedRowsProvider(props: SelectedRowsProviderProps) {
 
     setSelectedRowsState(newSelectedRows)
     checkSelectAllStatus(newSelectedRows)
-  }, [setSelectedRowsState])
+  }, [selectedRows, setSelectedRowsState])
 
   const resetSelectedBox = () => {
     setSelectedRowsState([])
