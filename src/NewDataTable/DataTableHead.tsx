@@ -43,7 +43,7 @@ function DataTableHead(props: DataTableHeadProps) {
 
     return <HeadCell
       key={column.id ?? column.dataField}
-      onClick={(event) => onHeadCellClick(event, column)}
+      onClick={sortable ? (event) => onHeadCellClick(event, column) : undefined}
     >
       <div className="head-cell__title">{column.header}</div>
       {(sortable || column.sortable) && <SortStrategyIcon sortStrategy={currentSort} />}
