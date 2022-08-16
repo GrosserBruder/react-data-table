@@ -8,10 +8,11 @@ export type DataTableBodyProps = {
   onRowClick?: (event: any, row: DataTableBodyRow) => void
   columns: Array<DataTableColumn>
   data?: Array<DataRow>
+  selectable?: boolean
 }
 
 function DataTableBody(props: DataTableBodyProps) {
-  const { columns, data } = props;
+  const { columns, data, selectable } = props;
 
   const getCell = useCallback((dataRow: DataRow, column: DataTableColumn) => {
     if (!column.dataField) return <Cell />
@@ -27,13 +28,21 @@ function DataTableBody(props: DataTableBodyProps) {
 
   const getCells = useCallback((dataRow: DataRow) => {
     const cells = columns.map((column) => getCell(dataRow, column))
-    return [<SelectedCheckbox row={dataRow} key="select-checkbox" />, cells]
-  }, [columns, getCell])
+
+    if (selectable) {
+      return [<SelectedCheckbox row={dataRow} key="select-checkbox" />, cells]
+    }
+
+    return cells
+  }, [columns, getCell, selectable])
 
   const getRows = useCallback(() => {
     if (data?.length === 0) {
+
+      const colspan = selectable ? columns.length + 1 : columns.length
+
       return <Row>
-        <Cell colSpan={columns.length}>
+        <Cell colSpan={colspan}>
           Список пуст
         </Cell>
       </Row>
@@ -42,7 +51,7 @@ function DataTableBody(props: DataTableBodyProps) {
     return data?.map((dataRow) => <Row key={dataRow.id}>
       {getCells(dataRow)}
     </Row>)
-  }, [data, columns.length, getCells])
+  }, [data, columns.length, getCells, selectable])
 
   const bodyRows = useMemo(getRows, [data, getRows])
 

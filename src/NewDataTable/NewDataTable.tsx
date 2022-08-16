@@ -7,15 +7,22 @@ import DataTableProvider from "./Context/DataTableContext/DataTableProvider";
 import { useMemo } from "react";
 import useDataTableContext from "./Context/DataTableContext/useDataTableBodyRowsContext";
 import SelectedRowsProvider from "./Context/SelectableContext/SelectedRowsProvider";
+import { useDataTableProps } from "./hooks/useDataTableProps";
 
 export type NewDataTableProps = {
   tableProps?: TableProps,
   columns: Array<DataTableColumn>
   data?: Array<DataRow>
+  filterable?: boolean
+  sortable?: boolean
+  selectable?: boolean
 }
 
 function NewDataTableRaw(props: NewDataTableProps) {
-  const { tableProps, columns, data } = props
+
+  const processedProps = useDataTableProps(props)
+
+  const { tableProps, columns, data, filterable, sortable, selectable } = processedProps
 
   const dataTableContext = useDataTableContext()
 
@@ -25,8 +32,18 @@ function NewDataTableRaw(props: NewDataTableProps) {
 
   return <div>
     <Table {...tableProps}>
-      <DataTableHead columns={columns} data={sortedAndFilteredData} />
-      <DataTableBody columns={columns} data={sortedAndFilteredData} />
+      <DataTableHead
+        columns={columns}
+        data={sortedAndFilteredData}
+        filterable={filterable}
+        sortable={sortable}
+        selectable={selectable}
+      />
+      <DataTableBody
+        columns={columns}
+        data={sortedAndFilteredData}
+        selectable={selectable}
+      />
     </Table>
   </div>
 }

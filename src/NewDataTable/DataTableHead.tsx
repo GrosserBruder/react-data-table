@@ -11,10 +11,13 @@ import { DataRow, DataTableColumn } from "./types";
 export type DataTableHeadProps = {
   columns: Array<DataTableColumn>
   data?: Array<DataRow>
+  filterable?: boolean
+  sortable?: boolean
+  selectable?: boolean
 }
 
 function DataTableHead(props: DataTableHeadProps) {
-  const { columns, data } = props
+  const { columns, data, filterable, sortable, selectable } = props
 
   const dataTableContext = useDataTableContext()
 
@@ -43,18 +46,22 @@ function DataTableHead(props: DataTableHeadProps) {
       onClick={(event) => onHeadCellClick(event, column)}
     >
       <div className="head-cell__title">{column.header}</div>
-      <SortStrategyIcon sortStrategy={currentSort} />
-      <FilterContainer column={column}>
+      {(sortable || column.sortable) && <SortStrategyIcon sortStrategy={currentSort} />}
+      {(filterable || column.filterable) && <FilterContainer column={column}>
         {column.filterComponent}
-      </FilterContainer>
+      </FilterContainer>}
     </HeadCell>
   }, [onHeadCellClick])
 
   const getCells = useCallback(() => {
     const cells = columns.map((column) => getCell(column))
-    return [<SelectedAllCheckbox data={data} key="select-all-checkbox" />, cells]
 
-  }, [columns, getCell])
+    if (selectable) {
+      return [<SelectedAllCheckbox data={data} key="select-all-checkbox" />, cells]
+    }
+
+    return cells
+  }, [columns, getCell, selectable])
 
   const getRows = useCallback(() => {
     return <Row>
