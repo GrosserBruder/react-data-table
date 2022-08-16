@@ -1,7 +1,7 @@
-import { Body, Cell, Row } from "@grossb/react-table"
+import { Body, Cell, CellProps, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
 import { SelectedCheckbox } from "./Components";
-import { DataRow, DataTableBodyRow, DataTableColumn } from "./types";
+import { DataRow, DataTableBodyRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
 
 export type DataTableBodyProps = {
   renderRow?: (row: DataTableBodyRow) => JSX.Element
@@ -9,10 +9,12 @@ export type DataTableBodyProps = {
   columns: Array<DataTableColumn>
   data?: Array<DataRow>
   selectable?: boolean
+  rowProps?: (dataRow: DataRow) => RowPropsWithoutChildren | undefined
+  cellProps?: (column: DataTableColumn) => CellProps | undefined
 }
 
 function DataTableBody(props: DataTableBodyProps) {
-  const { columns, data, selectable } = props;
+  const { columns, data, selectable, rowProps, cellProps } = props;
 
   const getCell = useCallback((dataRow: DataRow, column: DataTableColumn) => {
     if (!column.dataField) return <Cell />
@@ -21,7 +23,7 @@ function DataTableBody(props: DataTableBodyProps) {
       ? column.valueGetter(dataRow)
       : dataRow[column.dataField]
 
-    return <Cell key={column.id ?? column.dataField}>
+    return <Cell key={column.id ?? column.dataField} {...cellProps?.(column)}>
       {value}
     </Cell>
   }, [])
@@ -48,7 +50,7 @@ function DataTableBody(props: DataTableBodyProps) {
       </Row>
     }
 
-    return data?.map((dataRow) => <Row key={dataRow.id}>
+    return data?.map((dataRow) => <Row key={dataRow.id} {...rowProps?.(dataRow)}>
       {getCells(dataRow)}
     </Row>)
   }, [data, columns.length, getCells, selectable])

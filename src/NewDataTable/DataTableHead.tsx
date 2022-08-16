@@ -1,7 +1,7 @@
 import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
 import { SortStrategyIcon } from "../Components";
-import { HeadCellV2 as HeadCell } from "../Components/HeadCell";
+import { HeadCellV2 as HeadCell, HeadCellProps } from "../Components/HeadCell";
 import { SelectedAllCheckbox } from "./Components";
 import useDataTableContext from "./Context/DataTableContext/useDataTableBodyRowsContext";
 import { SORT_STRATEGY } from "./Context/DataTableContext/useSort";
@@ -14,10 +14,11 @@ export type DataTableHeadProps = {
   filterable?: boolean
   sortable?: boolean
   selectable?: boolean
+  cellProps?: (column: DataTableColumn) => HeadCellProps | undefined
 }
 
 function DataTableHead(props: DataTableHeadProps) {
-  const { columns, data, filterable, sortable, selectable } = props
+  const { columns, data, filterable, sortable, selectable, cellProps } = props
 
   const dataTableContext = useDataTableContext()
 
@@ -43,6 +44,7 @@ function DataTableHead(props: DataTableHeadProps) {
 
     return <HeadCell
       key={column.id ?? column.dataField}
+      {...cellProps?.(column)}
       onClick={sortable ? (event) => onHeadCellClick(event, column) : undefined}
     >
       <div className="head-cell__title">{column.header}</div>

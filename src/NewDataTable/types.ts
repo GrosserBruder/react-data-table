@@ -1,6 +1,8 @@
+import { HeadCellProps } from './../Components/HeadCell/HeadCellV2';
 import { CellProps, RowProps, TableProps } from "@grossb/react-table"
-import { ReactNode } from "react"
-import { HeadCellProps } from "../Components"
+import { ReactNode, TdHTMLAttributes } from "react"
+import { DataTableContextType } from './Context/DataTableContext/DataTableProvider';
+import { DataTableHeadProps } from './DataTableHead';
 
 export type DataTableCell = {
   id: string | number,
@@ -61,11 +63,13 @@ export type DataTableColumn = {
   filterComponent?: ReactNode
   filterable?: boolean,
   sortable?: boolean,
-  //ToDo: add htnl attribute for cell
-  //ToDo: add render row component
+  headCellProps?: ((column: DataTableColumn, dataTableContext: DataTableContextType) => HeadCellProps) | HeadCellProps
+  bodyCellProps?: ((column: DataTableColumn, dataTableContext: DataTableContextType) => CellProps) | CellProps
 }
 
 export type DataRow = {
   id: number | string,
   [key: string]: any,
 }
+
+export type RowPropsWithoutChildren = Omit<RowProps, "children">
