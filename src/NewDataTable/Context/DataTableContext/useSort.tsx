@@ -3,8 +3,9 @@ import { DataRow, DataTableColumn } from "../../types";
 
 export type UseSortResult = {
   sortFields: Map<string, SORT_STRATEGY>;
-  addFieldToSort: (fieldKey: string, sortStrategy: SORT_STRATEGY) => void;
-  removeFieldFromSort: (fieldKey: string) => void;
+  setSort: (fieldKey: string, sortStrategy: SORT_STRATEGY) => void;
+  removeSort: (fieldKey: string) => void;
+  removeAllSort: () => void;
   sortDataRows: (data: Array<DataRow>, columns: Array<DataTableColumn>) => Array<DataRow>
 }
 
@@ -16,14 +17,19 @@ export enum SORT_STRATEGY {
 export default function useSort(): UseSortResult {
   const [sortFields, setSortFields] = useState<Map<string, SORT_STRATEGY>>(new Map<string, SORT_STRATEGY>())
 
-  const addFieldToSort = useCallback((fieldKey: string, sortStrategy: SORT_STRATEGY) => {
+  const setSort = useCallback((fieldKey: string, sortStrategy: SORT_STRATEGY) => {
     const map = new Map(sortFields.set(fieldKey, sortStrategy))
     setSortFields(map)
   }, [setSortFields])
 
-  const removeFieldFromSort = useCallback((fieldKey: string) => {
+  const removeSort = useCallback((fieldKey: string) => {
     sortFields.delete(fieldKey)
     const map = new Map(sortFields)
+    setSortFields(map)
+  }, [setSortFields])
+
+  const removeAllSort = useCallback(() => {
+    const map = new Map()
     setSortFields(map)
   }, [setSortFields])
 
@@ -48,7 +54,7 @@ export default function useSort(): UseSortResult {
     }
 
     return 0;
-  }, [])
+  }, [sortFields])
 
   const sortDataRows = useCallback((data: Array<DataRow>, columns: Array<DataTableColumn>) => {
     const filteredColumns = columns.filter((x) => {
@@ -58,7 +64,13 @@ export default function useSort(): UseSortResult {
     })
 
     return data.sort((first, second) => comparer(first, second, filteredColumns))
-  }, [sortFields])
+  }, [sortFields, comparer])
 
-  return { sortDataRows, sortFields, addFieldToSort, removeFieldFromSort }
+  return {
+    sortDataRows,
+    sortFields,
+    setSort,
+    removeSort,
+    removeAllSort,
+  }
 }

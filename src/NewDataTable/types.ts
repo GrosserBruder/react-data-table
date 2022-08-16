@@ -59,6 +59,8 @@ export type DataTableColumn = {
   rowComparer?: (first: DataRow, second: DataRow) => -1 | 0 | 1
   rowFilter?: (row: DataRow, filter?: ColumnFilter) => boolean
   filterComponent?: ReactNode
+  //ToDo: add htnl attribute for cell
+  //ToDo: add render row component
 }
 
 export type DataRow = {

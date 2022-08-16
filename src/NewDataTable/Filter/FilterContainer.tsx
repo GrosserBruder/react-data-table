@@ -31,7 +31,9 @@ export function FilterContainer(props: FilterContainer) {
     return dataTableContext.filters.has(column.id ?? column.dataField)
   }, [column, dataTableContext.filters])
 
-  const togglePopover = useCallback(() => {
+  const togglePopover = useCallback((event: any) => {
+    event.stopPropagation()
+
     setIsPopoverOpen((x) => !x)
   }, [setIsPopoverOpen])
 

@@ -1,10 +1,11 @@
-import { createContext, ReactNode, useCallback } from "react";
+import { createContext, ReactNode } from "react";
 import { ColumnFilter, DataTableColumn } from "../../types";
 
 export type FilterContextType = {
   column: DataTableColumn
   onAccepte: (fieldKey: string, filter: ColumnFilter) => void
   onReset: (fieldKey: string) => void
+  filters: ColumnFilter
 }
 
 export type FilterProviderProps = {

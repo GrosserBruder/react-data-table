@@ -8,6 +8,7 @@ export * from "./SearchField"
 export * from "./SelectList"
 export * from "./TextField"
 export * from "./Toolbar"
+export * from "./SortStrategyIcon"
 
 export { default as Button } from "./Button"
 export type { ButtonProps } from "./Button"

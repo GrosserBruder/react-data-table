@@ -54,7 +54,7 @@ export default function useFilter(): UseFilterResult {
     })
 
     return data.filter((row) => filterer(row, filteredColumns))
-  }, [filters])
+  }, [filters, filterer])
 
   return {
     filters,
