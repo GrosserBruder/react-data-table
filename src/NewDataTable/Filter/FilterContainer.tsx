@@ -7,7 +7,7 @@ import Popper from "@mui/material/Popper";
 import classnames from "classnames";
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useDataTableContext from "../Context/DataTableContext/useDataTableBodyRowsContext";
-import FilterProvider from "../Context/FilterContext/FilterProvider";
+import FilterContainerProvider from "../Context/FilterContainerContext/FilterContainerProvider";
 import { DataTableColumn } from "../types";
 
 export type FilterContainer = {
@@ -68,7 +68,7 @@ export function FilterContainer(props: FilterContainer) {
   // если ее нет, то не выводим кнопку для открытия формы
   if (!children) return <></>
 
-  return <FilterProvider
+  return <FilterContainerProvider
     column={column}
     onAccepte={dataTableContext.setFilter}
     onReset={dataTableContext.removeFilter}
@@ -105,5 +105,5 @@ export function FilterContainer(props: FilterContainer) {
         </ClickAwayListener>
       </Popper>
     </div>
-  </FilterProvider>
+  </FilterContainerProvider>
 }

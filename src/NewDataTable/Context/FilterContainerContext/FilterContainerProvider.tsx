@@ -1,14 +1,14 @@
 import { createContext, ReactNode } from "react";
 import { ColumnFilter, DataTableColumn } from "../../types";
 
-export type FilterContextType = {
+export type FilterContainerContextType = {
   column: DataTableColumn
   onAccepte: (fieldKey: string, filter: ColumnFilter) => void
   onReset: (fieldKey: string) => void
   filters: ColumnFilter
 }
 
-export type FilterProviderProps = {
+export type FilterContainerProviderProps = {
   children?: ReactNode,
   column: DataTableColumn,
   onAccepte: (fieldKey: string, filter: ColumnFilter) => void,
@@ -16,9 +16,9 @@ export type FilterProviderProps = {
   filters: ColumnFilter
 }
 
-export const FilterContext = createContext<FilterContextType | undefined>(undefined);
+export const FilterContainerContext = createContext<FilterContainerContextType | undefined>(undefined);
 
-export default function FilterProvider(props: FilterProviderProps) {
+export default function FilterContainerProvider(props: FilterContainerProviderProps) {
   const { column, children, onAccepte, onReset, filters } = props;
 
   const value = {
@@ -28,7 +28,7 @@ export default function FilterProvider(props: FilterProviderProps) {
     filters,
   }
 
-  return <FilterContext.Provider value={value}>
+  return <FilterContainerContext.Provider value={value}>
     {children}
-  </FilterContext.Provider>
+  </FilterContainerContext.Provider>
 }
