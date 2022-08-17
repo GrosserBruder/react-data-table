@@ -1,20 +1,24 @@
-import { useState, useCallback } from "react"
+import { createContext, ReactNode, useCallback, useState } from "react";
+import { SORT_STRATEGY } from "../../../const";
 import { DataRow, DataTableColumn } from "../../types";
 
-export type UseSortResult = {
+export type SortContextType = {
   sortFields: Map<string, SORT_STRATEGY>;
   setSort: (fieldKey: string, sortStrategy: SORT_STRATEGY) => void;
   removeSort: (fieldKey: string) => void;
   removeAllSort: () => void;
-  sortDataRows: (data: Array<DataRow>, columns: Array<DataTableColumn>) => Array<DataRow>
+  sortDataRows: (data: Array<DataRow>) => Array<DataRow>
 }
 
-export enum SORT_STRATEGY {
-  ASC = "asc",
-  DESC = "desc",
+export type SortProviderProps = {
+  children?: ReactNode,
+  columns: Array<DataTableColumn>
 }
 
-export default function useSort(): UseSortResult {
+export const SortContext = createContext<SortContextType | undefined>(undefined);
+
+export default function SortProvider(props: SortProviderProps) {
+  const { columns, children } = props;
   const [sortFields, setSortFields] = useState<Map<string, SORT_STRATEGY>>(new Map<string, SORT_STRATEGY>())
 
   const setSort = useCallback((fieldKey: string, sortStrategy: SORT_STRATEGY) => {
@@ -56,7 +60,7 @@ export default function useSort(): UseSortResult {
     return 0;
   }, [sortFields])
 
-  const sortDataRows = useCallback((data: Array<DataRow>, columns: Array<DataTableColumn>) => {
+  const sortDataRows = useCallback((data: Array<DataRow>) => {
     const filteredColumns = columns.filter((x) => {
       if (x.id ?? x.dataField === undefined) return false;
 
@@ -64,13 +68,17 @@ export default function useSort(): UseSortResult {
     })
 
     return data.sort((first, second) => comparer(first, second, filteredColumns))
-  }, [sortFields, comparer])
+  }, [sortFields, comparer, columns])
 
-  return {
+  const value = {
     sortDataRows,
     sortFields,
     setSort,
     removeSort,
     removeAllSort,
   }
+
+  return <SortContext.Provider value={value}>
+    {children}
+  </SortContext.Provider>
 }

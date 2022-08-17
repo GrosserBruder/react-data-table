@@ -1,5 +1,5 @@
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
-import { SORT_STRATEGY } from "../../NewDataTable/Context/DataTableContext/useSort"
+import { SORT_STRATEGY } from "../../const";
 
 export type SortStrategyIconProps = {
   sortStrategy?: SORT_STRATEGY

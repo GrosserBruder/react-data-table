@@ -1,8 +1,6 @@
 import { HeadCellProps } from './../Components/HeadCell/HeadCellV2';
 import { CellProps, RowProps, TableProps } from "@grossb/react-table"
-import { ReactNode, TdHTMLAttributes } from "react"
-import { DataTableContextType } from './Context/DataTableContext/DataTableProvider';
-import { DataTableHeadProps } from './DataTableHead';
+import { ReactNode } from "react"
 
 export type DataTableCell = {
   id: string | number,
@@ -63,8 +61,8 @@ export type DataTableColumn = {
   filterComponent?: ReactNode
   filterable?: boolean,
   sortable?: boolean,
-  headCellProps?: ((column: DataTableColumn, dataTableContext: DataTableContextType) => HeadCellProps) | HeadCellProps
-  bodyCellProps?: ((column: DataTableColumn, dataTableContext: DataTableContextType) => CellProps) | CellProps
+  headCellProps?: ((column: DataTableColumn) => HeadCellProps) | HeadCellProps
+  bodyCellProps?: ((column: DataTableColumn) => CellProps) | CellProps
 }
 
 export type DataRow = {

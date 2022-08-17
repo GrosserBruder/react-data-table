@@ -1,12 +1,12 @@
 import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
+import { SORT_STRATEGY } from "../const";
 import { SortStrategyIcon } from "../Components";
 import { HeadCellV2 as HeadCell, HeadCellProps } from "../Components/HeadCell";
 import { SelectedAllCheckbox } from "./Components";
-import useDataTableContext from "./Context/DataTableContext/useDataTableBodyRowsContext";
-import { SORT_STRATEGY } from "./Context/DataTableContext/useSort";
 import { FilterContainer } from "./Filter/FilterContainer";
 import { DataRow, DataTableColumn } from "./types";
+import useSortContext from "./Context/SortContext/useSortContext";
 
 export type DataTableHeadProps = {
   columns: Array<DataTableColumn>
@@ -20,26 +20,26 @@ export type DataTableHeadProps = {
 function DataTableHead(props: DataTableHeadProps) {
   const { columns, data, filterable, sortable, selectable, cellProps } = props
 
-  const dataTableContext = useDataTableContext()
+  const sortContext = useSortContext()
 
   const onHeadCellClick = useCallback((event: any, column: DataTableColumn) => {
     if (column.dataField === undefined) return;
 
-    const currentSort = dataTableContext.sortFields.get(column.dataField)
+    const currentSort = sortContext.sortFields.get(column.dataField)
 
     switch (true) {
       case currentSort === undefined:
-        return dataTableContext.setSort(column.dataField, SORT_STRATEGY.ASC)
+        return sortContext.setSort(column.dataField, SORT_STRATEGY.ASC)
       case currentSort === SORT_STRATEGY.ASC:
-        return dataTableContext.setSort(column.dataField, SORT_STRATEGY.DESC)
+        return sortContext.setSort(column.dataField, SORT_STRATEGY.DESC)
       default:
-        return dataTableContext.removeSort(column.dataField)
+        return sortContext.removeSort(column.dataField)
     }
-  }, [dataTableContext.setSort, dataTableContext.sortFields, dataTableContext.removeSort])
+  }, [sortContext.setSort, sortContext.sortFields, sortContext.removeSort])
 
   const getCell = useCallback((column: DataTableColumn) => {
     const currentSort = column.dataField
-      ? dataTableContext.sortFields.get(column.dataField)
+      ? sortContext.sortFields.get(column.dataField)
       : undefined
 
     return <HeadCell

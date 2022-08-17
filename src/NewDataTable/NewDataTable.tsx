@@ -2,12 +2,15 @@ import { Table, TableProps } from "@grossb/react-table"
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
 import { DataRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
-import DataTableProvider, { DataTableContextType } from "./Context/DataTableContext/DataTableProvider";
 import { useCallback, useMemo } from "react";
-import useDataTableContext from "./Context/DataTableContext/useDataTableBodyRowsContext";
-import SelectedRowsProvider from "./Context/SelectableContext/SelectedRowsProvider";
+import SelectedRowsProvider, { SelectedRowsContextType } from "./Context/SelectableContext/SelectedRowsProvider";
 import { useDataTableProps } from "./hooks/useDataTableProps";
 import "../styles/DataTableHead.scss"
+import FilterProvider from "./Context/FilterContext/FilterProvider";
+import SortProvider from "./Context/SortContext/SortProvider";
+import useFilterContext from "./Context/FilterContext/useFilterContext";
+import useSortContext from "./Context/SortContext/useSortContext";
+import useSelectedRowsContext from "./Context/SelectableContext/useSelectedRowsContext";
 
 export type NewDataTableProps = {
   tableProps?: TableProps,
@@ -16,7 +19,7 @@ export type NewDataTableProps = {
   filterable?: boolean
   sortable?: boolean
   selectable?: boolean
-  rowProps?: ((dataRow: DataRow, dataTableContext: DataTableContextType) => RowPropsWithoutChildren) | RowPropsWithoutChildren
+  rowProps?: ((dataRow: DataRow, selectedRowsContext: SelectedRowsContextType) => RowPropsWithoutChildren) | RowPropsWithoutChildren
 }
 
 function NewDataTableRaw(props: NewDataTableProps) {
@@ -25,35 +28,38 @@ function NewDataTableRaw(props: NewDataTableProps) {
 
   const { tableProps, columns, data, filterable, sortable, selectable, rowProps } = processedProps
 
-  const dataTableContext = useDataTableContext()
+  const filterContext = useFilterContext()
+  const sortContext = useSortContext()
+  const selectedRowsContext = useSelectedRowsContext()
 
   const sortedAndFilteredData = useMemo(() => {
-    return dataTableContext.sortAndFilterDataRows(data ?? [])
-  }, [data, dataTableContext.sortAndFilterDataRows])
+    const filteredData = filterContext.filterDataRows(data ?? [])
+    return sortContext.sortDataRows(filteredData)
+  }, [data, filterContext.filterDataRows, sortContext.sortDataRows])
 
   const getRowProps = useCallback((dataRow: DataRow) => {
     if (typeof rowProps === "function") {
-      return rowProps(dataRow, dataTableContext)
+      return rowProps(dataRow, selectedRowsContext)
     }
 
     return rowProps
-  }, [rowProps, dataTableContext])
+  }, [rowProps, selectedRowsContext])
 
   const getBodyCellProps = useCallback((column: DataTableColumn) => {
     if (typeof column.bodyCellProps === "function") {
-      return column.bodyCellProps(column, dataTableContext)
+      return column.bodyCellProps(column)
     }
 
     return column.bodyCellProps
-  }, [rowProps, dataTableContext])
+  }, [rowProps])
 
   const getHeadCellProps = useCallback((column: DataTableColumn) => {
     if (typeof column.headCellProps === "function") {
-      return column.headCellProps?.(column, dataTableContext)
+      return column.headCellProps?.(column)
     }
 
     return column.headCellProps
-  }, [rowProps, dataTableContext])
+  }, [rowProps])
 
   return <div>
     <Table {...tableProps}>
@@ -77,11 +83,13 @@ function NewDataTableRaw(props: NewDataTableProps) {
 }
 
 function NewDataTable(props: NewDataTableProps) {
-  return <DataTableProvider columns={props.columns}>
-    <SelectedRowsProvider dataRowsLength={props.data?.length}>
-      <NewDataTableRaw {...props} />
-    </SelectedRowsProvider>
-  </DataTableProvider>
+  return <FilterProvider columns={props.columns}>
+    <SortProvider columns={props.columns}>
+      <SelectedRowsProvider dataRowsLength={props.data?.length}>
+        <NewDataTableRaw {...props} />
+      </SelectedRowsProvider>
+    </SortProvider>
+  </FilterProvider>
 }
 
 export default NewDataTable;

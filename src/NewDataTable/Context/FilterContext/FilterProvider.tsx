@@ -1,16 +1,25 @@
-import { useState, useCallback } from "react"
+import { createContext, ReactNode, useCallback, useState } from "react";
 import { ColumnFilter, DataRow, DataTableColumn } from "../../types";
 
-export type UseFilterResult = {
+export type FilterContextType = {
   filters: Map<string, any>
   setFilter: (fieldKey: string, filter: ColumnFilter) => void
   removeFilter: (fieldKey: string) => void
   resetAllFilters: () => void
-  filterDataRows: (data: Array<DataRow>, columns: Array<DataTableColumn>) => DataRow[]
+  filterDataRows: (data: Array<DataRow>) => DataRow[]
   getFilterByFieldKey: (fieldKey?: string) => any
 }
 
-export default function useFilter(): UseFilterResult {
+export type FilterProviderProps = {
+  children?: ReactNode,
+  columns: Array<DataTableColumn>
+}
+
+export const FilterContext = createContext<FilterContextType | undefined>(undefined);
+
+export default function FilterProvider(props: FilterProviderProps) {
+  const { columns, children } = props;
+
   const [filters, setFilters] = useState<Map<string, ColumnFilter>>(new Map<string, ColumnFilter>())
 
   const setFilter = useCallback((fieldKey: string, filter: ColumnFilter) => {
@@ -46,7 +55,7 @@ export default function useFilter(): UseFilterResult {
     return filters.get(fieldKey)
   }
 
-  const filterDataRows = useCallback((data: Array<DataRow>, columns: Array<DataTableColumn>) => {
+  const filterDataRows = useCallback((data: Array<DataRow>) => {
     const filteredColumns = columns.filter((x) => {
       if (x.id ?? x.dataField === undefined) return false;
 
@@ -54,9 +63,9 @@ export default function useFilter(): UseFilterResult {
     })
 
     return data.filter((row) => filterer(row, filteredColumns))
-  }, [filters, filterer])
+  }, [filters, filterer, columns])
 
-  return {
+  const value = {
     filters,
     setFilter,
     removeFilter,
@@ -64,4 +73,8 @@ export default function useFilter(): UseFilterResult {
     filterDataRows,
     getFilterByFieldKey
   }
+
+  return <FilterContext.Provider value={value}>
+    {children}
+  </FilterContext.Provider>
 }
