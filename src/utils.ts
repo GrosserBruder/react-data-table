@@ -1,3 +1,4 @@
+import { DataTableColumn } from './NewDataTable/types';
 import { NumberRange } from './Components/NumberRange/NumberRange';
 import { DateRange } from './Components/DateRange/DateRange';
 import { VALUE_TYPE, VALUE_TYPES } from "./const";
@@ -81,4 +82,8 @@ export const mergeObjects = (first: { [key: string]: any }, second: { [key: stri
   const firstCopy = { ...first };
   const secondCopy = { ...second };
   return Object.assign({}, firstCopy, secondCopy)
+}
+
+export const getColumnKey = (column: DataTableColumn) => {
+  return column.dataField ?? column.id
 }

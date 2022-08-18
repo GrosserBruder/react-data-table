@@ -1,6 +1,8 @@
 import { Body, Cell, CellProps, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
-import { SelectedCheckbox } from "./Components";
+import { SELECT_ALL_STATUSES } from "../const";
+import DataTableRow from "./Components/DataTableRow";
+import useDataTableContext from "./Context/DataTableContext/useDataTableContext";
 import { DataRow, DataTableBodyRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
 
 export type DataTableBodyProps = {
@@ -13,30 +15,20 @@ export type DataTableBodyProps = {
   cellProps?: (column: DataTableColumn) => CellProps | undefined
 }
 
+const MemoRow = memo(DataTableRow)
+
 function DataTableBody(props: DataTableBodyProps) {
-  const { columns, data, selectable, rowProps, cellProps } = props;
+  const { columns, data, selectable } = props;
 
-  const getCell = useCallback((dataRow: DataRow, column: DataTableColumn) => {
-    if (!column.dataField) return <Cell />
+  const dataTableContext = useDataTableContext()
 
-    const value = column.valueGetter !== undefined
-      ? column.valueGetter(dataRow)
-      : dataRow[column.dataField]
-
-    return <Cell key={column.id ?? column.dataField} {...cellProps?.(column)}>
-      {value}
-    </Cell>
-  }, [])
-
-  const getCells = useCallback((dataRow: DataRow) => {
-    const cells = columns.map((column) => getCell(dataRow, column))
-
-    if (selectable) {
-      return [<SelectedCheckbox row={dataRow} key="select-checkbox" />, cells]
+  const onSelectClick = useCallback((row: DataRow, currentStatus?: SELECT_ALL_STATUSES) => {
+    if (currentStatus === SELECT_ALL_STATUSES.SELECTED) {
+      dataTableContext.removeSelectedRows?.(row)
+    } else {
+      dataTableContext.addSelectedRows?.(row)
     }
-
-    return cells
-  }, [columns, getCell, selectable])
+  }, [dataTableContext.addSelectedRows, dataTableContext.removeSelectedRows])
 
   const getRows = useCallback(() => {
     if (data?.length === 0) {
@@ -50,15 +42,18 @@ function DataTableBody(props: DataTableBodyProps) {
       </Row>
     }
 
-    return data?.map((dataRow) => <Row key={dataRow.id} {...rowProps?.(dataRow)}>
-      {getCells(dataRow)}
-    </Row>)
-  }, [data, columns.length, getCells, selectable])
-
-  const bodyRows = useMemo(getRows, [data, getRows])
+    return data?.map((dataRow) => <MemoRow
+      key={dataRow.id}
+      columns={columns}
+      dataRow={dataRow}
+      selectable={selectable}
+      onSelectClick={onSelectClick}
+      selectStatus={dataTableContext.getSelectStatus?.(dataRow)}
+    />)
+  }, [data, columns, selectable, dataTableContext.getSelectStatus, onSelectClick])
 
   return <Body>
-    {bodyRows}
+    {getRows()}
   </Body>
 }
 
