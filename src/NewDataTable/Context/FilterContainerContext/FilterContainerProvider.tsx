@@ -5,7 +5,7 @@ export type FilterContainerContextType = {
   column: DataTableColumn
   onAccepte: (fieldKey: string, filter: ColumnFilter) => void
   onReset: (fieldKey: string) => void
-  filters: ColumnFilter
+  filters?: ColumnFilter
 }
 
 export type FilterContainerProviderProps = {
@@ -13,7 +13,7 @@ export type FilterContainerProviderProps = {
   column: DataTableColumn,
   onAccepte: (fieldKey: string, filter: ColumnFilter) => void,
   onReset: (fieldKey: string) => void,
-  filters: ColumnFilter
+  filters?: ColumnFilter
 }
 
 export const FilterContainerContext = createContext<FilterContainerContextType | undefined>(undefined);

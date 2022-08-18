@@ -6,8 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import classnames from "classnames";
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import useDataTableContext from "../Context/DataTableContext/useDataTableContext";
 import FilterContainerProvider from "../Context/FilterContainerContext/FilterContainerProvider";
-import useFilterContext from "../Context/FilterContext/useFilterContext";
 import { DataTableColumn } from "../types";
 
 export type FilterContainer = {
@@ -23,13 +23,13 @@ export function FilterContainer(props: FilterContainer) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const filterButtonRef = useRef(null)
 
-  const filterContext = useFilterContext()
+  const dataTableContext = useDataTableContext()
 
   const isFiltersInstalled = useMemo(() => {
     if (column?.id ?? column?.dataField === undefined) return false;
 
-    return filterContext.filters.has(column.id ?? column.dataField)
-  }, [column, filterContext.filters])
+    return dataTableContext.filters.has(column.id ?? column.dataField)
+  }, [column, dataTableContext.filters])
 
   const togglePopover = useCallback((event: any) => {
     event.stopPropagation()
@@ -70,9 +70,9 @@ export function FilterContainer(props: FilterContainer) {
 
   return <FilterContainerProvider
     column={column}
-    onAccepte={filterContext.setFilter}
-    onReset={filterContext.removeFilter}
-    filters={filterContext.getFilterByFieldKey(column.id ?? column.dataField)}
+    onAccepte={dataTableContext.setFilter}
+    onReset={dataTableContext.removeFilter}
+    filters={dataTableContext.getFilterByFieldKey(column.id ?? column.dataField)}
   >
     <div className="filter-container">
 

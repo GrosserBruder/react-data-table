@@ -1,16 +1,16 @@
 import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback, useMemo } from "react";
-import { SORT_STRATEGY } from "../const";
+import { SELECT_ALL_STATUSES, SORT_STRATEGY } from "../const";
 import { SortStrategyIcon } from "../Components";
 import { HeadCellV2 as HeadCell, HeadCellProps } from "../Components/HeadCell";
-import { SelectedAllCheckbox } from "./Components";
 import { FilterContainer } from "./Filter/FilterContainer";
 import { DataRow, DataTableColumn } from "./types";
-import useSortContext from "./Context/SortContext/useSortContext";
+import useDataTableContext from "./Context/DataTableContext/useDataTableContext";
+import { SelectedCheckboxCell } from "./Components";
 
 export type DataTableHeadProps = {
   columns: Array<DataTableColumn>
-  data?: Array<DataRow>
+  data: Array<DataRow>
   filterable?: boolean
   sortable?: boolean
   selectable?: boolean
@@ -20,26 +20,34 @@ export type DataTableHeadProps = {
 function DataTableHead(props: DataTableHeadProps) {
   const { columns, data, filterable, sortable, selectable, cellProps } = props
 
-  const sortContext = useSortContext()
+  const dataTableContext = useDataTableContext()
 
   const onHeadCellClick = useCallback((event: any, column: DataTableColumn) => {
     if (column.dataField === undefined) return;
 
-    const currentSort = sortContext.sortFields.get(column.dataField)
+    const currentSort = dataTableContext.sortFields.get(column.dataField)
 
     switch (true) {
       case currentSort === undefined:
-        return sortContext.setSort(column.dataField, SORT_STRATEGY.ASC)
+        return dataTableContext.setSort(column.dataField, SORT_STRATEGY.ASC)
       case currentSort === SORT_STRATEGY.ASC:
-        return sortContext.setSort(column.dataField, SORT_STRATEGY.DESC)
+        return dataTableContext.setSort(column.dataField, SORT_STRATEGY.DESC)
       default:
-        return sortContext.removeSort(column.dataField)
+        return dataTableContext.removeSort(column.dataField)
     }
-  }, [sortContext.setSort, sortContext.sortFields, sortContext.removeSort])
+  }, [dataTableContext.setSort, dataTableContext.sortFields, dataTableContext.removeSort])
+
+  const onSelectAllClick = useCallback(() => {
+    if (dataTableContext.selectAllStatus === SELECT_ALL_STATUSES.NOT_SELECTED) {
+      dataTableContext.addSelectedRows(data)
+    } else {
+      dataTableContext.resetSelectedBox()
+    }
+  }, [dataTableContext.addSelectedRows, dataTableContext.resetSelectedBox, data])
 
   const getCell = useCallback((column: DataTableColumn) => {
     const currentSort = column.dataField
-      ? sortContext.sortFields.get(column.dataField)
+      ? dataTableContext.sortFields.get(column.dataField)
       : undefined
 
     return <HeadCell
@@ -59,11 +67,11 @@ function DataTableHead(props: DataTableHeadProps) {
     const cells = columns.map((column) => getCell(column))
 
     if (selectable) {
-      return [<SelectedAllCheckbox data={data} key="select-all-checkbox" />, cells]
+      return [<SelectedCheckboxCell key="select-all-checkbox" onClick={onSelectAllClick} selectStatus={dataTableContext.selectAllStatus} />, cells]
     }
 
     return cells
-  }, [columns, getCell, selectable])
+  }, [columns, getCell, selectable, onSelectAllClick, dataTableContext.selectAllStatus])
 
   const getRows = useCallback(() => {
     return <Row>
