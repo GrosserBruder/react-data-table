@@ -1,5 +1,5 @@
 import { Body, Cell, CellProps, Row } from "@grossb/react-table"
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback } from "react";
 import { SELECT_ALL_STATUSES } from "../const";
 import DataTableRow from "./Components/DataTableRow";
 import useDataTableContext from "./Context/DataTableContext/useDataTableContext";
