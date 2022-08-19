@@ -5,7 +5,7 @@ import { BodyPropsCommunity, CellPropsCommunity, DataRow, DataTableColumn, HeadC
 import { useMemo } from "react";
 import { useDataTableProps } from "./hooks/useDataTableProps";
 import "../styles/DataTable.scss"
-import { useDataTableContext, DataTableProvider } from "./Context";
+import { useDataTableContext } from "./Context";
 
 export type DataTableProps = {
   tableProps?: TableProps,
