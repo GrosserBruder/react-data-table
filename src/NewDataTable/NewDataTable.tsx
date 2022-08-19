@@ -1,4 +1,4 @@
-import { Table, TableProps } from "@grossb/react-table"
+import { Table, TableProps } from "@grossb/react-table/dist/Table";
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
 import { DataRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
@@ -55,25 +55,22 @@ function NewDataTableRaw(props: NewDataTableProps) {
     return column.headCellProps
   }, [rowProps])
 
-  return <div>
-    <Table {...tableProps}>
-      <DataTableHead
-        columns={columns}
-        data={sortedAndFilteredData}
-        filterable={filterable}
-        sortable={sortable}
-        selectable={selectable}
-        cellProps={getHeadCellProps}
-      />
-      <DataTableBody
-        columns={columns}
-        data={sortedAndFilteredData}
-        selectable={selectable}
-        rowProps={getRowProps}
-        cellProps={getBodyCellProps}
-      />
-    </Table>
-  </div>
+  return <Table {...tableProps}>
+    <DataTableHead
+      columns={columns}
+      data={sortedAndFilteredData}
+      filterable={filterable}
+      sortable={sortable}
+      selectable={selectable}
+    />
+    <DataTableBody
+      columns={columns}
+      data={sortedAndFilteredData}
+      selectable={selectable}
+      rowProps={getRowProps}
+      cellProps={getBodyCellProps}
+    />
+  </Table>
 }
 
 function NewDataTable(props: NewDataTableProps) {
