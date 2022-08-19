@@ -15,7 +15,9 @@ export type DataTableHeadCellProps = HeadCellProps & {
 }
 
 function DataTableHeadCell(props: DataTableHeadCellProps) {
-  const { column, sortable, filterable, onHeadCellClick, sortStrategy, ...restProps } = props;
+  const {
+    column, sortable, filterable, onHeadCellClick, sortStrategy, ...restProps
+  } = props;
 
   const onHeadCellClickHandler = useCallback((event: any) => {
     if (!sortable) return;
@@ -25,6 +27,7 @@ function DataTableHeadCell(props: DataTableHeadCellProps) {
 
   return <HeadCell
     key={getColumnKey(column)}
+    {...restProps}
     onClick={onHeadCellClickHandler}
   >
     <div className="head-cell__title">{column.header}</div>

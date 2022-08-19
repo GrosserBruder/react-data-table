@@ -1,8 +1,7 @@
-import { Cell, CellProps } from "@grossb/react-table"
-import { getColumnKey } from "../utils";
-import { DataRow, DataTableColumn } from "../DataTable/types";
+import { Cell } from "@grossb/react-table"
+import { CellPropsCommunity, DataRow, DataTableColumn } from "../DataTable/types";
 
-export type DataTableCellProps = CellProps & {
+export type DataTableCellProps = CellPropsCommunity & {
   column: DataTableColumn
   dataRow: DataRow
 }
@@ -22,7 +21,7 @@ const getValue = (column: DataTableColumn, dataRow: DataRow) => {
 function DataTableCell(props: DataTableCellProps) {
   const { column, dataRow, ...restProps } = props;
 
-  return <Cell key={getColumnKey(column)} {...restProps}>
+  return <Cell {...restProps}>
     {getValue(column, dataRow)}
   </Cell>
 }
