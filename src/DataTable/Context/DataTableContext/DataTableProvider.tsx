@@ -1,27 +1,47 @@
 import { createContext, ReactNode } from "react";
-import { useSortingValue, useFilteringValue, useSelectingRowsValue, useSorting, useFiltering, useSelectingRows } from "../../hooks";
+import {
+  useSortingValue,
+  useFilteringValue,
+  useSelectingRowsValue,
+  useSorting,
+  useFiltering,
+  useSelectingRows,
+  useSortingProps,
+  useFilteringProps,
+  useSelectingRowsProps
+} from "../../hooks";
 import { DataRow, DataTableColumn } from "../../types";
 
-export type DataTableContextType = useSortingValue & useFilteringValue & useSelectingRowsValue
+export type DataTableContextType = useSortingValue
+  & useFilteringValue
+  & useSelectingRowsValue
+  & {
+    props: DataTableProviderProps
+  }
 
-export type DataTableProviderProps = {
-  children?: ReactNode,
-  columns: Array<DataTableColumn>
-  data: Array<DataRow>
-}
+export type DataTableProviderProps = Omit<useSortingProps, "columns">
+  & Omit<useFilteringProps, "columns">
+  & Omit<useSelectingRowsProps, "dataRowsLength">
+  & {
+    children?: ReactNode,
+    columns: Array<DataTableColumn>
+    data: Array<DataRow>
+  }
 
 export const DataTableContext = createContext<DataTableContextType | undefined>(undefined);
 
 export default function DataTableProvider(props: DataTableProviderProps) {
-  const { columns, children, data } = props
-  const sorting = useSorting({ columns })
-  const filtering = useFiltering({ columns })
-  const selecting = useSelectingRows({ dataRowsLength: data.length })
+  const { children, data } = props
+
+  const sorting = useSorting(props)
+  const filtering = useFiltering(props)
+  const selecting = useSelectingRows({ ...props, dataRowsLength: data.length })
 
   const value = {
     ...sorting,
     ...filtering,
     ...selecting,
+    props,
   }
 
   return <DataTableContext.Provider value={value}>
