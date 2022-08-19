@@ -16,6 +16,17 @@ export type useSortingValue = {
   removeAllSort: () => void;
 }
 
+const getNewSortMap = (sortingMode: SORTING_MODE, sortFields: Map<string, SORT_STRATEGY>, fieldKey: string, sortStrategy: SORT_STRATEGY) => {
+  switch (true) {
+    case sortingMode === SORTING_MODE.SINGLE:
+      return new Map<string, SORT_STRATEGY>().set(fieldKey, sortStrategy)
+    case sortingMode === SORTING_MODE.MULTIPLE:
+      return new Map<string, SORT_STRATEGY>(sortFields.set(fieldKey, sortStrategy))
+    default:
+      return new Map<string, SORT_STRATEGY>(sortFields)
+  }
+}
+
 export default function useSorting(props: useSortingProps) {
   const { columns, sortingMode = SORTING_MODE.MULTIPLE, onSortingChange } = props
   const [sortFields, setSortFields] = useState<Map<string, SORT_STRATEGY>>(new Map<string, SORT_STRATEGY>())
@@ -27,18 +38,7 @@ export default function useSorting(props: useSortingProps) {
   const setSort = useCallback((fieldKey: string, sortStrategy: SORT_STRATEGY) => {
     if (sortingMode === SORTING_MODE.OFF) return;
 
-    let map;
-
-    if (sortingMode === SORTING_MODE.SINGLE) {
-      map = new Map<string, SORT_STRATEGY>().set(fieldKey, sortStrategy)
-    }
-    if (sortingMode === SORTING_MODE.MULTIPLE) {
-      map = new Map<string, SORT_STRATEGY>(sortFields.set(fieldKey, sortStrategy))
-    }
-
-    if (map === undefined) {
-      map = new Map<string, SORT_STRATEGY>(sortFields)
-    }
+    const map = getNewSortMap(sortingMode, sortFields, fieldKey, sortStrategy)
 
     setSortFields(map)
   }, [setSortFields, sortingMode])
