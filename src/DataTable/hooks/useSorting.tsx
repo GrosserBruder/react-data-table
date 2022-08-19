@@ -1,9 +1,11 @@
-import { useCallback, useState } from "react"
-import { SORT_STRATEGY } from "../../const"
+import { useCallback, useEffect, useState } from "react"
+import { SORTING_MODE, SORT_STRATEGY } from "../../const"
 import { DataRow, DataTableColumn } from "../types"
 
 export type useSortingProps = {
   columns: Array<DataTableColumn>
+  sortingMode?: SORTING_MODE
+  onSortingChange?: (sortFields: Map<string, SORT_STRATEGY>) => void
 }
 
 export type useSortingValue = {
@@ -15,13 +17,31 @@ export type useSortingValue = {
 }
 
 export default function useSorting(props: useSortingProps) {
-  const { columns } = props
+  const { columns, sortingMode = SORTING_MODE.MULTIPLE, onSortingChange } = props
   const [sortFields, setSortFields] = useState<Map<string, SORT_STRATEGY>>(new Map<string, SORT_STRATEGY>())
 
+  useEffect(() => {
+    onSortingChange?.(sortFields)
+  }, [sortFields, onSortingChange])
+
   const setSort = useCallback((fieldKey: string, sortStrategy: SORT_STRATEGY) => {
-    const map = new Map(sortFields.set(fieldKey, sortStrategy))
+    if (sortingMode === SORTING_MODE.OFF) return;
+
+    let map;
+
+    if (sortingMode === SORTING_MODE.SINGLE) {
+      map = new Map<string, SORT_STRATEGY>().set(fieldKey, sortStrategy)
+    }
+    if (sortingMode === SORTING_MODE.MULTIPLE) {
+      map = new Map<string, SORT_STRATEGY>(sortFields.set(fieldKey, sortStrategy))
+    }
+
+    if (map === undefined) {
+      map = new Map<string, SORT_STRATEGY>(sortFields)
+    }
+
     setSortFields(map)
-  }, [setSortFields])
+  }, [setSortFields, sortingMode])
 
   const removeSort = useCallback((fieldKey: string) => {
     sortFields.delete(fieldKey)
@@ -58,6 +78,8 @@ export default function useSorting(props: useSortingProps) {
   }, [sortFields])
 
   const sortDataRows = useCallback((data: Array<DataRow>) => {
+    if (sortingMode === SORTING_MODE.OFF) return data;
+
     const filteredColumns = columns.filter((x) => {
       if (x.id ?? x.dataField === undefined) return false;
 
@@ -65,7 +87,7 @@ export default function useSorting(props: useSortingProps) {
     })
 
     return data.sort((first, second) => comparer(first, second, filteredColumns))
-  }, [sortFields, comparer, columns])
+  }, [sortFields, comparer, columns, sortingMode])
 
   return {
     sortDataRows,
