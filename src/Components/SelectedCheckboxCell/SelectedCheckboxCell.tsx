@@ -16,7 +16,7 @@ export default function SelectedAllCheckbox(props: SelectedCheckboxProps) {
     onClick?.(selectStatus)
   }, [selectStatus, onClick])
 
-  return <Cell className="cell__select-all" width={50}>
+  return <Cell className="cell__select-all">
     <Checkbox
       checked={selectStatus === SELECT_ALL_STATUSES.SELECTED}
       indeterminate={selectStatus === SELECT_ALL_STATUSES.INDETERMINATE}

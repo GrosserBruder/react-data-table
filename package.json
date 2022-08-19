@@ -21,7 +21,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "copy:styles": "cpx src/styles/** dist/styles && cpx src/Components/styles/** dist/Components/styles",
+    "copy:styles": "cpx src/styles/** dist/styles && cpx src/BaseComponents/styles/** dist/BaseComponents/styles && cpx src/Components/styles/** dist/Components/styles",
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.prod.json",
     "postbuild": "npm run copy:styles",

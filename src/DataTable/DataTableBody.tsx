@@ -34,7 +34,7 @@ function DataTableBody(props: DataTableBodyProps) {
       const colspan = selectable ? columns.length + 1 : columns.length
 
       return <Row>
-        <Cell colSpan={colspan}>
+        <Cell colSpan={colspan} className="data-table__empty-row">
           Список пуст
         </Cell>
       </Row>

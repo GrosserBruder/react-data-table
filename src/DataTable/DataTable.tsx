@@ -4,7 +4,7 @@ import DataTableHead from "./DataTableHead";
 import { DataRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
 import { useCallback, useMemo } from "react";
 import { useDataTableProps } from "./hooks/useDataTableProps";
-import "../styles/DataTableHead.scss"
+import "../styles/DataTable.scss"
 import { useDataTableContext, DataTableProvider, DataTableContextType } from "./Context";
 
 export type DataTableProps = {
@@ -54,7 +54,7 @@ function DataTableRaw(props: DataTableProps) {
     return column.headCellProps
   }, [rowProps])
 
-  return <Table {...tableProps}>
+  return <Table {...tableProps} className="data-table">
     <DataTableHead
       columns={columns}
       data={sortedAndFilteredData}
