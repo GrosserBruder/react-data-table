@@ -1,5 +1,5 @@
 import { createContext, useState, useMemo } from "react";
-import { DataTableBodyRow } from "../../NewDataTable/types";
+import { DataTableBodyRow } from "../../../NewDataTable/types";
 
 export type DataTableBodyRowsContextType = {
   bodyRows: DataTableBodyRow[],

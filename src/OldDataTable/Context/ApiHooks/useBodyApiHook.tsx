@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import { DataTableApi, DataTableBodyRow, ProcessedDataTableProps } from "../../NewDataTable/types";
+import { DataTableApi, DataTableBodyRow, ProcessedDataTableProps } from "../../../NewDataTable/types";
 
 export function useBodyApiHook(apiRef: MutableRefObject<DataTableApi>, props: ProcessedDataTableProps) {
   // Todo: удалить

@@ -1,5 +1,5 @@
 import { createContext, useRef } from "react";
-import { DataTableApi, ProcessedDataTableProps } from "../../NewDataTable/types";
+import { DataTableApi, ProcessedDataTableProps } from "../../../NewDataTable/types";
 import { useBodyApiHook } from "../ApiHooks/useBodyApiHook";
 
 export type DataTableApiContextProviderProps = ProcessedDataTableProps & {
