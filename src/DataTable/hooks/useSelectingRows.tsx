@@ -25,7 +25,7 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
   } = props;
 
   const [selectedRows, setSelectedRowsState] = useState(defaultSelectedRows)
-  const [selectAllStatus, setSelectAllStatus] = useState<SELECT_ALL_STATUSES>()
+  const [selectAllStatus, setSelectAllStatus] = useState<SELECT_ALL_STATUSES>(SELECT_ALL_STATUSES.NOT_SELECTED)
 
   useEffect(() => {
     onSelectedRowsChange?.(selectedRows)
