@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { SORT_STRATEGY } from "../../const";
-import { HeadCell, SortStrategyIcon } from "../../Components";
+import { HeadCellV2, SortStrategyIcon } from "../../Components";
 import { getColumnKey } from "../../utils";
-import { FilterContainer } from "../Filter/FilterContainer";
+import { FilterContainer } from "../FilterContainer/FilterContainer";
 import { DataTableColumn } from "../types";
 import { HeadCellProps } from "../../Components/HeadCell/HeadCellV2";
 
@@ -23,7 +23,7 @@ function DataTableHeadCell(props: DataTableHeadCellProps) {
     onHeadCellClick?.(event, column)
   }, [sortable, onHeadCellClick])
 
-  return <HeadCell
+  return <HeadCellV2
     key={getColumnKey(column)}
     onClick={onHeadCellClickHandler}
   >
@@ -34,7 +34,7 @@ function DataTableHeadCell(props: DataTableHeadCellProps) {
         {column.filterComponent}
       </FilterContainer>
     }
-  </HeadCell>
+  </HeadCellV2>
 }
 
 export default DataTableHeadCell;
