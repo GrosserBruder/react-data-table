@@ -4,4 +4,4 @@ export { default as useSelectingRows } from "./useSelectingRows"
 
 export type { useSortingProps, useSortingValue } from "./useSorting"
 export type { useFilteringProps, useFilteringValue } from "./useFiltering"
-export type { useSelectingRowsProviderProps, useSelectingRowsValue } from "./useSelectingRows"
+export type { useSelectingRowsProps, useSelectingRowsValue } from "./useSelectingRows"

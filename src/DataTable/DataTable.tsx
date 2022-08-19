@@ -9,8 +9,6 @@ import { useDataTableContext, DataTableProvider } from "./Context";
 
 export type DataTableProps = {
   tableProps?: TableProps,
-  columns: Array<DataTableColumn>
-  data?: Array<DataRow>
   filterable?: boolean
   sortable?: boolean
   selectable?: boolean
@@ -26,11 +24,14 @@ function DataTableRaw(props: DataTableProps) {
   const processedProps = useDataTableProps(props)
 
   const {
-    tableProps, columns, data = [], filterable, sortable, selectable,
+    tableProps, filterable, sortable, selectable,
     getBodyCellProps, getRowProps, bodyProps, headProps, getHeadCellProps
   } = processedProps
 
   const dataTableContext = useDataTableContext()
+
+  const columns = dataTableContext.props.columns
+  const data = dataTableContext.props.data
 
   const sortedAndFilteredData = useMemo(() => {
     const filteredData = dataTableContext.filterDataRows(data ?? [])
@@ -40,7 +41,7 @@ function DataTableRaw(props: DataTableProps) {
   return <Table {...tableProps} className="data-table">
     <DataTableHead
       {...headProps}
-      columns={columns}
+      columns={dataTableContext.props.columns}
       data={sortedAndFilteredData}
       filterable={filterable}
       sortable={sortable}
@@ -58,10 +59,4 @@ function DataTableRaw(props: DataTableProps) {
   </Table>
 }
 
-function DataTable(props: DataTableProps) {
-  return <DataTableProvider columns={props.columns} data={props.data ?? []}>
-    <DataTableRaw {...props} />
-  </DataTableProvider>
-}
-
-export default DataTable;
+export default DataTableRaw;

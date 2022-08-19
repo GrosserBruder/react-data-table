@@ -1,11 +1,11 @@
-import { useCallback, useLayoutEffect, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useState } from "react"
 import { SELECT_ALL_STATUSES } from "../../const"
 import { DataRow } from "../types"
 
-export type useSelectingRowsProviderProps = {
+export type useSelectingRowsProps = {
   defaultSelectedRows?: Array<DataRow>
-  defaultIsSelectAll?: SELECT_ALL_STATUSES,
   dataRowsLength?: number
+  onSelectedRowsChange?: (sselectedRows: Array<DataRow>) => void
 }
 
 export type useSelectingRowsValue = {
@@ -17,16 +17,23 @@ export type useSelectingRowsValue = {
   getSelectStatus: (row: DataRow) => SELECT_ALL_STATUSES.NOT_SELECTED | SELECT_ALL_STATUSES.SELECTED
 }
 
-export default function useSelectingRows(props: useSelectingRowsProviderProps) {
+export default function useSelectingRows(props: useSelectingRowsProps) {
   const {
     defaultSelectedRows = [],
-    defaultIsSelectAll = SELECT_ALL_STATUSES.NOT_SELECTED,
-    dataRowsLength
+    dataRowsLength,
+    onSelectedRowsChange,
   } = props;
 
   const [selectedRows, setSelectedRowsState] = useState(defaultSelectedRows)
-  const [selectAllStatus, setSelectAllStatus] = useState<SELECT_ALL_STATUSES>(defaultIsSelectAll)
+  const [selectAllStatus, setSelectAllStatus] = useState<SELECT_ALL_STATUSES>(SELECT_ALL_STATUSES.NOT_SELECTED)
 
+  useEffect(() => {
+    onSelectedRowsChange?.(selectedRows)
+  }, [onSelectedRowsChange, selectedRows])
+
+  useEffect(() => {
+    checkSelectAllStatus(defaultSelectedRows)
+  }, [])
 
   useLayoutEffect(() => {
     checkSelectAllStatus(selectedRows)
