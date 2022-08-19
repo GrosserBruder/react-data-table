@@ -26,3 +26,8 @@ export enum SELECT_ALL_STATUSES {
   INDETERMINATE,
   SELECTED
 }
+
+export enum SORT_STRATEGY {
+  ASC = "asc",
+  DESC = "desc",
+}

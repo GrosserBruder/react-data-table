@@ -1,69 +1,77 @@
-import { useState, useCallback } from "react";
-import { compareNumberOrBoolean, compareByAlphabetically, descSorting } from "../../utils";
-import { SORT_VALUES } from "../../const";
-import { TableRowProps, BodyLineCell } from "../types";
+import { useCallback, useState } from "react"
+import { SORT_STRATEGY } from "../../const"
+import { DataRow, DataTableColumn } from "../types"
 
-const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
-  const typeValue = typeof a.value
-
-  if (typeValue === "string") {
-    return compareByAlphabetically(a.value, b.value)
-  }
-
-  if (typeValue === "number" || typeValue === "boolean") {
-    return compareNumberOrBoolean(a.value, b.value)
-  }
-
-  return 0;
+export type useSortingProps = {
+  columns: Array<DataTableColumn>
 }
 
-export function useSorting(initialSortValues?: Map<string, string>) {
-  const [sortValues, setSortValues] = useState(new Map<string, string>(initialSortValues))
+export type useSortingValue = {
+  sortDataRows: (data: Array<DataRow>) => DataRow[];
+  sortFields: Map<string, SORT_STRATEGY>;
+  setSort: (fieldKey: string, sortStrategy: SORT_STRATEGY) => void;
+  removeSort: (fieldKey: string) => void;
+  removeAllSort: () => void;
+}
 
-  const setSort = useCallback((filterKey: string, value: any) => {
-    setSortValues((x) => new Map<string, string>(x.set(filterKey, value)))
-  }, [setSortValues])
+export default function useSorting(props: useSortingProps) {
+  const { columns } = props
+  const [sortFields, setSortFields] = useState<Map<string, SORT_STRATEGY>>(new Map<string, SORT_STRATEGY>())
 
-  const getSortValueByFilterKey = useCallback((filterKey: string) => {
-    return sortValues.get(filterKey)
-  }, [sortValues])
+  const setSort = useCallback((fieldKey: string, sortStrategy: SORT_STRATEGY) => {
+    const map = new Map(sortFields.set(fieldKey, sortStrategy))
+    setSortFields(map)
+  }, [setSortFields])
 
-  const compare = useCallback((
-    first: TableRowProps<BodyLineCell>,
-    second: TableRowProps<BodyLineCell>
-  ) => {
-    const firstFilteredCells = first.cells
-      .filter((x) => Boolean(x.filterKey))
-      .filter((cell) => sortValues.has(cell.filterKey!))
+  const removeSort = useCallback((fieldKey: string) => {
+    sortFields.delete(fieldKey)
+    const map = new Map(sortFields)
+    setSortFields(map)
+  }, [setSortFields])
 
-    for (let i = 0; i < firstFilteredCells.length; i++) {
-      const firstCell = firstFilteredCells[i]
-      const sortValue: SORT_VALUES = getSortValueByFilterKey(firstCell.filterKey!) as SORT_VALUES
+  const removeAllSort = useCallback(() => {
+    const map = new Map()
+    setSortFields(map)
+  }, [setSortFields])
 
-      const secondCell = second.cells.find((x) => x.id === firstCell.id)!
+  const comparer = useCallback((first: DataRow, second: DataRow, columns: Array<DataTableColumn>) => {
+    for (let index = 0; index < columns.length; index++) {
+      const column = columns[index];
 
-      const sortedCell = sortCell(firstCell, secondCell)
+      if (column.id ?? column.dataField === undefined) {
+        continue;
+      };
 
-      if (sortedCell !== 0) {
-        if (sortValue === SORT_VALUES.ASC) {
-          return sortedCell
-        }
+      const comparerResult = column.rowComparer?.(first, second)
 
-        if (sortValue === SORT_VALUES.DESC) {
-          return descSorting(sortedCell)
-        }
+      if (comparerResult !== undefined && comparerResult !== 0) {
+
+        const isDescSortStrategy = sortFields.get(column.id ?? column.dataField) === SORT_STRATEGY.DESC
+
+        return isDescSortStrategy
+          ? comparerResult * -1
+          : comparerResult
       }
     }
 
-    return 0
-  }, [getSortValueByFilterKey, sortValues])
+    return 0;
+  }, [sortFields])
+
+  const sortDataRows = useCallback((data: Array<DataRow>) => {
+    const filteredColumns = columns.filter((x) => {
+      if (x.id ?? x.dataField === undefined) return false;
+
+      return sortFields.has(x.id ?? x.dataField)
+    })
+
+    return data.sort((first, second) => comparer(first, second, filteredColumns))
+  }, [sortFields, comparer, columns])
 
   return {
-    sortValues,
+    sortDataRows,
+    sortFields,
     setSort,
-    getSortValueByFilterKey,
-    compare
-  };
+    removeSort,
+    removeAllSort,
+  }
 }
-
-export default useSorting
