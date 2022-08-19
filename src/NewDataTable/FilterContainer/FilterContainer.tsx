@@ -65,6 +65,14 @@ export function FilterContainer(props: FilterContainer) {
     }
   }, [onKeyDown])
 
+  // в HeadCell есть коллбэк на нажатие на ячейку
+  // но при нажатии на элемент внутри Popper
+  // коллбэк в HeadCell тоже вызывается
+  // данная функция блокирует всплытие события
+  const stopPropagation = useCallback((event: any) => {
+    event.stopPropagation()
+  }, [])
+
   const popperClassName = classnames("data-table__filter-container__popper", className)
 
   // в children находиться форма для установки фильтров
@@ -77,7 +85,7 @@ export function FilterContainer(props: FilterContainer) {
     onReset={dataTableContext.removeFilter}
     filters={dataTableContext.getFilterByFieldKey(column.id ?? column.dataField)}
   >
-    <div className="filter-container">
+    <div className="filter-container" onClick={stopPropagation}>
       <Badge
         color="secondary"
         badgeContent={" "}
