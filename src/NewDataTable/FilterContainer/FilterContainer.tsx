@@ -6,6 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import classnames from "classnames";
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getColumnKey } from "../../utils";
 import useDataTableContext from "../Context/DataTableContext/useDataTableContext";
 import FilterContainerProvider from "../Context/FilterContainerContext/FilterContainerProvider";
 import { DataTableColumn } from "../types";
@@ -26,9 +27,11 @@ export function FilterContainer(props: FilterContainer) {
   const dataTableContext = useDataTableContext()
 
   const isFiltersInstalled = useMemo(() => {
-    if (column?.id ?? column?.dataField === undefined) return false;
+    const columnKey = getColumnKey(column)
 
-    return dataTableContext.filters.has(column.id ?? column.dataField)
+    if (columnKey === undefined) return false;
+
+    return dataTableContext.filters.has(columnKey)
   }, [column, dataTableContext.filters])
 
   const togglePopover = useCallback((event: any) => {
@@ -75,7 +78,6 @@ export function FilterContainer(props: FilterContainer) {
     filters={dataTableContext.getFilterByFieldKey(column.id ?? column.dataField)}
   >
     <div className="filter-container">
-
       <Badge
         color="secondary"
         badgeContent={" "}
