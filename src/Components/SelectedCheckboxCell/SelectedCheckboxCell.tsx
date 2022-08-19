@@ -1,8 +1,8 @@
 import { Cell } from "@grossb/react-table"
-import { Checkbox } from "../../../Components"
-import { DataRow } from "../../types"
+import { Checkbox } from "../../BaseComponents"
+import { DataRow } from "../../DataTable/types"
 import { useCallback } from "react"
-import { SELECT_ALL_STATUSES } from "../../../const"
+import { SELECT_ALL_STATUSES } from "../../const"
 
 export type SelectedCheckboxProps = {
   selectStatus?: SELECT_ALL_STATUSES,

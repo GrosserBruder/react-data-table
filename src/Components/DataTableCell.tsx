@@ -1,6 +1,6 @@
 import { Cell, CellProps } from "@grossb/react-table"
-import { getColumnKey } from "../../utils";
-import { DataRow, DataTableColumn } from "../types";
+import { getColumnKey } from "../utils";
+import { DataRow, DataTableColumn } from "../DataTable/types";
 
 export type DataTableCellProps = CellProps & {
   column: DataTableColumn

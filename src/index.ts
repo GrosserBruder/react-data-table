@@ -1,3 +1,4 @@
+export * from "./BaseComponents";
 export * from "./Components";
 export * from "./DataTable";
 export * from "./FilterContainer";

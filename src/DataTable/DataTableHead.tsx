@@ -2,9 +2,8 @@ import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback } from "react";
 import { SELECT_ALL_STATUSES, SORT_STRATEGY } from "../const";
 import { DataRow, DataTableColumn } from "./types";
-import useDataTableContext from "./Context/DataTableContext/useDataTableContext";
-import { SelectedCheckboxCell } from "./Components";
-import DataTableHeadCell from "./Components/DataTableHeadCell";
+import { useDataTableContext } from "./Context";
+import { SelectedCheckboxCell, DataTableHeadCell } from "../Components";
 import { getColumnKey } from "../utils";
 
 export type DataTableHeadProps = {

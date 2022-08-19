@@ -1,8 +1,8 @@
 import { Row, RowProps } from "@grossb/react-table";
 import { memo, useCallback } from "react";
-import { SELECT_ALL_STATUSES } from "../../const";
-import { getColumnKey } from "../../utils";
-import { DataRow, DataTableColumn } from "../types";
+import { SELECT_ALL_STATUSES } from "../const";
+import { getColumnKey } from "../utils";
+import { DataRow, DataTableColumn } from "../DataTable/types";
 import DataTableCell from "./DataTableCell";
 import { SelectedCheckboxCell } from "./SelectedCheckboxCell";
 
