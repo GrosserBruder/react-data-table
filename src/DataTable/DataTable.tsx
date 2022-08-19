@@ -1,11 +1,11 @@
 import { Table, TableProps } from "@grossb/react-table";
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
-import { DataRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
-import { useCallback, useMemo } from "react";
+import { BodyPropsCommunity, CellPropsCommunity, DataRow, DataTableColumn, HeadCellPropsCommunity, HeadPropsCommunity, RowPropsCommunity } from "./types";
+import { useMemo } from "react";
 import { useDataTableProps } from "./hooks/useDataTableProps";
 import "../styles/DataTable.scss"
-import { useDataTableContext, DataTableProvider, DataTableContextType } from "./Context";
+import { useDataTableContext, DataTableProvider } from "./Context";
 
 export type DataTableProps = {
   tableProps?: TableProps,
@@ -14,14 +14,21 @@ export type DataTableProps = {
   filterable?: boolean
   sortable?: boolean
   selectable?: boolean
-  rowProps?: ((dataRow: DataRow, selectedRowsContext: DataTableContextType) => RowPropsWithoutChildren) | RowPropsWithoutChildren
+  getBodyCellProps?: (dataRow: DataRow, column: DataTableColumn) => CellPropsCommunity
+  getRowProps?: (dataRow: DataRow) => RowPropsCommunity
+  bodyProps?: BodyPropsCommunity
+  headProps?: HeadPropsCommunity
+  getHeadCellProps?: (column: DataTableColumn) => HeadCellPropsCommunity
 }
 
 function DataTableRaw(props: DataTableProps) {
 
   const processedProps = useDataTableProps(props)
 
-  const { tableProps, columns, data = [], filterable, sortable, selectable, rowProps } = processedProps
+  const {
+    tableProps, columns, data = [], filterable, sortable, selectable,
+    getBodyCellProps, getRowProps, bodyProps, headProps, getHeadCellProps
+  } = processedProps
 
   const dataTableContext = useDataTableContext()
 
@@ -30,44 +37,23 @@ function DataTableRaw(props: DataTableProps) {
     return dataTableContext.sortDataRows(filteredData)
   }, [data, dataTableContext.filterDataRows, dataTableContext.sortDataRows])
 
-  const getRowProps = useCallback((dataRow: DataRow) => {
-    if (typeof rowProps === "function") {
-      return rowProps(dataRow, dataTableContext)
-    }
-
-    return rowProps
-  }, [rowProps, dataTableContext])
-
-  const getBodyCellProps = useCallback((column: DataTableColumn) => {
-    if (typeof column.bodyCellProps === "function") {
-      return column.bodyCellProps(column)
-    }
-
-    return column.bodyCellProps
-  }, [rowProps])
-
-  const getHeadCellProps = useCallback((column: DataTableColumn) => {
-    if (typeof column.headCellProps === "function") {
-      return column.headCellProps?.(column)
-    }
-
-    return column.headCellProps
-  }, [rowProps])
-
   return <Table {...tableProps} className="data-table">
     <DataTableHead
+      {...headProps}
       columns={columns}
       data={sortedAndFilteredData}
       filterable={filterable}
       sortable={sortable}
       selectable={selectable}
+      getCellProps={getHeadCellProps}
     />
     <DataTableBody
+      {...bodyProps}
       columns={columns}
       data={sortedAndFilteredData}
       selectable={selectable}
-      rowProps={getRowProps}
-      cellProps={getBodyCellProps}
+      getCellProps={getBodyCellProps}
+      getRowProps={getRowProps}
     />
   </Table>
 }

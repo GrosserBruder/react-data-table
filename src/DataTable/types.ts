@@ -1,6 +1,12 @@
 import { HeadCellProps } from '../BaseComponents/HeadCell/HeadCell';
-import { CellProps, RowProps } from "@grossb/react-table"
+import { BodyProps, CellProps, HeadProps, RowProps } from "@grossb/react-table"
 import { ReactNode } from "react"
+
+export type CellPropsCommunity = Omit<CellProps, "children">
+export type HeadCellPropsCommunity = Omit<HeadCellProps, "children">
+export type RowPropsCommunity = Omit<RowProps, "children">
+export type BodyPropsCommunity = Omit<BodyProps, "children">
+export type HeadPropsCommunity = Omit<HeadProps, "children">
 
 export type ColumnFilter = {
   search?: string,
@@ -25,5 +31,3 @@ export type DataRow = {
   id: number | string,
   [key: string]: any,
 }
-
-export type RowPropsWithoutChildren = Omit<RowProps, "children">

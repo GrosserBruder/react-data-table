@@ -1,23 +1,28 @@
 import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback } from "react";
 import { SELECT_ALL_STATUSES, SORT_STRATEGY } from "../const";
-import { DataRow, DataTableColumn } from "./types";
+import { DataRow, DataTableColumn, HeadCellPropsCommunity, HeadPropsCommunity } from "./types";
 import { useDataTableContext } from "./Context";
 import { SelectedCheckboxCell, DataTableHeadCell } from "../Components";
 import { getColumnKey } from "../utils";
+import classNames from "classnames";
 
-export type DataTableHeadProps = {
+export type DataTableHeadProps = HeadPropsCommunity & {
   columns: Array<DataTableColumn>
   data: Array<DataRow>
   filterable?: boolean
   sortable?: boolean
   selectable?: boolean
+  getCellProps?: (column: DataTableColumn) => HeadCellPropsCommunity
 }
 
 const MemoDataTableHeadCell = memo(DataTableHeadCell)
 
 function DataTableHead(props: DataTableHeadProps) {
-  const { columns, data, filterable, sortable, selectable } = props
+  const {
+    columns, data, filterable, sortable, selectable, className, getCellProps,
+    ...restProps
+  } = props
 
   const dataTableContext = useDataTableContext()
 
@@ -47,6 +52,7 @@ function DataTableHead(props: DataTableHeadProps) {
   const getCells = useCallback(() => {
     const cells = columns.map((column) => <MemoDataTableHeadCell
       key={getColumnKey(column)}
+      {...getCellProps?.(column)}
       column={column}
       sortable={sortable}
       filterable={filterable}
@@ -77,7 +83,9 @@ function DataTableHead(props: DataTableHeadProps) {
     </Row>
   }, [getCells])
 
-  return <Head className="data-table-head">
+  const headClassName = classNames("data-table-head", className)
+
+  return <Head className={headClassName} {...restProps}>
     {getRows()}
   </Head>
 }
