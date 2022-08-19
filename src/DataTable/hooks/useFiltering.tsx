@@ -1,8 +1,9 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { ColumnFilter, DataRow, DataTableColumn } from "../types"
 
 export type useFilteringProps = {
   columns: Array<DataTableColumn>
+  onFilterChange?: (filters: Map<string, ColumnFilter>) => void
 }
 
 export type useFilteringValue = {
@@ -12,11 +13,16 @@ export type useFilteringValue = {
   resetAllFilters: () => void;
   filterDataRows: (data: Array<DataRow>) => DataRow[];
   getFilterByFieldKey: (fieldKey?: string) => ColumnFilter | undefined;
+
 }
 
 export default function useFiltering(props: useFilteringProps) {
-  const { columns } = props
+  const { columns, onFilterChange } = props
   const [filters, setFilters] = useState<Map<string, ColumnFilter>>(new Map<string, ColumnFilter>())
+
+  useEffect(() => {
+    onFilterChange?.(filters)
+  }, [filters, onFilterChange])
 
   const setFilter = useCallback((fieldKey: string, filter: ColumnFilter) => {
     const map = new Map(filters.set(fieldKey, filter))
