@@ -85,5 +85,5 @@ export const mergeObjects = (first: { [key: string]: any }, second: { [key: stri
 }
 
 export const getColumnKey = (column: DataTableColumn) => {
-  return column.dataField ?? column.id
+  return column.id ?? column.dataField
 }
