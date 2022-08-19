@@ -1,14 +1,13 @@
-import { Table, TableProps } from "@grossb/react-table/dist/Table";
+import { Table, TableProps } from "@grossb/react-table";
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
 import { DataRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
 import { useCallback, useMemo } from "react";
 import { useDataTableProps } from "./hooks/useDataTableProps";
 import "../styles/DataTableHead.scss"
-import useDataTableContext from "./Context/DataTableContext/useDataTableContext";
-import DataTableProvider, { DataTableContextType } from "./Context/DataTableContext/DataTableProvider";
+import { useDataTableContext, DataTableProvider, DataTableContextType } from "./Context";
 
-export type NewDataTableProps = {
+export type DataTableProps = {
   tableProps?: TableProps,
   columns: Array<DataTableColumn>
   data?: Array<DataRow>
@@ -18,7 +17,7 @@ export type NewDataTableProps = {
   rowProps?: ((dataRow: DataRow, selectedRowsContext: DataTableContextType) => RowPropsWithoutChildren) | RowPropsWithoutChildren
 }
 
-function NewDataTableRaw(props: NewDataTableProps) {
+function DataTableRaw(props: DataTableProps) {
 
   const processedProps = useDataTableProps(props)
 
@@ -73,10 +72,10 @@ function NewDataTableRaw(props: NewDataTableProps) {
   </Table>
 }
 
-function NewDataTable(props: NewDataTableProps) {
+function DataTable(props: DataTableProps) {
   return <DataTableProvider columns={props.columns} data={props.data ?? []}>
-    <NewDataTableRaw {...props} />
+    <DataTableRaw {...props} />
   </DataTableProvider>
 }
 
-export default NewDataTable;
+export default DataTable;

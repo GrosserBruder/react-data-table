@@ -6,19 +6,19 @@ import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import classnames from "classnames";
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getColumnKey } from "../../utils";
-import useDataTableContext from "../Context/DataTableContext/useDataTableContext";
-import FilterContainerProvider from "../Context/FilterContainerContext/FilterContainerProvider";
-import { DataTableColumn } from "../types";
+import { getColumnKey } from "../utils";
+import useDataTableContext from "../DataTable/Context/DataTableContext/useDataTableContext";
+import FilterContainerProvider from "../DataTable/Context/FilterContainerContext/FilterContainerProvider";
+import { DataTableColumn } from "../DataTable/types";
 
-export type FilterContainer = {
+export type FilterContainerProps = {
   className?: string
   children?: ReactNode
   filter?: ReactNode
   column: DataTableColumn,
 }
 
-export function FilterContainer(props: FilterContainer) {
+export function FilterContainer(props: FilterContainerProps) {
   const { children, className, column } = props;
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -116,3 +116,5 @@ export function FilterContainer(props: FilterContainer) {
     </div>
   </FilterContainerProvider>
 }
+
+export default FilterContainer

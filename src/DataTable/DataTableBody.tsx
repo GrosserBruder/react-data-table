@@ -3,11 +3,9 @@ import { memo, useCallback } from "react";
 import { SELECT_ALL_STATUSES } from "../const";
 import DataTableRow from "./Components/DataTableRow";
 import useDataTableContext from "./Context/DataTableContext/useDataTableContext";
-import { DataRow, DataTableBodyRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
+import { DataRow, DataTableColumn, RowPropsWithoutChildren } from "./types";
 
 export type DataTableBodyProps = {
-  renderRow?: (row: DataTableBodyRow) => JSX.Element
-  onRowClick?: (event: any, row: DataTableBodyRow) => void
   columns: Array<DataTableColumn>
   data?: Array<DataRow>
   selectable?: boolean

@@ -1,7 +1,6 @@
-export * from "./DataTable";
-// export * from "./Filter";
 export * from "./Components";
+export * from "./DataTable";
+export * from "./FilterContainer";
+
 export * from "./const";
 export * from "./utils";
-
-export * from "./NewDataTable"

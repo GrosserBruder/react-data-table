@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect, useState } from "react"
 import { SELECT_ALL_STATUSES } from "../../const"
 import { DataRow } from "../types"
 
-export type SelectedRowsProviderProps = {
+export type useSelectingRowsProviderProps = {
   defaultSelectedRows?: Array<DataRow>
   defaultIsSelectAll?: SELECT_ALL_STATUSES,
   dataRowsLength?: number
@@ -17,7 +17,7 @@ export type useSelectingRowsValue = {
   getSelectStatus: (row: DataRow) => SELECT_ALL_STATUSES.NOT_SELECTED | SELECT_ALL_STATUSES.SELECTED
 }
 
-export default function useSelectingRows(props: SelectedRowsProviderProps) {
+export default function useSelectingRows(props: useSelectingRowsProviderProps) {
   const {
     defaultSelectedRows = [],
     defaultIsSelectAll = SELECT_ALL_STATUSES.NOT_SELECTED,
@@ -27,7 +27,7 @@ export default function useSelectingRows(props: SelectedRowsProviderProps) {
   const [selectedRows, setSelectedRowsState] = useState(defaultSelectedRows)
   const [selectAllStatus, setSelectAllStatus] = useState<SELECT_ALL_STATUSES>(defaultIsSelectAll)
 
-  
+
   useLayoutEffect(() => {
     checkSelectAllStatus(selectedRows)
   }, [selectedRows])

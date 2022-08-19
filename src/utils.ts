@@ -1,6 +1,4 @@
-import { DataTableColumn } from './NewDataTable/types';
-import { NumberRange } from './Components/NumberRange/NumberRange';
-import { DateRange } from './Components/DateRange/DateRange';
+import { DataTableColumn } from './DataTable/types';
 import { VALUE_TYPE, VALUE_TYPES } from "./const";
 
 export type ResultCompare = -1 | 0 | 1
@@ -34,20 +32,6 @@ export const compareDate = (a: string | Date, b: string | Date) => {
   if (aDate < bDate) return -1;
   if (aDate > bDate) return 1;
   return 0;
-}
-
-export const isDateInDataRange = (date: string | Date, dateRange: DateRange) => {
-  const checkFrom = dateRange.from ? new Date(date) >= new Date(dateRange.from) : true
-  const checkTo = dateRange.to ? new Date(date) <= new Date(dateRange.to) : true
-
-  return checkFrom && checkTo;
-}
-
-export const isNumberInNumberRange = (number: number, numberRange: NumberRange) => {
-  const checkFrom = numberRange.from ? number >= numberRange.from : true
-  const checkTo = numberRange.to ? number <= numberRange.to : true
-
-  return checkFrom && checkTo;
 }
 
 export function primitiveOrFunction(primitiveOrFunction: Function | boolean | string | number | undefined | null, dataToFunction: { [key: string]: any }) {
