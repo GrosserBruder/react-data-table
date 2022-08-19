@@ -1,4 +1,4 @@
-import { HeadCellProps } from './../Components/HeadCell/HeadCellV2';
+import { HeadCellProps } from '../Components/HeadCell/HeadCell';
 import { CellProps, RowProps, TableProps } from "@grossb/react-table"
 import { ReactNode } from "react"
 

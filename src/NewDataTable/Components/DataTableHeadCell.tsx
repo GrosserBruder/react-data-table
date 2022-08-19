@@ -4,7 +4,7 @@ import { HeadCellV2, SortStrategyIcon } from "../../Components";
 import { getColumnKey } from "../../utils";
 import { FilterContainer } from "../FilterContainer/FilterContainer";
 import { DataTableColumn } from "../types";
-import { HeadCellProps } from "../../Components/HeadCell/HeadCellV2";
+import { HeadCellProps } from "../../Components/HeadCell/HeadCell";
 
 export type DataTableHeadCellProps = HeadCellProps & {
   column: DataTableColumn

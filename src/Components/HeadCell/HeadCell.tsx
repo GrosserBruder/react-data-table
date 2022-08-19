@@ -9,7 +9,7 @@ export type HeadCellProps = ThHTMLAttributes<HTMLElement>
     width?: number,
   };
 
-export function HeadCellV2(props: HeadCellProps) {
+export function HeadCell(props: HeadCellProps) {
   const { children, className: classNameProps, ...rest } = props;
 
   const className = classnames('head-cell', classNameProps)
@@ -21,4 +21,4 @@ export function HeadCellV2(props: HeadCellProps) {
   </Cell>
 }
 
-export default HeadCellV2;
+export default HeadCell;
