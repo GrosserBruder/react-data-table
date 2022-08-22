@@ -3,7 +3,6 @@ import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
 import { BodyPropsCommunity, CellPropsCommunity, DataRow, DataTableColumn, HeadCellPropsCommunity, HeadPropsCommunity, RowPropsCommunity } from "./types";
 import { useMemo } from "react";
-import { useDataTableProps } from "./hooks/useDataTableProps";
 import "../styles/DataTable.scss"
 import { useDataTableContext } from "./Context";
 
@@ -17,16 +16,15 @@ export type DataTableProps = {
   bodyProps?: BodyPropsCommunity
   headProps?: HeadPropsCommunity
   getHeadCellProps?: (column: DataTableColumn) => HeadCellPropsCommunity
+  disableSelectOnClick?: boolean
+  onRowClick?: (event: any, dataRow: DataRow) => void
 }
 
 function DataTableRaw(props: DataTableProps) {
-
-  const processedProps = useDataTableProps(props)
-
   const {
-    tableProps, filterable, sortable, selectable,
+    tableProps, filterable, sortable, selectable, disableSelectOnClick, onRowClick,
     getBodyCellProps, getRowProps, bodyProps, headProps, getHeadCellProps
-  } = processedProps
+  } = props
 
   const dataTableContext = useDataTableContext()
 
@@ -35,6 +33,16 @@ function DataTableRaw(props: DataTableProps) {
 
   const sortedAndFilteredData = useMemo(() => {
     const filteredData = dataTableContext.filterDataRows(data ?? [])
+
+    // убираем из выбранных строки, которые скрылить при обновлении фильтров
+    const notExistingSelectedRows = dataTableContext.selectedRows.filter(
+      (selectedRow) => filteredData.findIndex(((filteredDataItem) => selectedRow.id === filteredDataItem.id)) === -1
+    )
+
+    if (notExistingSelectedRows.length > 0) {
+      dataTableContext.removeSelectedRows(notExistingSelectedRows)
+    }
+
     return dataTableContext.sortDataRows(filteredData)
   }, [data, dataTableContext.filterDataRows, dataTableContext.sortDataRows])
 
@@ -55,6 +63,8 @@ function DataTableRaw(props: DataTableProps) {
       selectable={selectable}
       getCellProps={getBodyCellProps}
       getRowProps={getRowProps}
+      disableSelectOnClick={disableSelectOnClick}
+      onRowClick={onRowClick}
     />
   </Table>
 }

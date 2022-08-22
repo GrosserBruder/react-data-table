@@ -1,28 +1,33 @@
 import { Row } from "@grossb/react-table";
 import { memo, useCallback } from "react";
-import { SELECT_ALL_STATUSES } from "../const";
+import { SELECT_STATUSES } from "../const";
 import { getColumnKey } from "../utils";
 import { CellPropsCommunity, DataRow, DataTableColumn, RowPropsCommunity } from "../DataTable/types";
 import DataTableCell from "./DataTableCell";
 import { SelectedCheckboxCell } from "./SelectedCheckboxCell";
 
-export type DataTableRowProps = RowPropsCommunity & {
+export type DataTableRowProps = Omit<RowPropsCommunity, "onClick"> & {
   columns: Array<DataTableColumn>
   dataRow: DataRow
   selectable?: boolean
-  onSelectClick?: (dataRow: DataRow, currentStatus?: SELECT_ALL_STATUSES) => void
-  selectStatus?: SELECT_ALL_STATUSES
+  onSelectClick?: (dataRow: DataRow, currentStatus?: SELECT_STATUSES) => void
+  selectStatus?: SELECT_STATUSES
   getCellProps?: (dataRow: DataRow, column: DataTableColumn) => CellPropsCommunity
+  onClick?: (event: any, dataRow: DataRow, currentStatus?: SELECT_STATUSES) => void
 }
 
 const MemoDataTableCell = memo(DataTableCell)
 
 function DataTableRow(props: DataTableRowProps) {
-  const { columns, dataRow, selectable, onSelectClick, selectStatus, getCellProps, ...restProps } = props;
+  const { columns, dataRow, selectable, onSelectClick, selectStatus, getCellProps, onClick, ...restProps } = props;
 
-  const onSelectClickHandler = useCallback((currentStatus?: SELECT_ALL_STATUSES) => {
+  const onSelectClickHandler = useCallback((currentStatus?: SELECT_STATUSES) => {
     onSelectClick?.(dataRow, currentStatus)
   }, [dataRow, onSelectClick])
+
+  const onClickHandler = useCallback((event: any) => {
+    onClick?.(event, dataRow, selectStatus)
+  }, [onClick, dataRow, selectStatus])
 
   const getCells = useCallback((dataRow: DataRow) => {
     const cells = columns.map((column) => <MemoDataTableCell
@@ -42,7 +47,7 @@ function DataTableRow(props: DataTableRowProps) {
     return cells
   }, [columns, selectable, onSelectClick, selectStatus])
 
-  return <Row key={dataRow.id} {...restProps}>
+  return <Row key={dataRow.id} {...restProps} onClick={onClickHandler}>
     {getCells(dataRow)}
   </Row>
 }

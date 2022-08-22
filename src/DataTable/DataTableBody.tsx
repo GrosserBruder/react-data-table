@@ -1,6 +1,6 @@
 import { Body, Cell, Row } from "@grossb/react-table"
 import { memo, useCallback } from "react";
-import { SELECT_ALL_STATUSES } from "../const";
+import { SELECT_STATUSES } from "../const";
 import { DataTableRow } from "../Components";
 import { useDataTableContext } from "./Context";
 import { BodyPropsCommunity, CellPropsCommunity, DataRow, DataTableColumn, RowPropsCommunity } from "./types";
@@ -11,22 +11,32 @@ export type DataTableBodyProps = BodyPropsCommunity & {
   selectable?: boolean
   getCellProps?: (dataRow: DataRow, column: DataTableColumn) => CellPropsCommunity
   getRowProps?: (dataRow: DataRow) => RowPropsCommunity
+  disableSelectOnClick?: boolean
+  onRowClick?: (event: any, dataRow: DataRow) => void
 }
 
 const MemoDataTableRow = memo(DataTableRow)
 
 function DataTableBody(props: DataTableBodyProps) {
-  const { columns, data, selectable, getCellProps, getRowProps, ...restProps } = props;
+  const { columns, data, selectable, getCellProps, getRowProps, onRowClick, disableSelectOnClick, ...restProps } = props;
 
   const dataTableContext = useDataTableContext()
 
-  const onSelectClick = useCallback((row: DataRow, currentStatus?: SELECT_ALL_STATUSES) => {
-    if (currentStatus === SELECT_ALL_STATUSES.SELECTED) {
+  const onSelectClick = useCallback((row: DataRow, currentStatus?: SELECT_STATUSES) => {
+    if (currentStatus === SELECT_STATUSES.SELECTED) {
       dataTableContext.removeSelectedRows?.(row)
     } else {
       dataTableContext.addSelectedRows?.(row)
     }
   }, [dataTableContext.addSelectedRows, dataTableContext.removeSelectedRows])
+
+  const onRowClickHandler = useCallback((event: any, dataRow: DataRow, selectStatus?: SELECT_STATUSES) => {
+    if (!disableSelectOnClick) {
+      onSelectClick(dataRow, selectStatus)
+    }
+
+    onRowClick?.(event, dataRow)
+  }, [onRowClick, onSelectClick, disableSelectOnClick])
 
   const getRows = useCallback(() => {
     if (data?.length === 0) {
@@ -46,6 +56,7 @@ function DataTableBody(props: DataTableBodyProps) {
       dataRow={dataRow}
       selectable={selectable}
       onSelectClick={onSelectClick}
+      onClick={onRowClickHandler}
       selectStatus={dataTableContext.getSelectStatus?.(dataRow)}
       getCellProps={getCellProps}
       {...getRowProps?.(dataRow)}
