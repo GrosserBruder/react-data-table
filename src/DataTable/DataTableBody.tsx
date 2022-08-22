@@ -11,12 +11,14 @@ export type DataTableBodyProps = BodyPropsCommunity & {
   selectable?: boolean
   getCellProps?: (dataRow: DataRow, column: DataTableColumn) => CellPropsCommunity
   getRowProps?: (dataRow: DataRow) => RowPropsCommunity
+  disableSelectOnClick?: boolean
+  onRowClick?: (event: any, dataRow: DataRow) => void
 }
 
 const MemoDataTableRow = memo(DataTableRow)
 
 function DataTableBody(props: DataTableBodyProps) {
-  const { columns, data, selectable, getCellProps, getRowProps, ...restProps } = props;
+  const { columns, data, selectable, getCellProps, getRowProps, onRowClick, disableSelectOnClick, ...restProps } = props;
 
   const dataTableContext = useDataTableContext()
 
@@ -27,6 +29,14 @@ function DataTableBody(props: DataTableBodyProps) {
       dataTableContext.addSelectedRows?.(row)
     }
   }, [dataTableContext.addSelectedRows, dataTableContext.removeSelectedRows])
+
+  const onRowClickHandler = useCallback((event: any, dataRow: DataRow) => {
+    if (!disableSelectOnClick) {
+      onSelectClick(dataRow, dataTableContext.getSelectStatus?.(dataRow))
+    }
+
+    onRowClick?.(event, dataRow)
+  }, [onRowClick, onSelectClick, disableSelectOnClick, dataTableContext.getSelectStatus])
 
   const getRows = useCallback(() => {
     if (data?.length === 0) {
@@ -46,6 +56,7 @@ function DataTableBody(props: DataTableBodyProps) {
       dataRow={dataRow}
       selectable={selectable}
       onSelectClick={onSelectClick}
+      onClick={onRowClickHandler}
       selectStatus={dataTableContext.getSelectStatus?.(dataRow)}
       getCellProps={getCellProps}
       {...getRowProps?.(dataRow)}
