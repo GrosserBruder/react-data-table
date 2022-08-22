@@ -47,7 +47,7 @@ function DataTableHead(props: DataTableHeadProps) {
     } else {
       dataTableContext.resetSelectedRows()
     }
-  }, [dataTableContext.addSelectedRows, dataTableContext.resetSelectedRows, data])
+  }, [dataTableContext.selectAllStatus, dataTableContext.addSelectedRows, dataTableContext.resetSelectedRows, data])
 
   const getCells = useCallback(() => {
     const cells = columns.map((column) => <MemoDataTableHeadCell
