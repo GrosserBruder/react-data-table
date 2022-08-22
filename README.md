@@ -59,3 +59,95 @@
 | `sortable`  |  boolean     |   Включает сортировку для столбца. Перекрывает  `sortable` из `DataTable`   |                      |
 | `headCellProps` |  `(column: DataTableColumn) => HeadCellProps` или  `HeadCellProps` |  Объект или функция возвращающая объект, который передает параметры для ячейки из заголовка                                |                      |
 | `bodyCellProps` |  `(column: DataTableColumn) => CellProps` или `CellProps` |  Объект или функция возвращающая объект, который передает параметры для ячейки из тела таблицы  |                      |
+
+### <a name="#Пример_использования">Пример использования</a>
+
+```js
+
+  const columns = [
+    {
+      dataField: "createdDate",
+      header: 'Дата создания',
+      valueGetter: (row: any) => new Date(row.createdDate).toLocaleString("ru-RU")
+    },
+    {
+      dataField: "name",
+      header: 'Название',
+      rowComparer: (first: any, second: any) => {
+        if (first.name.toLocaleLowerCase() < second.name.toLocaleLowerCase()) return -1;
+        if (first.name.toLocaleLowerCase() > second.name.toLocaleLowerCase()) return 1;
+        return 0;
+      },
+    },
+    {
+      dataField: "address",
+      header: 'Название',
+    },
+    {
+      dataField: "login",
+      header: 'Логин',
+    },
+    {
+      dataField: "password",
+      header: 'Пароль',
+      valueGetter: (row: any) => "********",
+    },
+    {
+      dataField: "editCount",
+      header: 'Количество редактирований',
+      rowComparer: (first: any, second: any) => {
+        const res = first.editCount - second.editCount
+        if (res === 0) return 0
+        return res > 0 ? 1 : -1;
+      }
+    },
+    {
+      dataField: "description",
+      header: 'Описание',
+    },
+    {
+      dataField: "isDeleted",
+      header: 'Удален',
+      valueGetter: (row: any) => row.isDeleted ? "Да" : "Нет"
+    },
+  ]
+
+  const data = [
+    {
+      id: 0,
+      createdDate: "2022-10-11T09:48:49.601Z",
+      name: "название",
+      address: "google.com",
+      login: "логин",
+      password: "test",
+      editCount: 23,
+      description: "description",
+      isDeleted: true
+    },
+    {
+      id: 1,
+      createdDate: "2022-11-04T12:32:49.601Z",
+      name: "gitlab",
+      address: "address.ru",
+      login: "q1w2e3r4",
+      password: "password",
+      editCount: 32,
+      description: "не забыть поменять пароль",
+      isDeleted: true
+    }
+  ]
+
+  ////////
+
+  <DataTableProvider columns={columns} data={data}>
+    <DataTable
+      tableProps={{
+        striped: true,
+        fixedTopTitle: true,
+      }}
+      disableSelectOnClick
+      selectable
+      sortable
+    />
+  </DataTableProvider>
+```
