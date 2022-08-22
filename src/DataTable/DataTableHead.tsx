@@ -1,6 +1,6 @@
 import { Head, Row } from "@grossb/react-table"
 import { memo, useCallback } from "react";
-import { SELECT_ALL_STATUSES, SORT_STRATEGY } from "../const";
+import { SELECT_STATUSES, SORT_STRATEGY } from "../const";
 import { DataRow, DataTableColumn, HeadCellPropsCommunity, HeadPropsCommunity } from "./types";
 import { useDataTableContext } from "./Context";
 import { SelectedCheckboxCell, DataTableHeadCell } from "../Components";
@@ -42,7 +42,7 @@ function DataTableHead(props: DataTableHeadProps) {
   }, [dataTableContext.setSort, dataTableContext.sortFields, dataTableContext.removeSort])
 
   const onSelectAllClick = useCallback(() => {
-    if (dataTableContext.selectAllStatus === SELECT_ALL_STATUSES.NOT_SELECTED) {
+    if (dataTableContext.selectAllStatus === SELECT_STATUSES.NOT_SELECTED) {
       dataTableContext.addSelectedRows(data)
     } else {
       dataTableContext.resetSelectedBox()

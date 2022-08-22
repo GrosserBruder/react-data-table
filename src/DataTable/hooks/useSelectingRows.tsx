@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from "react"
-import { SELECT_ALL_STATUSES } from "../../const"
+import { SELECT_STATUSES } from "../../const"
 import { DataRow } from "../types"
 
 export type useSelectingRowsProps = {
@@ -10,11 +10,11 @@ export type useSelectingRowsProps = {
 
 export type useSelectingRowsValue = {
   selectedRows: DataRow[];
-  selectAllStatus: SELECT_ALL_STATUSES;
+  selectAllStatus: SELECT_STATUSES;
   addSelectedRows: (rows: DataRow | Array<DataRow>) => void;
   removeSelectedRows: (rows: DataRow | Array<DataRow>) => void;
   resetSelectedBox: () => void;
-  getSelectStatus: (row: DataRow) => SELECT_ALL_STATUSES.NOT_SELECTED | SELECT_ALL_STATUSES.SELECTED
+  getSelectStatus: (row: DataRow) => SELECT_STATUSES.NOT_SELECTED | SELECT_STATUSES.SELECTED
 }
 
 export default function useSelectingRows(props: useSelectingRowsProps) {
@@ -25,7 +25,7 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
   } = props;
 
   const [selectedRows, setSelectedRowsState] = useState(defaultSelectedRows)
-  const [selectAllStatus, setSelectAllStatus] = useState<SELECT_ALL_STATUSES>(SELECT_ALL_STATUSES.NOT_SELECTED)
+  const [selectAllStatus, setSelectAllStatus] = useState<SELECT_STATUSES>(SELECT_STATUSES.NOT_SELECTED)
 
   useEffect(() => {
     onSelectedRowsChange?.(selectedRows)
@@ -41,16 +41,16 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
 
   const checkSelectAllStatus = useCallback(async (selectedRows: Array<DataRow>) => {
     if (dataRowsLength === undefined) {
-      return setSelectAllStatus(SELECT_ALL_STATUSES.NOT_SELECTED)
+      return setSelectAllStatus(SELECT_STATUSES.NOT_SELECTED)
     }
 
     switch (true) {
       case dataRowsLength === selectedRows.length:
-        return setSelectAllStatus(SELECT_ALL_STATUSES.SELECTED)
+        return setSelectAllStatus(SELECT_STATUSES.SELECTED)
       case selectedRows.length > 0 && selectedRows.length < dataRowsLength:
-        return setSelectAllStatus(SELECT_ALL_STATUSES.INDETERMINATE)
+        return setSelectAllStatus(SELECT_STATUSES.INDETERMINATE)
       default:
-        return setSelectAllStatus(SELECT_ALL_STATUSES.NOT_SELECTED)
+        return setSelectAllStatus(SELECT_STATUSES.NOT_SELECTED)
     }
   }, [dataRowsLength])
 
@@ -82,9 +82,9 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
   const getSelectStatus = useCallback((row: DataRow) => {
     const selectRow = selectedRows.find((x) => x.id === row.id)
 
-    if (selectRow === undefined) return SELECT_ALL_STATUSES.NOT_SELECTED
+    if (selectRow === undefined) return SELECT_STATUSES.NOT_SELECTED
 
-    return SELECT_ALL_STATUSES.SELECTED
+    return SELECT_STATUSES.SELECTED
   }, [selectedRows])
 
   return {

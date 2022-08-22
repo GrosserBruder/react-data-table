@@ -1,6 +1,6 @@
 import { Body, Cell, Row } from "@grossb/react-table"
 import { memo, useCallback } from "react";
-import { SELECT_ALL_STATUSES } from "../const";
+import { SELECT_STATUSES } from "../const";
 import { DataTableRow } from "../Components";
 import { useDataTableContext } from "./Context";
 import { BodyPropsCommunity, CellPropsCommunity, DataRow, DataTableColumn, RowPropsCommunity } from "./types";
@@ -20,8 +20,8 @@ function DataTableBody(props: DataTableBodyProps) {
 
   const dataTableContext = useDataTableContext()
 
-  const onSelectClick = useCallback((row: DataRow, currentStatus?: SELECT_ALL_STATUSES) => {
-    if (currentStatus === SELECT_ALL_STATUSES.SELECTED) {
+  const onSelectClick = useCallback((row: DataRow, currentStatus?: SELECT_STATUSES) => {
+    if (currentStatus === SELECT_STATUSES.SELECTED) {
       dataTableContext.removeSelectedRows?.(row)
     } else {
       dataTableContext.addSelectedRows?.(row)

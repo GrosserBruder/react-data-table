@@ -21,7 +21,7 @@ export const enum FILTER_FIELD_KEY {
   SORT = "sort"
 }
 
-export enum SELECT_ALL_STATUSES {
+export enum SELECT_STATUSES {
   NOT_SELECTED,
   INDETERMINATE,
   SELECTED
