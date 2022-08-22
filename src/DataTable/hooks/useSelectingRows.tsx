@@ -13,7 +13,7 @@ export type useSelectingRowsValue = {
   selectAllStatus: SELECT_STATUSES;
   addSelectedRows: (rows: DataRow | Array<DataRow>) => void;
   removeSelectedRows: (rows: DataRow | Array<DataRow>) => void;
-  resetSelectedBox: () => void;
+  resetSelectedRows: () => void;
   getSelectStatus: (row: DataRow) => SELECT_STATUSES.NOT_SELECTED | SELECT_STATUSES.SELECTED
 }
 
@@ -74,10 +74,10 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
     setSelectedRowsState(newSelectedRows)
   }, [setSelectedRowsState])
 
-  const resetSelectedBox = () => {
+  const resetSelectedRows = useCallback(() => {
     setSelectedRowsState([])
     checkSelectAllStatus([])
-  }
+  }, [setSelectedRowsState, checkSelectAllStatus])
 
   const getSelectStatus = useCallback((row: DataRow) => {
     const selectRow = selectedRows.find((x) => x.id === row.id)
@@ -92,7 +92,7 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
     selectAllStatus,
     addSelectedRows,
     removeSelectedRows,
-    resetSelectedBox,
+    resetSelectedRows,
     getSelectStatus,
   }
 }
