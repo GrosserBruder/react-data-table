@@ -6,14 +6,14 @@ import { SELECT_STATUSES } from "../../const"
 
 export type SelectedCheckboxProps = {
   selectStatus?: SELECT_STATUSES,
-  onClick?: (currentStatus?: SELECT_STATUSES) => void
+  onClick?: (event: any, currentStatus?: SELECT_STATUSES) => void
 }
 
 export default function SelectedAllCheckbox(props: SelectedCheckboxProps) {
   const { selectStatus, onClick } = props;
 
-  const onCheckboxClick = useCallback(() => {
-    onClick?.(selectStatus)
+  const onCheckboxClick = useCallback((event: any) => {
+    onClick?.(event, selectStatus)
   }, [selectStatus, onClick])
 
   return <Cell className="cell__select-all">

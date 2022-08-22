@@ -21,7 +21,8 @@ const MemoDataTableCell = memo(DataTableCell)
 function DataTableRow(props: DataTableRowProps) {
   const { columns, dataRow, selectable, onSelectClick, selectStatus, getCellProps, onClick, ...restProps } = props;
 
-  const onSelectClickHandler = useCallback((currentStatus?: SELECT_STATUSES) => {
+  const onSelectClickHandler = useCallback((event: any, currentStatus?: SELECT_STATUSES) => {
+    event.stopPropagation()
     onSelectClick?.(dataRow, currentStatus)
   }, [dataRow, onSelectClick])
 
