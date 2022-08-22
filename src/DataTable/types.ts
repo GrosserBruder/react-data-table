@@ -9,7 +9,6 @@ export type BodyPropsCommunity = Omit<BodyProps, "children">
 export type HeadPropsCommunity = Omit<HeadProps, "children">
 
 export type ColumnFilter = {
-  search?: string,
   [key: string]: any,
 }
 
