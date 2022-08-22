@@ -21,7 +21,6 @@ export type DataTableProps = {
 }
 
 function DataTableRaw(props: DataTableProps) {
-
   const {
     tableProps, filterable, sortable, selectable, disableSelectOnClick, onRowClick,
     getBodyCellProps, getRowProps, bodyProps, headProps, getHeadCellProps
