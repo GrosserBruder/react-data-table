@@ -6,6 +6,7 @@ import { useEffect, useMemo } from "react";
 import "../styles/DataTable.scss"
 import { useDataTableContext } from "./Context";
 import { onFilterChangeListener, onSortChangeListener, useListeners } from "./hooks";
+import { onSelectedRowsChangeListener } from "./hooks/useListeners";
 
 export type DataTableProps = {
   tableProps?: TableProps,
@@ -22,18 +23,20 @@ export type DataTableProps = {
   disableFiltersAndSortingOnClientSide?: boolean
   onFilterChange?: onFilterChangeListener
   onSortChange?: onSortChangeListener
+  onSelectedRowsChange?: onSelectedRowsChangeListener
 }
 
 function DataTableRaw(props: DataTableProps) {
   const {
     tableProps, filterable, sortable, selectable, disableSelectOnClick, onRowClick,
     getBodyCellProps, getRowProps, bodyProps, headProps, getHeadCellProps,
-    disableFiltersAndSortingOnClientSide, onFilterChange, onSortChange
+    disableFiltersAndSortingOnClientSide, onFilterChange, onSortChange,
+    onSelectedRowsChange
   } = props
 
   const dataTableContext = useDataTableContext()
 
-  useListeners(onFilterChange, onSortChange)
+  useListeners(onFilterChange, onSortChange, onSelectedRowsChange)
 
   const columns = dataTableContext.props.columns
   const data = dataTableContext.props.data
