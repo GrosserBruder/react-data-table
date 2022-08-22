@@ -31,9 +31,9 @@ function DataTableHeadCell(props: DataTableHeadCellProps) {
     onClick={onHeadCellClickHandler}
   >
     <div className="head-cell__title">{column.header}</div>
-    {(sortable || column.sortable) && <SortStrategyIcon sortStrategy={sortStrategy} />}
+    {(sortable) && <SortStrategyIcon sortStrategy={sortStrategy} />}
     {
-      (filterable || column.filterable) && <FilterContainer column={column}>
+      (filterable) && <FilterContainer column={column}>
         {column.filterComponent}
       </FilterContainer>
     }

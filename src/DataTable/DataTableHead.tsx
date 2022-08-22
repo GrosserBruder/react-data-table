@@ -54,8 +54,8 @@ function DataTableHead(props: DataTableHeadProps) {
       key={getColumnKey(column)}
       {...getCellProps?.(column)}
       column={column}
-      sortable={sortable}
-      filterable={filterable}
+      sortable={(sortable || column.sortable) && Boolean(column.rowComparer)}
+      filterable={(filterable || column.filterable) && Boolean(column.rowFilter)}
       sortStrategy={column.dataField
         ? dataTableContext.sortFields.get(column.dataField)
         : undefined
