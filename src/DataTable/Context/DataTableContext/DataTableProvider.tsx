@@ -19,9 +19,9 @@ export type DataTableContextType = useSortingValue
     props: DataTableProviderProps
   }
 
-export type DataTableProviderProps = Omit<useSortingProps, "columns">
-  & Omit<useFilteringProps, "columns">
-  & Omit<useSelectingRowsProps, "dataRowsLength">
+export type DataTableProviderProps = Omit<useSortingProps, "columns" | "onSortingChange">
+  & Omit<useFilteringProps, "columns" | "onFilterChange">
+  & Omit<useSelectingRowsProps, "dataRowsLength" | "onSelectedRowsChange">
   & {
     children?: ReactNode,
     columns: Array<DataTableColumn>
