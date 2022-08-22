@@ -26,7 +26,7 @@ export type DataTableProps = {
   onSelectedRowsChange?: onSelectedRowsChangeListener
 }
 
-function DataTableRaw(props: DataTableProps) {
+function DataTable(props: DataTableProps) {
   const {
     tableProps, filterable, sortable, selectable, disableSelectOnClick, onRowClick,
     getBodyCellProps, getRowProps, bodyProps, headProps, getHeadCellProps,
@@ -85,4 +85,4 @@ function DataTableRaw(props: DataTableProps) {
   </Table>
 }
 
-export default DataTableRaw;
+export default DataTable;
