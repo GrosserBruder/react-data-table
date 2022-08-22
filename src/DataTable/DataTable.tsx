@@ -35,6 +35,14 @@ function DataTableRaw(props: DataTableProps) {
 
   const sortedAndFilteredData = useMemo(() => {
     const filteredData = dataTableContext.filterDataRows(data ?? [])
+
+    // убираем из выбранных строки, которые скрылить при обновлении фильтров
+    const notExistingSelectedRows = dataTableContext.selectedRows.filter(
+      (selectedRow) => filteredData.findIndex(((filteredDataItem) => selectedRow.id === filteredDataItem.id)) === -1
+    )
+
+    dataTableContext.removeSelectedRows(notExistingSelectedRows)
+
     return dataTableContext.sortDataRows(filteredData)
   }, [data, dataTableContext.filterDataRows, dataTableContext.sortDataRows])
 
