@@ -30,13 +30,13 @@ function DataTableBody(props: DataTableBodyProps) {
     }
   }, [dataTableContext.addSelectedRows, dataTableContext.removeSelectedRows])
 
-  const onRowClickHandler = useCallback((event: any, dataRow: DataRow) => {
+  const onRowClickHandler = useCallback((event: any, dataRow: DataRow, selectStatus?: SELECT_STATUSES) => {
     if (!disableSelectOnClick) {
-      onSelectClick(dataRow, dataTableContext.getSelectStatus?.(dataRow))
+      onSelectClick(dataRow, selectStatus)
     }
 
     onRowClick?.(event, dataRow)
-  }, [onRowClick, onSelectClick, disableSelectOnClick, dataTableContext.getSelectStatus])
+  }, [onRowClick, onSelectClick, disableSelectOnClick])
 
   const getRows = useCallback(() => {
     if (data?.length === 0) {

@@ -13,7 +13,7 @@ export type DataTableRowProps = Omit<RowPropsCommunity, "onClick"> & {
   onSelectClick?: (dataRow: DataRow, currentStatus?: SELECT_STATUSES) => void
   selectStatus?: SELECT_STATUSES
   getCellProps?: (dataRow: DataRow, column: DataTableColumn) => CellPropsCommunity
-  onClick?: (event: any, dataRow: DataRow) => void
+  onClick?: (event: any, dataRow: DataRow, currentStatus?: SELECT_STATUSES) => void
 }
 
 const MemoDataTableCell = memo(DataTableCell)
@@ -26,8 +26,8 @@ function DataTableRow(props: DataTableRowProps) {
   }, [dataRow, onSelectClick])
 
   const onClickHandler = useCallback((event: any) => {
-    onClick?.(event, dataRow)
-  }, [onClick, dataRow])
+    onClick?.(event, dataRow, selectStatus)
+  }, [onClick, dataRow, selectStatus])
 
   const getCells = useCallback((dataRow: DataRow) => {
     const cells = columns.map((column) => <MemoDataTableCell
