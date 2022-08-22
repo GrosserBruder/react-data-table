@@ -13,7 +13,6 @@ export type useFilteringValue = {
   resetAllFilters: () => void;
   filterDataRows: (data: Array<DataRow>) => DataRow[];
   getFilterByFieldKey: (fieldKey?: string) => ColumnFilter | undefined;
-
 }
 
 export default function useFiltering(props: useFilteringProps) {

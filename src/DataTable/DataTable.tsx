@@ -2,9 +2,10 @@ import { Table, TableProps } from "@grossb/react-table";
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
 import { BodyPropsCommunity, CellPropsCommunity, DataRow, DataTableColumn, HeadCellPropsCommunity, HeadPropsCommunity, RowPropsCommunity } from "./types";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import "../styles/DataTable.scss"
 import { useDataTableContext } from "./Context";
+import { onFilterChangeListener, onSortChangeListener, useListeners } from "./hooks";
 
 export type DataTableProps = {
   tableProps?: TableProps,
@@ -18,33 +19,45 @@ export type DataTableProps = {
   getHeadCellProps?: (column: DataTableColumn) => HeadCellPropsCommunity
   disableSelectOnClick?: boolean
   onRowClick?: (event: any, dataRow: DataRow) => void
+  disableFiltersAndSortingOnClientSide?: boolean
+  onFilterChange?: onFilterChangeListener
+  onSortChange?: onSortChangeListener
 }
 
 function DataTableRaw(props: DataTableProps) {
   const {
     tableProps, filterable, sortable, selectable, disableSelectOnClick, onRowClick,
-    getBodyCellProps, getRowProps, bodyProps, headProps, getHeadCellProps
+    getBodyCellProps, getRowProps, bodyProps, headProps, getHeadCellProps,
+    disableFiltersAndSortingOnClientSide, onFilterChange, onSortChange
   } = props
 
   const dataTableContext = useDataTableContext()
+
+  useListeners(onFilterChange, onSortChange)
 
   const columns = dataTableContext.props.columns
   const data = dataTableContext.props.data
 
   const sortedAndFilteredData = useMemo(() => {
+    if (disableFiltersAndSortingOnClientSide) return data;
+
     const filteredData = dataTableContext.filterDataRows(data ?? [])
 
-    // убираем из выбранных строки, которые скрылить при обновлении фильтров
+    return dataTableContext.sortDataRows(filteredData)
+  }, [data, dataTableContext.filterDataRows, dataTableContext.sortDataRows, disableFiltersAndSortingOnClientSide])
+
+  // убираем из выбранных строки, которые скрылить при обновлении фильтров
+  useEffect(() => {
+    if (sortedAndFilteredData.length === 0) return;
+
     const notExistingSelectedRows = dataTableContext.selectedRows.filter(
-      (selectedRow) => filteredData.findIndex(((filteredDataItem) => selectedRow.id === filteredDataItem.id)) === -1
+      (selectedRow) => sortedAndFilteredData.findIndex(((item) => selectedRow.id === item.id)) === -1
     )
 
     if (notExistingSelectedRows.length > 0) {
       dataTableContext.removeSelectedRows(notExistingSelectedRows)
     }
-
-    return dataTableContext.sortDataRows(filteredData)
-  }, [data, dataTableContext.filterDataRows, dataTableContext.sortDataRows])
+  }, [sortedAndFilteredData])
 
   return <Table {...tableProps} className="data-table">
     <DataTableHead
