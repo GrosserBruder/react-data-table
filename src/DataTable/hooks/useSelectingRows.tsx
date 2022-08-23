@@ -45,7 +45,7 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
     }
 
     switch (true) {
-      case dataRowsLength === selectedRows.length:
+      case dataRowsLength === selectedRows.length && dataRowsLength !== 0:
         return setSelectAllStatus(SELECT_STATUSES.SELECTED)
       case selectedRows.length > 0 && selectedRows.length < dataRowsLength:
         return setSelectAllStatus(SELECT_STATUSES.INDETERMINATE)
