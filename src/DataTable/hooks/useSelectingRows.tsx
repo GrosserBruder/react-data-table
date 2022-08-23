@@ -31,14 +31,6 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
     onSelectedRowsChange?.(selectedRows)
   }, [onSelectedRowsChange, selectedRows])
 
-  useEffect(() => {
-    checkSelectAllStatus(defaultSelectedRows)
-  }, [])
-
-  useLayoutEffect(() => {
-    checkSelectAllStatus(selectedRows)
-  }, [selectedRows])
-
   const checkSelectAllStatus = useCallback(async (selectedRows: Array<DataRow>) => {
     if (dataRowsLength === undefined) {
       return setSelectAllStatus(SELECT_STATUSES.NOT_SELECTED)
@@ -53,6 +45,10 @@ export default function useSelectingRows(props: useSelectingRowsProps) {
         return setSelectAllStatus(SELECT_STATUSES.NOT_SELECTED)
     }
   }, [dataRowsLength])
+
+  useLayoutEffect(() => {
+    checkSelectAllStatus(selectedRows)
+  }, [checkSelectAllStatus, selectedRows, dataRowsLength])
 
   const addSelectedRows = useCallback((rows: DataRow | Array<DataRow>) => {
     const isArray = Array.isArray(rows)
