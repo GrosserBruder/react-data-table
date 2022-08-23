@@ -12,8 +12,6 @@
 
 [Пример использования](#Пример_использования)
 
-|               |               |                                 |                      |
-
 ### <a name="DataTableProvider">DataTableProvider</a>
 
 |    Название   |      Тип      |            Описание            | Значение по умолчанию |
@@ -59,6 +57,10 @@
 | `sortable`  |  boolean     |   Включает сортировку для столбца. Перекрывает  `sortable` из `DataTable`   |                      |
 | `headCellProps` |  `(column: DataTableColumn) => HeadCellProps` или  `HeadCellProps` |  Объект или функция возвращающая объект, который передает параметры для ячейки из заголовка                                |                      |
 | `bodyCellProps` |  `(column: DataTableColumn) => CellProps` или `CellProps` |  Объект или функция возвращающая объект, который передает параметры для ячейки из тела таблицы  |                      |
+
+### <a name="#CSS_переменные">CSS переменные</a>
+
+Описание CSS переменных находится [тут](https://github.com/GrosserBruder/react-table#CSS_переменные)
 
 ### <a name="#Пример_использования">Пример использования</a>
 
