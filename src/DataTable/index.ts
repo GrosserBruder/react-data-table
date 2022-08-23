@@ -1,9 +1,13 @@
+export * from "./Context"
 export * from "./hooks"
+export * from "./types"
+
 export { default as DataTable } from "./DataTable"
-export * from "./defaultProps"
+export { default as DataTableBody } from "./DataTableBody"
+export { default as DataTableHead } from "./DataTableHead"
 
-export * from "./hooks"
+export type { DataTableProps } from "./DataTable"
+export type { DataTableBodyProps } from "./DataTableBody"
+export type { DataTableHeadProps } from "./DataTableHead"
 
-export type {
-  BodyLineCell, DataTableProps, HeadLineCell, TableRowProps, LineCell
-} from "./types"
+

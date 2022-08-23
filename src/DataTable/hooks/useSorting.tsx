@@ -1,69 +1,99 @@
-import { useState, useCallback } from "react";
-import { compareNumberOrBoolean, compareByAlphabetically, descSorting } from "../../utils";
-import { SORT_VALUES } from "../../const";
-import { TableRowProps, BodyLineCell } from "../types";
+import { useCallback, useEffect, useState } from "react"
+import { SORTING_MODE, SORT_STRATEGY } from "../../const"
+import { DataRow, DataTableColumn } from "../types"
 
-const sortCell = (a: BodyLineCell, b: BodyLineCell) => {
-  const typeValue = typeof a.value
-
-  if (typeValue === "string") {
-    return compareByAlphabetically(a.value, b.value)
-  }
-
-  if (typeValue === "number" || typeValue === "boolean") {
-    return compareNumberOrBoolean(a.value, b.value)
-  }
-
-  return 0;
+export type useSortingProps = {
+  columns: Array<DataTableColumn>
+  sortingMode?: SORTING_MODE
+  onSortingChange?: (sortFields: Map<string, SORT_STRATEGY>) => void
 }
 
-export function useSorting(initialSortValues?: Map<string, string>) {
-  const [sortValues, setSortValues] = useState(new Map<string, string>(initialSortValues))
+export type useSortingValue = {
+  sortDataRows: (data: Array<DataRow>) => DataRow[];
+  sortFields: Map<string, SORT_STRATEGY>;
+  setSort: (fieldKey: string, sortStrategy: SORT_STRATEGY) => void;
+  removeSort: (fieldKey: string) => void;
+  removeAllSort: () => void;
+}
 
-  const setSort = useCallback((filterKey: string, value: any) => {
-    setSortValues((x) => new Map<string, string>(x.set(filterKey, value)))
-  }, [setSortValues])
+const getNewSortMap = (sortingMode: SORTING_MODE, sortFields: Map<string, SORT_STRATEGY>, fieldKey: string, sortStrategy: SORT_STRATEGY) => {
+  switch (true) {
+    case sortingMode === SORTING_MODE.SINGLE:
+      return new Map<string, SORT_STRATEGY>().set(fieldKey, sortStrategy)
+    case sortingMode === SORTING_MODE.MULTIPLE:
+      return new Map<string, SORT_STRATEGY>(sortFields.set(fieldKey, sortStrategy))
+    default:
+      return new Map<string, SORT_STRATEGY>(sortFields)
+  }
+}
 
-  const getSortValueByFilterKey = useCallback((filterKey: string) => {
-    return sortValues.get(filterKey)
-  }, [sortValues])
+export default function useSorting(props: useSortingProps) {
+  const { columns, sortingMode = SORTING_MODE.MULTIPLE, onSortingChange } = props
+  const [sortFields, setSortFields] = useState<Map<string, SORT_STRATEGY>>(new Map<string, SORT_STRATEGY>())
 
-  const compare = useCallback((
-    first: TableRowProps<BodyLineCell>,
-    second: TableRowProps<BodyLineCell>
-  ) => {
-    const firstFilteredCells = first.cells
-      .filter((x) => Boolean(x.filterKey))
-      .filter((cell) => sortValues.has(cell.filterKey!))
+  useEffect(() => {
+    onSortingChange?.(sortFields)
+  }, [sortFields, onSortingChange])
 
-    for (let i = 0; i < firstFilteredCells.length; i++) {
-      const firstCell = firstFilteredCells[i]
-      const sortValue: SORT_VALUES = getSortValueByFilterKey(firstCell.filterKey!) as SORT_VALUES
+  const setSort = useCallback((fieldKey: string, sortStrategy: SORT_STRATEGY) => {
+    if (sortingMode === SORTING_MODE.OFF) return;
 
-      const secondCell = second.cells.find((x) => x.id === firstCell.id)!
+    const map = getNewSortMap(sortingMode, sortFields, fieldKey, sortStrategy)
 
-      const sortedCell = sortCell(firstCell, secondCell)
+    setSortFields(map)
+  }, [setSortFields, sortingMode])
 
-      if (sortedCell !== 0) {
-        if (sortValue === SORT_VALUES.ASC) {
-          return sortedCell
-        }
+  const removeSort = useCallback((fieldKey: string) => {
+    sortFields.delete(fieldKey)
+    const map = new Map(sortFields)
+    setSortFields(map)
+  }, [setSortFields])
 
-        if (sortValue === SORT_VALUES.DESC) {
-          return descSorting(sortedCell)
-        }
+  const removeAllSort = useCallback(() => {
+    const map = new Map()
+    setSortFields(map)
+  }, [setSortFields])
+
+  const comparer = useCallback((first: DataRow, second: DataRow, columns: Array<DataTableColumn>) => {
+    for (let index = 0; index < columns.length; index++) {
+      const column = columns[index];
+
+      if (column.id ?? column.dataField === undefined) {
+        continue;
+      };
+
+      const comparerResult = column.rowComparer?.(first, second)
+
+      if (comparerResult !== undefined && comparerResult !== 0) {
+
+        const isDescSortStrategy = sortFields.get(column.id ?? column.dataField) === SORT_STRATEGY.DESC
+
+        return isDescSortStrategy
+          ? comparerResult * -1
+          : comparerResult
       }
     }
 
-    return 0
-  }, [getSortValueByFilterKey, sortValues])
+    return 0;
+  }, [sortFields])
+
+  const sortDataRows = useCallback((data: Array<DataRow>) => {
+    if (sortingMode === SORTING_MODE.OFF) return data;
+
+    const filteredColumns = columns.filter((x) => {
+      if (x.id ?? x.dataField === undefined) return false;
+
+      return sortFields.has(x.id ?? x.dataField)
+    })
+
+    return data.sort((first, second) => comparer(first, second, filteredColumns))
+  }, [sortFields, comparer, columns, sortingMode])
 
   return {
-    sortValues,
+    sortDataRows,
+    sortFields,
     setSort,
-    getSortValueByFilterKey,
-    compare
-  };
+    removeSort,
+    removeAllSort,
+  }
 }
-
-export default useSorting
