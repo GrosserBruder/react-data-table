@@ -1,9 +1,16 @@
-.data-table {
-  table-layout: auto;
+@import "./FilterContainer.scss";
+@import "./DataTableHead.scss";
 
+.data-table {
   &__empty-row {
     height: 50px;
     text-align: center;
+  }
+
+  .cell__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .cell__select-all,
@@ -15,20 +22,5 @@
   .cell__select-all .cell__wrapper,
   .cell__select .cell__wrapper {
     padding: 0;
-  }
-
-  .cell__wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .cell__toolbar {
-    .cell__wrapper {
-      border-top: unset !important;
-      border-left: unset;
-      border-right: unset;
-      justify-content: unset;
-    }
   }
 }

@@ -21,7 +21,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "copy:styles": "cpx src/styles/** dist/styles && cpx src/Components/styles/** dist/Components/styles",
+    "copy:styles": "cpx src/styles/** dist/styles && cpx src/BaseComponents/styles/** dist/BaseComponents/styles && cpx src/Components/styles/** dist/Components/styles",
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.prod.json",
     "postbuild": "npm run copy:styles",
@@ -38,8 +38,8 @@
     "@emotion/styled": "^11.8.1",
     "@grossb/react-table": "^0.1.2",
     "@mui/icons-material": "^5.8.2",
-    "@mui/material": "^5.8.7",
     "@mui/lab": "^5.0.0-alpha.75",
+    "@mui/material": "^5.8.7",
     "classnames": "^2.3.1",
     "react": ">=17.0.1",
     "react-dom": ">=17.0.1",
@@ -48,7 +48,7 @@
   "devDependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@grossb/react-table": "^0.1.2",
+    "@grossb/react-table": "^0.1.5",
     "@mui/icons-material": "^5.8.4",
     "@mui/lab": "^5.0.0-alpha.75",
     "@mui/material": "^5.8.7",
