@@ -1,5 +1,5 @@
 import { HeadCellProps } from '../BaseComponents/HeadCell/HeadCell';
-import { BodyProps, CellProps, HeadProps, RowProps } from "@grossb/react-table"
+import { BodyProps, CellProps, HeadProps, RowProps, TableProps as GrossbTableProps } from "@grossb/react-table"
 import { ReactNode } from "react"
 
 export type CellPropsCommunity = Omit<CellProps, "children">
@@ -30,3 +30,5 @@ export type DataRow = {
   id: number | string,
   [key: string]: any,
 }
+
+export type TableProps = Omit<GrossbTableProps, "children">

@@ -1,7 +1,7 @@
-import { Table, TableProps } from "@grossb/react-table";
+import { Table } from "@grossb/react-table";
 import DataTableBody from "./DataTableBody";
 import DataTableHead from "./DataTableHead";
-import { BodyPropsCommunity, CellPropsCommunity, DataRow, DataTableColumn, HeadCellPropsCommunity, HeadPropsCommunity, RowPropsCommunity } from "./types";
+import { BodyPropsCommunity, CellPropsCommunity, DataRow, DataTableColumn, HeadCellPropsCommunity, HeadPropsCommunity, RowPropsCommunity, TableProps } from "./types";
 import { useEffect, useMemo } from "react";
 import "../styles/DataTable.scss"
 import { useDataTableContext } from "./Context";
