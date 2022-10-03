@@ -1,7 +1,6 @@
-@import "./FilterContainer.scss";
-@import "./DataTableHead.scss";
-
 .data-table {
+  background-color: white;
+
   &__empty-row {
     height: 50px;
     text-align: center;
@@ -11,12 +10,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  .cell__select-all,
-  .cell__select {
-    min-width: 50px;
-    width: 50px;
   }
 
   .cell__select-all .cell__wrapper,

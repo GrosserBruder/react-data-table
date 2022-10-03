@@ -1,6 +1,6 @@
 {
   "name": "@grossb/react-data-table",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "React data table component",
   "keywords": [
     "react",
@@ -21,7 +21,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "copy:styles": "cpx src/styles/** dist/styles && cpx src/BaseComponents/styles/** dist/BaseComponents/styles && cpx src/Components/styles/** dist/Components/styles",
+    "copy:styles": "copyfiles -f src/styles/** dist/styles && copyfiles -f src/components/styles/** dist/components/styles",
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.prod.json",
     "postbuild": "npm run copy:styles",
@@ -36,7 +36,7 @@
   "peerDependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
-    "@grossb/react-table": "^0.1.2",
+    "@grossb/react-table": "^0.1.6",
     "@mui/icons-material": "^5.8.2",
     "@mui/lab": "^5.0.0-alpha.75",
     "@mui/material": "^5.8.7",
@@ -48,13 +48,13 @@
   "devDependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@grossb/react-table": "^0.1.5",
+    "@grossb/react-table": "^0.1.6",
     "@mui/icons-material": "^5.8.4",
     "@mui/lab": "^5.0.0-alpha.75",
     "@mui/material": "^5.8.7",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
-    "cpx": "^1.5.0",
+    "copyfiles": "^2.4.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "rimraf": "^3.0.2",
