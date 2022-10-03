@@ -36,7 +36,7 @@
   "peerDependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
-    "@grossb/react-table": "^0.1.2",
+    "@grossb/react-table": "^0.1.6",
     "@mui/icons-material": "^5.8.2",
     "@mui/lab": "^5.0.0-alpha.75",
     "@mui/material": "^5.8.7",
@@ -48,7 +48,7 @@
   "devDependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@grossb/react-table": "^0.1.5",
+    "@grossb/react-table": "^0.1.6",
     "@mui/icons-material": "^5.8.4",
     "@mui/lab": "^5.0.0-alpha.75",
     "@mui/material": "^5.8.7",
