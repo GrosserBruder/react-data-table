@@ -1,5 +1,12 @@
-.data-table__filter-container__popper {
-  & .MuiBox-root {
-    width: 250px;
+.filter-container {
+  position: absolute;
+  right: 0;
+
+  &__open-button {
+    padding: 0 !important;
   }
+}
+
+.filter-container__popper {
+  z-index: 3;
 }

@@ -1,0 +1,9 @@
+.data-table-head-cell {
+  .cell__wrapper {
+    position: relative;
+  }
+
+  &.filterable {
+    min-width: 80px;
+  }
+}
