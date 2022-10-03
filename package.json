@@ -21,7 +21,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "copy:styles": "cpx src/styles/** dist/styles && cpx src/components/styles/** dist/components/styles",
+    "copy:styles": "copyfiles -f src/styles/** dist/styles && copyfiles -f src/components/styles/** dist/components/styles",
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.prod.json",
     "postbuild": "npm run copy:styles",
@@ -54,7 +54,7 @@
     "@mui/material": "^5.8.7",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
-    "cpx": "^1.5.0",
+    "copyfiles": "^2.4.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "rimraf": "^3.0.2",
