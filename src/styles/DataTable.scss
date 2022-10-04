@@ -1,3 +1,5 @@
+@import "./mixins.scss";
+
 .data-table {
   background-color: white;
 
@@ -15,5 +17,22 @@
   .cell__select-all .cell__wrapper,
   .cell__select .cell__wrapper {
     padding: 0;
+  }
+}
+
+.asd-sorting {
+  position: relative;
+  @include triangle(bottom);
+}
+
+.desc-sorting {
+  position: relative;
+  @include triangle(top);
+}
+
+.sortable {
+  cursor: pointer;
+  &:hover {
+    background-color: lightgray;
   }
 }

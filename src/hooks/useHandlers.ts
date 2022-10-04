@@ -12,7 +12,7 @@ export function useHandlers(
   sortingHook: ReturnType<typeof useSorting>,
   filteringHook: ReturnType<typeof useFiltering>,
 ) {
-  const { data } = props
+  const { data, sortable } = props
 
   const onSelectClick = useCallback((dataItem: DataItem, currentStatus?: SELECT_STATUSES) => {
     if (currentStatus === SELECT_STATUSES.SELECTED) {
@@ -36,6 +36,8 @@ export function useHandlers(
   ])
 
   const onHeadCellClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>, column: Column) => {
+    if (!sortable) return;
+
     const columnId = getColumnId(column)
 
     if (!columnId || !column.sortComparator) return;
@@ -54,7 +56,7 @@ export function useHandlers(
       default:
         sortingHook.removeSort()
     }
-  }, [sortingHook.currentSorting, sortingHook.setSortColumn, sortingHook.removeSort])
+  }, [sortable, sortingHook.currentSorting, sortingHook.setSortColumn, sortingHook.removeSort])
 
   return useMemo(() => ({
     onSelectClick,

@@ -1,0 +1,30 @@
+@mixin base-triangle($direction, $size, $color) {
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(50% - $size);
+    border: $size solid transparent;
+
+    @if $direction == top {
+      border-bottom: $size solid $color;
+      border-top: 0;
+    }
+    @if $direction == bottom {
+      border-top: $size solid $color;
+      border-bottom: 0;
+    }
+    @if $direction == left {
+      border-right: $size solid $color;
+      border-left: 0;
+    }
+    @if $direction == right {
+      border-left: $size solid $color;
+      border-right: 0;
+    }
+  }
+}
+
+@mixin triangle($direction) {
+  @include base-triangle($direction, 10px, gray);
+}
