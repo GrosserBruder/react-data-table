@@ -57,7 +57,7 @@ export type DataTableProps = Pick<TableProps, "fixedTopTitle" | "striped" | "fix
   onRowClick?: (event: any, dataItem: DataItem) => void,
   selectable?: boolean,
   onSelectChange?: (selectedItems: Array<DataItem>) => void
-  onSortChange?: (column?: Column, sortingOrder?: SORTING_ORDER) => void
+  onSortChange?: (sortingColumnOrder?: SortingColumnOrder) => void
   sortable?: boolean,
   filterable?: boolean,
   defaultSortingColumnOrder?: SortingColumnOrder,

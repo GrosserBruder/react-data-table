@@ -25,12 +25,16 @@ export function useEffects(
 
   useEffect(() => {
     if (!sortingHook.currentSorting) {
-      return onSortChange?.(undefined, undefined)
+      return onSortChange?.(undefined)
     }
 
     const column = columns.find((x) => getColumnId(x) === sortingHook.currentSorting?.columnId)
 
-    return onSortChange?.(column, sortingHook.currentSorting.sortingOrder)
+    if (!column) {
+      return onSortChange?.(undefined)
+    }
+
+    return onSortChange?.({ column, sortingOrder: sortingHook.currentSorting.sortingOrder })
   }, [onSortChange, columns, sortingHook.currentSorting])
 
   useEffect(() => {
