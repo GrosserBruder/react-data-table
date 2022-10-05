@@ -51,6 +51,8 @@ export type FormProps = {
 export type FilterComponent = (props: FormProps) => ReactElement
 export type ColumnFilterComponent = FilterComponent | false
 
+// ToDo: сделатб пропс на получаение/вычисление параметров для строк. 
+// Например, при выбранной строке нужно ее окрашивать в какой - то цвет
 export type DataTableProps = Pick<TableProps, "fixedTopTitle" | "striped" | "fixedLeftColumn"> & {
   data: Array<DataItem>,
   columns: Array<Column>,
