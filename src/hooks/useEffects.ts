@@ -16,12 +16,12 @@ export function useEffects(
   const { columns, onSelectChange, onSortChange, onFilterChange } = props
 
   useEffect(() => {
-    onSelectChange?.(selectableHook.selected)
-  }, [onSelectChange, selectableHook.selected])
+    const selectedItems = selectableHook.selectedItemIds
+      .map((selectedId) => data.find((dataItem) => selectedId === dataItem.id))
+      .filter((x): x is DataItem => x !== undefined)
 
-  useEffect(() => {
-    onSelectChange?.(selectableHook.selected)
-  }, [onSelectChange, selectableHook.selected])
+    onSelectChange?.(selectedItems)
+  }, [data, onSelectChange, selectableHook.selectedItemIds])
 
   useEffect(() => {
     if (!sortingHook.currentSorting) {
@@ -41,14 +41,16 @@ export function useEffects(
     onFilterChange?.(filteringHook.allFilterData)
   }, [onFilterChange, filteringHook.allFilterData])
 
-  const prevFiltedData = usePrevious(filteringHook.allFilterData)
+  const prevData = usePrevious(data)
 
   useEffect(() => {
-    if (filteringHook.allFilterData === prevFiltedData) return;
+    if (prevData === data) return;
 
-    const existSelecteds = selectableHook.selected.filter((selected) => data.find((dataItem) => dataItem.id === selected.id))
+    const existSelecteds = selectableHook.selectedItemIds
+      .map((selectedId) => data.find((dataItem) => selectedId === dataItem.id))
+      .filter((x): x is DataItem => x !== undefined)
 
     selectableHook.resetSelected()
     selectableHook.addSelected(existSelecteds)
-  }, [data, prevFiltedData, filteringHook.allFilterData, selectableHook.selected, selectableHook.addSelected, selectableHook.resetSelected])
+  }, [data, prevData, selectableHook.selectedItemIds, selectableHook.addSelected, selectableHook.resetSelected])
 }

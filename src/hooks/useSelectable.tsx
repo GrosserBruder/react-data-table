@@ -2,8 +2,10 @@ import { useCallback, useLayoutEffect, useMemo, useState } from "react"
 import { SELECT_STATUSES } from "../constants/const"
 import { DataItem } from "../DataTable"
 
+type SeletedItem = DataItem["id"]
+
 export function useSelectable<T extends DataItem>(allDataLength: number) {
-  const [selected, setSelected] = useState<Array<T>>([])
+  const [selectedItemIds, setSelectedItemIds] = useState<Array<SeletedItem>>([])
   const [selectAllStatus, setSelectAllStatus] = useState<SELECT_STATUSES>(SELECT_STATUSES.NOT_SELECTED)
 
   const checkSelectAllStatus = useCallback(() => {
@@ -12,56 +14,56 @@ export function useSelectable<T extends DataItem>(allDataLength: number) {
     }
 
     switch (true) {
-      case allDataLength === selected.length && allDataLength !== 0:
+      case allDataLength === selectedItemIds.length && allDataLength !== 0:
         return setSelectAllStatus(SELECT_STATUSES.SELECTED)
-      case selected.length > 0 && selected.length < allDataLength:
+      case selectedItemIds.length > 0 && selectedItemIds.length < allDataLength:
         return setSelectAllStatus(SELECT_STATUSES.INDETERMINATE)
       default:
         return setSelectAllStatus(SELECT_STATUSES.NOT_SELECTED)
     }
-  }, [selected, allDataLength])
+  }, [selectedItemIds, allDataLength])
 
   useLayoutEffect(() => {
     checkSelectAllStatus()
   }, [checkSelectAllStatus])
 
   const addSelected = useCallback((items: T | Array<T>) => {
-    const arrayItems = Array.isArray(items) ? items : [items]
+    const arrayItemIds = (Array.isArray(items) ? items : [items]).map((x) => x.id)
 
-    setSelected((prevSelected) => [...prevSelected, ...arrayItems])
+    setSelectedItemIds((prevSelected) => [...prevSelected, ...arrayItemIds])
   }, [])
 
   const removeSelected = useCallback((items: T | Array<T>) => {
-    const removeItems = Array.isArray(items) ? items : [items]
+    const removeItemIds = (Array.isArray(items) ? items : [items]).map((x) => x.id)
 
-    const newSelected = (prevSelected: Array<T>) => prevSelected.filter((selectedItem) => {
-      return removeItems.find((removeItem) => removeItem.id === selectedItem.id) === undefined
+    const newSelected = (prevSelected: Array<SeletedItem>) => prevSelected.filter((prevSelectedItemId) => {
+      return removeItemIds.find((removeId) => removeId === prevSelectedItemId) === undefined
     })
 
-    setSelected(newSelected)
+    setSelectedItemIds(newSelected)
   }, [])
 
   const isSelected = useCallback((item: T) => {
-    const selectItem = selected.find((x) => x.id === item.id)
+    const selectItemId = selectedItemIds.find((x) => x === item.id)
 
-    if (selectItem === undefined) return false
+    if (selectItemId === undefined) return false
 
     return true
-  }, [selected])
+  }, [selectedItemIds])
 
   const resetSelected = useCallback(() => {
-    setSelected([])
+    setSelectedItemIds([])
     // checkSelectAllStatus([])
-  }, [setSelected])
+  }, [setSelectedItemIds])
 
   return useMemo(() => ({
-    selected,
+    selectedItemIds,
     selectAllStatus,
     addSelected,
     removeSelected,
     isSelected,
     resetSelected,
-  }), [selected,
+  }), [selectedItemIds,
     selectAllStatus,
     addSelected,
     removeSelected,
