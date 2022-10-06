@@ -4,16 +4,16 @@ import { memo } from "react";
 import DataTableBodyRow from "../DataTableBodyRow";
 import { SELECT_STATUSES } from "../constants/const";
 
-const MemoDataTableRow = memo(DataTableBodyRow)
+const MemoDataTableRow = memo(DataTableBodyRow) as typeof DataTableBodyRow
 
-export type useBodyRowsConfig = {
-  onRowClick?: (event: any, dataItem: DataItem) => void,
+export type useBodyRowsConfig<T extends DataItem> = {
+  onRowClick?: (event: any, dataItem: T) => void,
   selectable?: boolean,
-  isSelected?: (item: DataItem) => boolean,
+  isSelected?: (item: T) => boolean,
   onSelectClick?: (event: any, currentStatus?: SELECT_STATUSES) => void,
 }
 
-export function useBodyRows(data: Array<DataItem>, columns: Array<Column>, config: useBodyRowsConfig = {}) {
+export function useBodyRows<T extends DataItem>(data: Array<T>, columns: Array<Column<T>>, config: useBodyRowsConfig<T> = {}) {
   const { onRowClick, selectable, isSelected, onSelectClick } = config
   const colspan = selectable ? columns.length + 1 : columns.length
 
@@ -25,7 +25,7 @@ export function useBodyRows(data: Array<DataItem>, columns: Array<Column>, confi
     </Row>
   }
 
-  return data.map((dataItem) => <MemoDataTableRow
+  return data.map((dataItem) => <MemoDataTableRow<T>
     key={dataItem.id ?? dataItem}
     columns={columns}
     dataItem={dataItem}

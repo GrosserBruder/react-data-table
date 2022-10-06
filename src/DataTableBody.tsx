@@ -4,19 +4,19 @@ import { SELECT_STATUSES } from "./constants/const";
 import { Column, DataItem } from "./DataTable";
 import { useBodyRows } from "./hooks/useBodyRows";
 
-export type DataTableBodyProps = {
-  columns: Array<Column>
-  data: Array<DataItem>
+export type DataTableBodyProps<T extends DataItem> = {
+  columns: Array<Column<T>>
+  data: Array<T>
   selectable?: boolean
-  onRowClick?: (event: any, dataItem: DataItem) => void
+  onRowClick?: (event: any, dataItem: T) => void
   onSelectClick?: (event: any, currentStatus?: SELECT_STATUSES) => void,
-  isSelected?: (item: DataItem) => boolean,
+  isSelected?: (item: T) => boolean,
 }
 
-function DataTableBody(props: DataTableBodyProps) {
+function DataTableBody<T extends DataItem>(props: DataTableBodyProps<T>) {
   const { columns, data, selectable, onRowClick, onSelectClick, isSelected } = props;
 
-  const onRowClickHandler = useCallback((event: any, dataRow: DataItem, selectStatus?: SELECT_STATUSES) => {
+  const onRowClickHandler = useCallback((event: any, dataRow: T, selectStatus?: SELECT_STATUSES) => {
     onRowClick?.(event, dataRow)
   }, [onRowClick])
 

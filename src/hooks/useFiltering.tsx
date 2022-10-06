@@ -8,15 +8,15 @@ export type AllFilterData = {
   [key: ColumnId]: FilterData
 }
 
-export type useFilteringProps = {
-  columns: Array<Column>
+export type useFilteringProps<T extends DataItem> = {
+  columns: Array<Column<T>>
 }
 
-export function useFiltering(props: useFilteringProps) {
+export function useFiltering<T extends DataItem = DataItem>(props: useFilteringProps<T>) {
   const { columns } = props;
   const [allFilterData, setAllFilterData] = useState<AllFilterData | undefined>(undefined)
 
-  const setFilter = useCallback((column: Column, data: FilterData) => {
+  const setFilter = useCallback((column: Column<T>, data: FilterData) => {
     const columnId = getColumnId(column)
 
     if (!columnId) return;
@@ -24,7 +24,7 @@ export function useFiltering(props: useFilteringProps) {
     setAllFilterData((prev) => ({ ...prev, [columnId]: data }))
   }, [])
 
-  const removeFilter = useCallback((column: Column) => {
+  const removeFilter = useCallback((column: Column<T>) => {
     const columnId = getColumnId(column)
 
     if (!columnId) return;
@@ -40,7 +40,7 @@ export function useFiltering(props: useFilteringProps) {
     setAllFilterData(undefined)
   }, [])
 
-  const filterData = useCallback((data: Array<DataItem>) => data.filter((dataItem) => {
+  const filterData = useCallback((data: Array<T>) => data.filter((dataItem) => {
     return columns.every((column) => {
       const columnId = getColumnId(column)
 

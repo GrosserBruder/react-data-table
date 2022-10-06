@@ -1,6 +1,6 @@
 import { MouseEventHandler, useCallback, useRef } from "react"
 import { Cell } from "@grossb/react-table";
-import { Column, ColumnFilterComponent, FormProps } from "./DataTable";
+import { Column, ColumnFilterComponent, DataItem, FormProps } from "./DataTable";
 import { getColumnId } from "./helpers";
 import { SORTING_ORDER } from "./constants/const";
 import classnames from "classnames";
@@ -8,19 +8,19 @@ import { AllFilterData } from "./hooks/useFiltering";
 import FilterContainer, { FilterContainerRenderProps } from "./FilterContainer";
 import "./styles/DataTableHeadCell.scss"
 
-export type DataTableRowProps = {
-  column: Column
-  onClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>, column: Column) => void
+export type DataTableHeadCellProps<T extends DataItem> = {
+  column: Column<T>
+  onClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>, column: Column<T>) => void
   isSorting?: SORTING_ORDER,
   sortable?: boolean,
   allFilterData?: AllFilterData
-  filterComponent?: ColumnFilterComponent
-  onFilterSubmit?: (column: Column, data: any) => void;
-  onFilterReset?: (column: Column) => void;
+  filterComponent?: ColumnFilterComponent<T>
+  onFilterSubmit?: (column: Column<T>, data: any) => void;
+  onFilterReset?: (column: Column<T>) => void;
   filterable?: boolean
 }
 
-function DataTableHeadCell(props: DataTableRowProps) {
+export function DataTableHeadCell<T extends DataItem>(props: DataTableHeadCellProps<T>) {
   const {
     column, onClick, isSorting, sortable, filterComponent, allFilterData, onFilterReset,
     onFilterSubmit, filterable,
@@ -57,7 +57,7 @@ function DataTableHeadCell(props: DataTableRowProps) {
     const columnId = getColumnId(column)
     const columnFilterData = columnId && allFilterData ? allFilterData[columnId] : undefined
 
-    const formProps: FormProps = {
+    const formProps: FormProps<T> = {
       column,
       allFilterData,
       columnFilterData,

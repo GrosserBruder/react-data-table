@@ -5,7 +5,7 @@ import { getColumnId, primitiveOrFunction } from "../helpers"
 
 const MemoCell = memo(Cell)
 
-function getValue(column: Column, dataItem: DataItem) {
+function getValue<T extends DataItem = DataItem>(column: Column<T>, dataItem: T) {
   if (column.valueGetter !== undefined) {
     return column.valueGetter(dataItem)
   }
@@ -17,7 +17,7 @@ function getValue(column: Column, dataItem: DataItem) {
   return dataItem[column.dataField]
 }
 
-function createBodyCells(columns: Array<Column>, dataItem: DataItem) {
+function createBodyCells<T extends DataItem = DataItem>(columns: Array<Column<T>>, dataItem: T) {
   return columns.map((column) => {
     return <MemoCell key={getColumnId(column)} {...primitiveOrFunction(column.bodyCellProps, dataItem)}>
       {getValue(column, dataItem)}

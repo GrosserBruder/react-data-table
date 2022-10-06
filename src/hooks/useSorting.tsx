@@ -8,13 +8,13 @@ export type SortingColumnIdOrder = {
   sortingOrder: SORTING_ORDER
 }
 
-export type useSortingProps = {
-  data: Array<DataItem>
+export type useSortingProps<T extends DataItem> = {
+  data: Array<T>
   defaultSortingColumnIdOrder?: SortingColumnIdOrder
-  columns: Array<Column>
+  columns: Array<Column<T>>
 }
 
-export function useSorting(props: useSortingProps) {
+export function useSorting<T extends DataItem>(props: useSortingProps<T>) {
   const { columns, defaultSortingColumnIdOrder } = props
   const [currentSorting, setSortingColumnOrder] = useState<SortingColumnIdOrder | undefined>(defaultSortingColumnIdOrder)
 
@@ -27,7 +27,7 @@ export function useSorting(props: useSortingProps) {
     setSortingColumnOrder(undefined)
   }, [setSortingColumnOrder])
 
-  const sortData = useCallback((data: Array<DataItem>) => {
+  const sortData = useCallback((data: Array<T>) => {
     if (!currentSorting) return data
 
     const column = columns.find((x) => getColumnId(x) === currentSorting.columnId)

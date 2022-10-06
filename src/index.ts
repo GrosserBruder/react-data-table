@@ -4,7 +4,7 @@ export type { CellProps, Column, ColumnId, DataItem, DataTableProps, FormProps, 
 export type { DataTableBodyProps } from "./DataTableBody"
 export type { DataTableBodyRowProps } from "./DataTableBodyRow"
 export type { DataTableHeadProps } from "./DataTableHead"
-export type { DataTableRowProps } from "./DataTableHeadCell"
+export type { DataTableHeadCellProps as DataTableRowProps } from "./DataTableHeadCell"
 export type { DataTableHeadRowProps } from "./DataTableHeadRow"
 export type { FilterContainerProps } from "./FilterContainer"
 

@@ -15,19 +15,19 @@ export type ColumnId = string | number
 
 export type CellProps = TdHTMLAttributes<HTMLElement>
 
-export type SortComparator = (a: DataItem, b: DataItem, sortingOrder: SORTING_ORDER) => number
-export type FilterComparator = (dataItem: DataItem, columnFilterData?: FilterData, allFilterData?: AllFilterData) => boolean
+export type SortComparator<T extends DataItem> = (a: T, b: T, sortingOrder: SORTING_ORDER) => number
+export type FilterComparator<T extends DataItem> = (dataItem: T, columnFilterData?: FilterData, allFilterData?: AllFilterData) => boolean
 
-export type Column = {
+export type Column<T extends DataItem = DataItem> = {
   id?: ColumnId,
   dataField?: string,
-  valueGetter?: (value: DataItem) => ReactNode,
+  valueGetter?: (value: T) => ReactNode,
   header?: ReactNode,
   headCellProps?: CellProps
-  bodyCellProps?: ((dataItem: DataItem) => CellProps) | CellProps
-  sortComparator?: SortComparator
-  filterComparator?: FilterComparator
-  filterComponent?: ColumnFilterComponent
+  bodyCellProps?: ((dataItem: T) => CellProps) | CellProps
+  sortComparator?: SortComparator<T>
+  filterComparator?: FilterComparator<T>
+  filterComponent?: ColumnFilterComponent<T>
 }
 
 export type DataItem = {
@@ -35,44 +35,44 @@ export type DataItem = {
   [key: string]: any,
 }
 
-export type SortingColumnOrder = {
-  column: Column,
+export type SortingColumnOrder<T extends DataItem> = {
+  column: Column<T>,
   sortingOrder: SORTING_ORDER
 }
 
-export type FormProps = {
-  column: Column;
+export type FormProps<T extends DataItem> = {
+  column: Column<T>;
   allFilterData?: AllFilterData;
   columnFilterData?: FilterData,
   onSubmit: (data: any) => void;
   onReset: () => void;
 }
 
-export type FilterComponent = (props: FormProps) => ReactElement
-export type ColumnFilterComponent = FilterComponent | false
+export type FilterComponent<T extends DataItem> = (props: FormProps<T>) => ReactElement
+export type ColumnFilterComponent<T extends DataItem> = FilterComponent<T> | false
 
-// ToDo: сделатб пропс на получаение/вычисление параметров для строк. 
+// ToDo: сделать пропс на получаение/вычисление параметров для строк. 
 // Например, при выбранной строке нужно ее окрашивать в какой - то цвет
-export type DataTableProps = Pick<TableProps, "fixedTopTitle" | "striped" | "fixedLeftColumn"> & {
-  data: Array<DataItem>,
-  columns: Array<Column>,
-  onRowClick?: (event: any, dataItem: DataItem) => void,
+export type DataTableProps<T extends DataItem = DataItem> = Pick<TableProps, "fixedTopTitle" | "striped" | "fixedLeftColumn"> & {
+  data: Array<T>,
+  columns: Array<Column<T>>,
+  onRowClick?: (event: any, dataItem: T) => void,
   selectable?: boolean,
-  onSelectChange?: (selectedItems: Array<DataItem>) => void
-  onSortChange?: (sortingColumnOrder?: SortingColumnOrder) => void
+  onSelectChange?: (selectedItems: Array<T>) => void
+  onSortChange?: (sortingColumnOrder?: SortingColumnOrder<T>) => void
   sortable?: boolean,
   filterable?: boolean,
-  defaultSortingColumnOrder?: SortingColumnOrder,
-  commonFilterComponent?: FilterComponent,
+  defaultSortingColumnOrder?: SortingColumnOrder<T>,
+  commonFilterComponent?: FilterComponent<T>,
   onFilterChange?: (allFilterData?: AllFilterData) => void,
   sortingMode?: SORTING_MODE
   filterMode?: FILTERING_MODE
 }
 
-const MemoDataTableHead = memo(DataTableHead)
-const MemoDataTableBody = memo(DataTableBody)
+const MemoDataTableHead = memo(DataTableHead) as typeof DataTableHead
+const MemoDataTableBody = memo(DataTableBody) as typeof DataTableBody
 
-export default function DataTable(props: DataTableProps) {
+export default function DataTable<T extends DataItem = DataItem>(props: DataTableProps<T>) {
   const {
     data, columns, onRowClick, selectable, fixedTopTitle,
     striped, fixedLeftColumn, defaultSortingColumnOrder, sortable, commonFilterComponent,
@@ -83,15 +83,15 @@ export default function DataTable(props: DataTableProps) {
   const columnId = defaultSortingColumnOrder?.column ? getColumnId(defaultSortingColumnOrder?.column) : undefined
   const defaultSortingColumnIdOrder = columnId && defaultSortingColumnOrder ? { columnId, sortingOrder: defaultSortingColumnOrder.sortingOrder } : undefined
 
-  const filteringHook = useFiltering({ columns })
+  const filteringHook = useFiltering<T>({ columns })
   const { allFilterData, setFilter, removeFilter, filterData } = filteringHook
 
-  const sortingHook = useSorting({ columns, data, defaultSortingColumnIdOrder })
+  const sortingHook = useSorting<T>({ columns, data, defaultSortingColumnIdOrder })
   const { sortData, currentSorting } = sortingHook
 
-  const selectableHook = useSelectable<DataItem>(data.length)
+  const selectableHook = useSelectable<T>(data.length)
 
-  const handlersHook = useHandlers(
+  const handlersHook = useHandlers<T>(
     { ...props, sortingMode, filterMode },
     selectableHook,
     sortingHook,
@@ -112,7 +112,7 @@ export default function DataTable(props: DataTableProps) {
     return result
   }, [data, filterable, filterMode, filterData, sortable, sortingMode, sortData])
 
-  useEffects(
+  useEffects<T>(
     sortingAndFilteredData,
     { ...props, sortingMode, filterMode },
     selectableHook,
@@ -143,7 +143,7 @@ export default function DataTable(props: DataTableProps) {
       sortingMode={sortingMode}
 
     />
-    <MemoDataTableBody
+    <MemoDataTableBody<T>
       columns={columns}
       data={sortingAndFilteredData}
       selectable={selectable}
