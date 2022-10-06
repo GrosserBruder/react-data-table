@@ -1,14 +1,14 @@
-import { Column } from "../DataTable";
+import { Column, DataItem } from "../DataTable";
 import DataTableHeadRow, { DataTableHeadRowProps } from "../DataTableHeadRow";
 import { memo } from "react";
 
-export type useHeadRowsConfig = Omit<DataTableHeadRowProps, "columns">
+export type useHeadRowsConfig<T extends DataItem> = Omit<DataTableHeadRowProps<T>, "columns">
 
-const MemoDataTableHeadRow = memo(DataTableHeadRow)
+const MemoDataTableHeadRow = memo(DataTableHeadRow) as typeof DataTableHeadRow
 
-export function useHeadRows(columns: Array<Column>, config: useHeadRowsConfig = {}) {
+export function useHeadRows<T extends DataItem>(columns: Array<Column<T>>, config: useHeadRowsConfig<T> = {}) {
 
-  return <MemoDataTableHeadRow
+  return <MemoDataTableHeadRow<T>
     columns={columns}
     {...config}
   />

@@ -5,17 +5,17 @@ import { SELECT_STATUSES } from "./constants/const";
 import { Column, DataItem } from "./DataTable";
 import useCell from "./hooks/useCell";
 
-export type DataTableBodyRowProps = {
-  columns: Array<Column>
-  dataItem: DataItem
-  onClick?: (event: any, dataItem: DataItem) => void,
+export type DataTableBodyRowProps<T extends DataItem> = {
+  columns: Array<Column<T>>
+  dataItem: T
+  onClick?: (event: any, dataItem: T) => void,
   children?: ReactNode,
   selectable?: boolean,
   isSelected?: boolean,
   onSelectClick?: (event: any, currentStatus?: SELECT_STATUSES) => void
 }
 
-function DataTableBodyRow(props: DataTableBodyRowProps) {
+function DataTableBodyRow<T extends DataItem>(props: DataTableBodyRowProps<T>) {
   const { children, columns, dataItem, onClick, selectable, isSelected, onSelectClick, ...restProps } = props;
 
   const onClickHandler = useCallback((event: any) => {

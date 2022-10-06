@@ -1,34 +1,34 @@
 import { Head } from "@grossb/react-table"
 import classNames from "classnames";
 import { FILTERING_MODE, SELECT_STATUSES, SORTING_MODE } from "./constants/const";
-import { Column, FilterComponent } from "./DataTable";
+import { Column, DataItem, FilterComponent } from "./DataTable";
 import { SortingColumnIdOrder } from "./hooks/useSorting";
 import { memo } from "react";
 import DataTableHeadRow from "./DataTableHeadRow";
 import { AllFilterData } from "./hooks/useFiltering";
 
-export type DataTableHeadProps = {
-  columns: Array<Column>
+export type DataTableHeadProps<T extends DataItem> = {
+  columns: Array<Column<T>>
   selectable?: boolean
   // getCellProps?: (column: Column) => HeadCellPropsCommunity,
   onSelectAllClick?: (event: any) => void,
   selectAllStatus?: SELECT_STATUSES
   className?: string
   sortable?: boolean,
-  onHeaderCellClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>, column: Column) => void,
+  onHeaderCellClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>, column: Column<T>) => void,
   currentSorting?: SortingColumnIdOrder,
-  commonFilterComponent?: FilterComponent,
+  commonFilterComponent?: FilterComponent<T>,
   allFilterData?: AllFilterData,
-  onFilterSubmit?: (column: Column, data: any) => void,
-  onFilterReset?: (column: Column) => void,
+  onFilterSubmit?: (column: Column<T>, data: any) => void,
+  onFilterReset?: (column: Column<T>) => void,
   filterable?: boolean
   sortingMode?: SORTING_MODE
   filterMode?: FILTERING_MODE
 }
 
-const MemoDataTableHeadRow = memo(DataTableHeadRow)
+const MemoDataTableHeadRow = memo(DataTableHeadRow) as typeof DataTableHeadRow
 
-function DataTableHead(props: DataTableHeadProps) {
+function DataTableHead<T extends DataItem>(props: DataTableHeadProps<T>) {
   const {
     columns, selectable, className, selectAllStatus, onSelectAllClick, onHeaderCellClick,
     sortable, currentSorting, commonFilterComponent, allFilterData, onFilterSubmit, onFilterReset,
@@ -38,7 +38,7 @@ function DataTableHead(props: DataTableHeadProps) {
   const headClassName = classNames("data-table__head", className)
 
   return <Head className={headClassName}>
-    <MemoDataTableHeadRow
+    <MemoDataTableHeadRow<T>
       columns={columns}
       selectable={selectable}
       onSelectAllClick={onSelectAllClick}

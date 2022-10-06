@@ -6,15 +6,15 @@ import { useFiltering } from "./useFiltering"
 import useSelectable from "./useSelectable"
 import useSorting from "./useSorting"
 
-export function useHandlers(
-  props: DataTableProps,
-  selectableHook: ReturnType<typeof useSelectable<DataItem>>,
-  sortingHook: ReturnType<typeof useSorting>,
-  filteringHook: ReturnType<typeof useFiltering>,
+export function useHandlers<T extends DataItem>(
+  props: DataTableProps<T>,
+  selectableHook: ReturnType<typeof useSelectable<T>>,
+  sortingHook: ReturnType<typeof useSorting<T>>,
+  filteringHook: ReturnType<typeof useFiltering<T>>,
 ) {
   const { data, sortable } = props
 
-  const onSelectClick = useCallback((dataItem: DataItem, currentStatus?: SELECT_STATUSES) => {
+  const onSelectClick = useCallback((dataItem: T, currentStatus?: SELECT_STATUSES) => {
     if (currentStatus === SELECT_STATUSES.SELECTED) {
       selectableHook.removeSelected?.(dataItem)
     } else {
@@ -35,7 +35,7 @@ export function useHandlers(
     data
   ])
 
-  const onHeadCellClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>, column: Column) => {
+  const onHeadCellClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>, column: Column<T>) => {
     if (!sortable) return;
 
     const columnId = getColumnId(column)

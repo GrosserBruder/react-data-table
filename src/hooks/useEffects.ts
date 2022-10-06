@@ -6,19 +6,19 @@ import { usePrevious } from "./usePrevious"
 import useSelectable from "./useSelectable"
 import useSorting from "./useSorting"
 
-export function useEffects(
-  data: Array<DataItem>,
-  props: DataTableProps,
-  selectableHook: ReturnType<typeof useSelectable<DataItem>>,
-  sortingHook: ReturnType<typeof useSorting>,
-  filteringHook: ReturnType<typeof useFiltering>,
+export function useEffects<T extends DataItem = DataItem>(
+  data: Array<T>,
+  props: DataTableProps<T>,
+  selectableHook: ReturnType<typeof useSelectable<T>>,
+  sortingHook: ReturnType<typeof useSorting<T>>,
+  filteringHook: ReturnType<typeof useFiltering<T>>,
 ) {
   const { columns, onSelectChange, onSortChange, onFilterChange } = props
 
   useEffect(() => {
     const selectedItems = selectableHook.selectedItemIds
       .map((selectedId) => data.find((dataItem) => selectedId === dataItem.id))
-      .filter((x): x is DataItem => x !== undefined)
+      .filter((x): x is T => x !== undefined)
 
     onSelectChange?.(selectedItems)
   }, [data, onSelectChange, selectableHook.selectedItemIds])
@@ -48,7 +48,7 @@ export function useEffects(
 
     const existSelecteds = selectableHook.selectedItemIds
       .map((selectedId) => data.find((dataItem) => selectedId === dataItem.id))
-      .filter((x): x is DataItem => x !== undefined)
+      .filter((x): x is T => x !== undefined)
 
     selectableHook.resetSelected()
     selectableHook.addSelected(existSelecteds)
