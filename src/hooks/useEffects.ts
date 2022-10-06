@@ -41,14 +41,14 @@ export function useEffects(
     onFilterChange?.(filteringHook.allFilterData)
   }, [onFilterChange, filteringHook.allFilterData])
 
-  const prevFiltedData = usePrevious(filteringHook.allFilterData)
+  const prevData = usePrevious(data)
 
   useEffect(() => {
-    if (filteringHook.allFilterData === prevFiltedData) return;
+    if (prevData === data) return;
 
     const existSelecteds = selectableHook.selected.filter((selected) => data.find((dataItem) => dataItem.id === selected.id))
 
     selectableHook.resetSelected()
     selectableHook.addSelected(existSelecteds)
-  }, [data, prevFiltedData, filteringHook.allFilterData, selectableHook.selected, selectableHook.addSelected, selectableHook.resetSelected])
+  }, [data, prevData, selectableHook.selected, selectableHook.addSelected, selectableHook.resetSelected])
 }
