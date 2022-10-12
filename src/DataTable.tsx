@@ -1,15 +1,15 @@
-import { Table, TableProps } from "@grossb/react-table"
+import { RowProps, Table, TableProps } from "@grossb/react-table"
 import { memo, ReactElement, ReactNode, TdHTMLAttributes, useMemo } from "react"
+import { FILTERING_MODE, SORTING_MODE, SORTING_ORDER } from "./constants/const"
 import DataTableBody from "./DataTableBody"
+import DataTableHead from "./DataTableHead"
+import { getColumnId } from "./helpers"
+import { useEffects } from "./hooks/useEffects"
+import { AllFilterData, FilterData, useFiltering } from "./hooks/useFiltering"
 import { useHandlers } from "./hooks/useHandlers"
 import useSelectable from "./hooks/useSelectable"
-import DataTableHead from "./DataTableHead"
-import "./styles/DataTable.scss"
-import { FILTERING_MODE, SORTING_MODE, SORTING_ORDER } from "./constants/const"
 import useSorting from "./hooks/useSorting"
-import { getColumnId } from "./helpers"
-import { AllFilterData, FilterData, useFiltering } from "./hooks/useFiltering"
-import { useEffects } from "./hooks/useEffects"
+import "./styles/DataTable.scss"
 
 export type ColumnId = string | number
 
@@ -67,6 +67,7 @@ export type DataTableProps<T extends DataItem = DataItem> = Pick<TableProps, "fi
   onFilterChange?: (allFilterData?: AllFilterData) => void,
   sortingMode?: SORTING_MODE
   filterMode?: FILTERING_MODE
+  rowProps?: ((dataItem: T) => RowProps) | RowProps
 }
 
 const MemoDataTableHead = memo(DataTableHead) as typeof DataTableHead
@@ -77,6 +78,7 @@ export default function DataTable<T extends DataItem = DataItem>(props: DataTabl
     data, columns, onRowClick, selectable, fixedTopTitle,
     striped, fixedLeftColumn, defaultSortingColumnOrder, sortable, commonFilterComponent,
     filterable, sortingMode = SORTING_MODE.CLIENT, filterMode = FILTERING_MODE.CLIENT,
+    rowProps,
   } = props
 
   // ToDo: Refactor
@@ -150,6 +152,7 @@ export default function DataTable<T extends DataItem = DataItem>(props: DataTabl
       onRowClick={onRowClick}
       onSelectClick={handlersHook.onSelectClick}
       isSelected={selectableHook.isSelected}
+      rowProps={rowProps}
     />
   </Table>
 }

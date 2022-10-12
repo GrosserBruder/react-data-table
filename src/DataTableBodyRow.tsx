@@ -1,9 +1,10 @@
 import { Row, Cell } from "@grossb/react-table";
-import { ReactNode, useCallback } from "react";
+import { ReactNode, useCallback, memo } from "react";
 import { SelectedCheckbox } from "./components/SelectedCheckbox";
 import { SELECT_STATUSES } from "./constants/const";
 import { Column, DataItem } from "./DataTable";
-import useCell from "./hooks/useCell";
+import DataTableBodyCell from "./DataTableBodyCell";
+import { getColumnId } from "./helpers";
 
 export type DataTableBodyRowProps<T extends DataItem> = {
   columns: Array<Column<T>>
@@ -14,6 +15,8 @@ export type DataTableBodyRowProps<T extends DataItem> = {
   isSelected?: boolean,
   onSelectClick?: (event: any, currentStatus?: SELECT_STATUSES) => void
 }
+
+const MemoDataTableBodyCell = memo(DataTableBodyCell) as typeof DataTableBodyCell
 
 function DataTableBodyRow<T extends DataItem>(props: DataTableBodyRowProps<T>) {
   const { children, columns, dataItem, onClick, selectable, isSelected, onSelectClick, ...restProps } = props;
@@ -27,8 +30,6 @@ function DataTableBodyRow<T extends DataItem>(props: DataTableBodyRowProps<T>) {
     onSelectClick?.(dataItem, currentStatus)
   }, [dataItem, onSelectClick])
 
-  const cellHook = useCell()
-
   return <Row key={dataItem.id} {...restProps} onClick={onClickHandler}>
     {
       selectable && <Cell className="cell__select">
@@ -41,7 +42,13 @@ function DataTableBodyRow<T extends DataItem>(props: DataTableBodyRowProps<T>) {
         />
       </Cell>
     }
-    {cellHook.createBodyCells(columns, dataItem)}
+    {columns.map((column) => {
+      return <MemoDataTableBodyCell<T>
+        key={getColumnId(column)}
+        column={column}
+        dataItem={dataItem}
+      />
+    })}
   </Row>
 }
 
