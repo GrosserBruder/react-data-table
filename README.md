@@ -1,25 +1,42 @@
-# react-data-table
+## Описание типов
 
-## Оглавление
+## DataItem
 
-[DataTableProvider](#DataTableProvider)
+`DataItem` - базовый тип объекта данных из массива `data`. Тип данных, который будет передаваться в массиве `data`, должен быть расширен от данного типа.
 
-[DataTable](#DataTable)
+  `id: number | string`  - Уникальные идентификатор объекта. Он используется как ключ для строк в таблице.
+  `[key: string]: any` - дополнительные поля объекта.
 
-[Основные типы данных](#BasicDataTypes)
+## Column
 
-[CSS переменные](#CSS_переменные)
+`Column` - тип, которые описывается все ячейки одного столбца.
 
-[Пример использования](#Пример_использования)
+  `id?: ColumnId` - Унивальный идентификатор столбца. Необязательное поле. (string | number)
+  `dataField?: string` - Поле объекта из которого будут браться данные для вывода в ячейку. Необязательный параметр.
+  `valueGetter?: (value: T) => ReactNode` - Функция для преобазования данных с поля объекта для вывода в ячейку. Необязательный параметр.
+  `header?: ReactNode` - Загловок столбца, которые будет выводится в `Head` таблицы.Необязательный параметр.
+  `headCellProps?: CellProps` - Параметры ячейки в заголовке таблицы. Можно задать стили или класс и т.д. Необязательный параметр.
+  `bodyCellProps?: ((dataItem: T) => CellProps) | CellProps` - Параметры ячейки в тебе таблицы. Можно задать стили или класс и т.д. Принимается как функция, так и объект. Необязательный параметр.
+  `sortComparator?: SortComparator<T>` - Функция для сортировки данных в столбце. Чтобы сортировка работала, нужно для таблицы указать параметр `sortable` и указать данную функцию. Необязательный параметр.
+  `filterComparator?: FilterComparator<T>` - Функция фля фильтрации данных в таблице по столбцу. Функция получается как данные фильтра для конкретного столбца, так и фильтры для всех столбцов. Названия полей задаются пользователем в компоненте фильтра. Чтобы фильтрация работалаЮ нужно для таблицы указать параметр `filterable` и указать данную функцию. Необязательный параметр.
+  `filterComponent?: ColumnFilterComponent<T>` - Компонент фильтра для столбца. Можно указать `false`, чтобы не отображать компонент фильтра для столбца, даже есть будет указан общий компонент фильтра в таблице. Необязательный параметр.
 
-### <a name="DataTableProvider">DataTableProvider</a>
+  ## DataTableProps
+    data: Array<T>,
+  columns: Array<Column<T>>,
+  onRowClick?: (event: any, dataItem: T) => void,
+  selectable?: boolean,
+  onSelectChange?: (selectedItems: Array<T>) => void
+  onSortChange?: (sortingColumnOrder?: SortingColumnOrder<T>) => void
+  sortable?: boolean,
+  filterable?: boolean,
+  defaultSortingColumnOrder?: SortingColumnOrder<T>,
+  commonFilterComponent?: FilterComponent<T>,
+  onFilterChange?: (allFilterData?: AllFilterData) => void,
+  sortingMode?: SORTING_MODE
+  filterMode?: FILTERING_MODE
+  rowProps?: ((dataItem: T) => RowProps) | RowProps
 
-|    Название   |      Тип      |            Описание            | Значение по умолчанию |
-| ------------- | ------------- | ------------------------------ | --------------------- |
-|    `data`     | Array<DataRow> | Массив объектов. В каждом объекте обязательное поле `id` |  |
-|   `columns`    |  Array<DataTableColumn> |   Массив объектов, в которых описываются ячейки столбца, их свойства и т.д.   |                      |
-| `defaultSelectedRows`  | Array<DataRow>  | Начальное значение выбранных строк | [] |
-| `sortingMode` | SORTING_MODE  |   Указывает режим работы сортировки. <br/> Доступные значения:  <br/>   `SORTING_MODE.OFF` - сортировка отключена <br/>  `SORTING_MODE.SINGLE` - сортировка работает только по последнему выбранному стобцу <br/> `SORTING_MODE.MULTIPLE` - сортировка работает по всем выбранным столбцам. Сортировка применяется к стобцам в порядке объявления их в `columns`  | SORTING_MODE.MULTIPLE |
 
 ### <a name="DataTable">DataTable</a>
 
