@@ -40,7 +40,7 @@ export type SortingColumnOrder<T extends DataItem> = {
   sortingOrder: SORTING_ORDER
 }
 
-export type FormProps<T extends DataItem> = {
+export type FilterComponentProps<T extends DataItem> = {
   column: Column<T>;
   allFilterData?: AllFilterData;
   columnFilterData?: FilterData,
@@ -48,11 +48,9 @@ export type FormProps<T extends DataItem> = {
   onReset: () => void;
 }
 
-export type FilterComponent<T extends DataItem> = (props: FormProps<T>) => ReactElement
+export type FilterComponent<T extends DataItem> = (props: FilterComponentProps<T>) => ReactElement
 export type ColumnFilterComponent<T extends DataItem> = FilterComponent<T> | false
 
-// ToDo: сделать пропс на получаение/вычисление параметров для строк. 
-// Например, при выбранной строке нужно ее окрашивать в какой - то цвет
 export type DataTableProps<T extends DataItem = DataItem> = Pick<TableProps, "fixedTopTitle" | "striped" | "fixedLeftColumn"> & {
   data: Array<T>,
   columns: Array<Column<T>>,
