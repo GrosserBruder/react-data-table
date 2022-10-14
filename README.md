@@ -1,5 +1,3 @@
-#
-
 Библиотека сделана на основе библиотеки [@grossb/react-table](https://www.npmjs.com/package/@grossb/react-table)
 
 ## Описание типов
@@ -125,7 +123,7 @@
 
 Описание CSS переменных находится [тут](https://github.com/GrosserBruder/react-table#CSS_переменные)
 
-### <a name="#Пример_использования">Пример использования</a>
+### Пример использования
 
 ```js
 function alphabeticalSortComparator<T extends DataItem>(a: T, b: T, sortingOrder: SORTING_ORDER, fieldName: keyof T) {
