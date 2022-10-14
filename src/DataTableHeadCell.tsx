@@ -1,6 +1,6 @@
 import { MouseEventHandler, useCallback, useRef } from "react"
 import { Cell } from "@grossb/react-table";
-import { Column, ColumnFilterComponent, DataItem, FormProps } from "./DataTable";
+import { Column, ColumnFilterComponent, DataItem, FilterComponentProps } from "./DataTable";
 import { getColumnId } from "./helpers";
 import { SORTING_ORDER } from "./constants/const";
 import classnames from "classnames";
@@ -57,7 +57,7 @@ export function DataTableHeadCell<T extends DataItem>(props: DataTableHeadCellPr
     const columnId = getColumnId(column)
     const columnFilterData = columnId && allFilterData ? allFilterData[columnId] : undefined
 
-    const formProps: FormProps<T> = {
+    const formProps: FilterComponentProps<T> = {
       column,
       allFilterData,
       columnFilterData,

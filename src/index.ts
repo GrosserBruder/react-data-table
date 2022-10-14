@@ -1,6 +1,6 @@
 export { default as DataTable } from "./DataTable"
 
-export type { CellProps, Column, ColumnId, DataItem, DataTableProps, FormProps, SortingColumnOrder } from "./DataTable"
+export type { CellProps, Column, ColumnId, DataItem, DataTableProps, FilterComponentProps as FormProps, SortingColumnOrder } from "./DataTable"
 export type { DataTableBodyProps } from "./DataTableBody"
 export type { DataTableBodyRowProps } from "./DataTableBodyRow"
 export type { DataTableHeadProps } from "./DataTableHead"
