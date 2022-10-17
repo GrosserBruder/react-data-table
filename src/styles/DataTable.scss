@@ -22,12 +22,12 @@
 
 .asd-sorting {
   position: relative;
-  @include triangle(bottom);
+  @include triangle(top);
 }
 
 .desc-sorting {
   position: relative;
-  @include triangle(top);
+  @include triangle(bottom);
 }
 
 .sortable {
